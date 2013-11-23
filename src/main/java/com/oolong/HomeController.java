@@ -25,17 +25,4 @@ public class HomeController
 		return "index";
 	}
 	
-	/*
-	@RequestMapping(value = "/advActivity/create", method = RequestMethod.GET)
-	public String toCreateAdvActivityPage()
-	{
-		return "adv/createAdvActivity";
-	}
-	
-	@RequestMapping(value = "/advActivity/list", method = RequestMethod.GET)
-	public String toListAdvActivityPage()
-	{
-		return "adv/listAdvActivity";
-	}
-	*/
 }

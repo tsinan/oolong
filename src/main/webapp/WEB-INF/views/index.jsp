@@ -34,8 +34,8 @@
 						<li class="dropdown">
 							<a href="#adv" class="dropdown-toggle" data-toggle="dropdown">广告管理 <b class="caret"></b></a>
 							<ul class="dropdown-menu">
-								<li><a href="<%=contextPath%>/advActivity/create">新建广告活动</a></li>
-			                  	<li><a href="<%=contextPath%>/advActivity/list">查看广告活动</a></li>
+								<li><a href="<%=contextPath%>/activity/create">新建广告活动</a></li>
+			                  	<li><a href="<%=contextPath%>/activity/list">查看广告活动</a></li>
 			                  	<li class="divider"></li>
 			                  	<li><a href="#">新建广告订单</a></li>
 								<li><a href="#">待处理广告订单</a></li>

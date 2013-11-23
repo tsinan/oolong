@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans:beans xmlns="http://www.springframework.org/schema/mvc"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:beans="http://www.springframework.org/schema/beans"
 	xsi:schemaLocation="
         http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-3.0.xsd
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
@@ -42,6 +43,32 @@
 	    </beans:property>  
 	</beans:bean>  
  	-->
+ 	
+ 	<beans:bean id="restExceptionResolver" class="com.oolong.web.error.RestExceptionHandler">
+        <beans:property name="order" value="100"/>
+        <!--<beans:property name="messageConverters">
+             <list>
+                <ref bean="jacksonHttpMessageConverter"/>
+            </list> 
+        </beans:property>-->
+        <beans:property name="errorResolver">
+            <beans:bean class="com.oolong.web.error.DefaultRestErrorResolver">
+                <!-- <property name="localeResolver" ref="localeResolver"/>  -->
+                <beans:property name="defaultMoreInfoUrl" value="mailto:support@mycompany.com"/>
+                <beans:property name="exceptionMappingDefinitions">
+                    <beans:map>
+                        <!-- 404 -->
+                        <beans:entry key="com.oolong.web.exception.UnknownResourceException" value="404, _exmsg"/>
+
+                        <beans:entry key="org.springframework.web.bind.MethodArgumentNotValidException" value="500, 参数检查未通过"/>
+                        
+                        <!-- 500 (catch all): -->
+                        <beans:entry key="Throwable" value="500, 网站内部错误，请联系管理员解决。"/>
+                    </beans:map>
+                </beans:property>
+            </beans:bean>
+        </beans:property>
+    </beans:bean>
  	
 	<!-- Message Source for i18n properties -->
 	<beans:bean id="messageSource"
