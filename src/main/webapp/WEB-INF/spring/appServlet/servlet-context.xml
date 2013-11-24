@@ -9,9 +9,20 @@
 	<!-- DispatcherServlet Context: defines this servlet's request-processing 
 		infrastructure -->
 
+	<!-- Message Source for i18n properties -->
+	<beans:bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<beans:property name="basenames">
+			<beans:list>
+				<beans:value>classpath:i18n/commons/message</beans:value>
+			</beans:list>
+		</beans:property>
+		<beans:property name="defaultEncoding" value="UTF-8" />
+	</beans:bean>
+
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<annotation-driven />
-
+	    
 	<!-- Handles HTTP GET requests for /resources/** by efficiently serving 
 		up static resources in the ${webappRoot}/resources directory -->
 	<resources mapping="/resources/**" location="/resources/" />
@@ -44,8 +55,9 @@
 	</beans:bean>  
  	-->
  	
+ 	<!-- Handler Exception, convert to json -->
  	<beans:bean id="restExceptionResolver" class="com.oolong.web.error.RestExceptionHandler">
-        <beans:property name="order" value="100"/>
+        <beans:property name="order" value="1"/>
         <!--<beans:property name="messageConverters">
              <list>
                 <ref bean="jacksonHttpMessageConverter"/>
@@ -57,8 +69,11 @@
                 <beans:property name="defaultMoreInfoUrl" value="mailto:support@mycompany.com"/>
                 <beans:property name="exceptionMappingDefinitions">
                     <beans:map>
+                        <!-- 450 -->
+                        <beans:entry key="com.oolong.exception.DuplicationNameException" value="400, 关键信息名称重复，请修改重新提交"/>
+                        
                         <!-- 404 -->
-                        <beans:entry key="com.oolong.web.exception.UnknownResourceException" value="404, _exmsg"/>
+                        <beans:entry key="com.oolong.exception.UnknownResourceException" value="404, _exmsg"/>
 
                         <beans:entry key="org.springframework.web.bind.MethodArgumentNotValidException" value="500, 参数检查未通过"/>
                         
@@ -70,17 +85,7 @@
         </beans:property>
     </beans:bean>
  	
-	<!-- Message Source for i18n properties -->
-	<beans:bean id="messageSource"
-		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
-		<beans:property name="basenames">
-			<beans:list>
-				<beans:value>classpath:i18n/commons/message</beans:value>
-				<beans:value>classpath:i18n/goods/message</beans:value>
-			</beans:list>
-		</beans:property>
-		<beans:property name="defaultEncoding" value="UTF-8" />
-	</beans:bean>
+
 
 	<!-- Imports user-defined @Controller beans that process client requests -->
 	<beans:import resource="controllers.xml" />

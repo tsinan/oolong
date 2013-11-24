@@ -18,42 +18,7 @@
     
     <script type="text/javascript" src="resources/jquery-1.10.2/jquery-1.10.2.min.js"></script>
 	<script type="text/javascript" src="resources/bootstrap-3.0.0/js/bootstrap.min.js"></script>
-	<script type="text/javascript" src="resources/plugin/handlebars-1.0.rc.1.js"></script>
-    <script type="text/javascript" src="resources/plugin/simplePagingGrid-0.6.0.0.js"></script>
-	<script type="text/javascript">
-		$(document).ready(function() {
-		        $("#exampleGrid").simplePagingGrid({
-		            columnNames: ["Name", "Price ($)", "Quantity"],
-		            columnKeys: ["Name", "Price", "Quantity"],
-		            columnWidths: ["50%", "25%", "25%"],
-		            sortable: [true, true, true],
-		            initialSortColumn: "Name",
-		            data: [
-		                { "OrderLineID": 1, "Name": "Pineapple", "Price": 1.50, "Quantity": 4 },
-						{ "OrderLineID": 2, "Name": "Strawberry", "Price": 1.10, "Quantity": 40 },
-						{ "OrderLineID": 3, "Name": "Oranges", "Price": 0.20, "Quantity": 8 },
-						{ "OrderLineID": 4, "Name": "Apples", "Price": 1.50, "Quantity": 5 },
-						{ "OrderLineID": 5, "Name": "Raspberries", "Price": 1.50, "Quantity": 20 },
-						{ "OrderLineID": 6, "Name": "Blueberries", "Price": 1.50, "Quantity": 20 },
-						{ "OrderLineID": 7, "Name": "Pairs", "Price": 1.50, "Quantity": 8 },
-						{ "OrderLineID": 8, "Name": "Melons", "Price": 1.50, "Quantity": 2 },
-						{ "OrderLineID": 9, "Name": "Potatoes", "Price": 1.50, "Quantity": 6 },
-						{ "OrderLineID": 10, "Name": "Sweet Potatoes", "Price": 1.50, "Quantity": 3 },
-						{ "OrderLineID": 11, "Name": "Cabbages", "Price": 1.50, "Quantity": 1 },
-						{ "OrderLineID": 12, "Name": "Lettuce", "Price": 1.50, "Quantity": 1 },
-						{ "OrderLineID": 13, "Name": "Onions", "Price": 1.50, "Quantity": 25 },
-						{ "OrderLineID": 14, "Name": "Carrots", "Price": 1.50, "Quantity": 30 },
-						{ "OrderLineID": 15, "Name": "Broccoli", "Price": 1.50, "Quantity": 1 },
-						{ "OrderLineID": 16, "Name": "Cauliflower", "Price": 1.50, "Quantity": 1 },
-						{ "OrderLineID": 17, "Name": "Peas", "Price": 1.50, "Quantity": 1 },
-						{ "OrderLineID": 18, "Name": "Sweetcorn", "Price": 1.50, "Quantity": 2 },
-						{ "OrderLineID": 19, "Name": "Gooseberries", "Price": 1.50, "Quantity": 20 },
-						{ "OrderLineID": 20, "Name": "Spring Onions", "Price": 1.50, "Quantity": 9 },
-		                { "OrderLineID": 21, "Name": "Beetroot", "Price": 0.30, "Quantity": 3 },
-                		{ "OrderLineID": 22, "Name": "Avocado", "Price": 2.30, "Quantity": 1 }]
-		        });
-		    });
-	</script>
+
 </head>
 <body>
 	<!-- Wrap all page content here -->
@@ -128,7 +93,106 @@
 			      	</div>
 					
 					
-					<div id="exampleGrid"></div>
+					<table class="table  table-hover"  style="margin:10px auto 0 auto;">
+					<thead>
+						<tr>
+							<th><input type="checkbox" value=""></th>
+							<th>广告活动编号</th>
+							<th>广告活动名称</th>
+							<th>创建人</th>
+							<th>公司名称</th>
+							<th>创建时间</th>
+							<th>操作</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><input type="checkbox" value=""></div>
+							</td>
+							<td>01-201302200002</td>
+							<td>通用汽车</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" value=""></td>
+							<td>01-201301220011</td>
+							<td>页游广告效果测试投放</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" value=""></td>
+							<td>01-201301220011</td>
+							<td>页游广告效果测试投放</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" value=""></td>
+							<td>01-201301220011</td>
+							<td>页游广告效果测试投放</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>
+						<tr>
+							<td><input type="checkbox" value=""></td>
+							<td>01-201301220011</td>
+							<td>页游广告效果测试投放</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>	
+						<tr>
+							<td><input type="checkbox" value=""></td>
+							<td>01-201301220011</td>
+							<td>页游广告效果测试投放</td>
+							<td>王某某</td>
+							<td>杯京公司</td>
+							<td>2013-02-20 12:28</td>
+							<td>
+								<span class="glyphicon glyphicon-floppy-open"></span> &nbsp;
+								<span class="glyphicon glyphicon-floppy-remove"></span>
+							</td>
+						</tr>					
+					</tbody>
+					</table>
+				
+					<ul class="pagination pagination-right" style="padding:0 auto;margin:10px auto;">
+						<li class="disabled"><a href="#">&laquo;</a></li>
+					  	<li class="active"><a href="#">1 <span class="sr-only">(current)</span></a></li>
+					  	<li><a href="#">2</a></li>
+					  	<li><a href="#">3</a></li>
+					  	<li><a href="#">4</a></li>
+					  	<li><a href="#">5</a></li>
+					  	<li><a href="#">&raquo;</a></li>
+					</ul>
+      				
+      				
       				
       			</div>
       		</div>

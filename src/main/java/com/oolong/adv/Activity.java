@@ -7,6 +7,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 
@@ -32,6 +33,7 @@ public class Activity
 	/** 广告活动名称，必需 */
 	@NotNull
 	@Size(min=1, max=100)
+	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{3,30}")
 	@Column(name="activityName")  
 	private String activityName;
 	
