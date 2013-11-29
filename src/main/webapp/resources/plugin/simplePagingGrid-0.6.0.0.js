@@ -42,6 +42,10 @@
 
         this.init();
     };
+    
+    // Used to detect initial (useless) popstate.
+	// If history.state exists, assume browser isn't going to fire initial popstate.
+	var popped = ('state' in window.history), initialURL = location.href
 
     SimplePagingGrid.prototype = {
         constructor: SimplePagingGrid,
@@ -218,6 +222,11 @@
             var that = this;
             if (that._settings.urlUpdatingEnabled && supportsHistoryApi()) {
                 window.addEventListener("popstate", function() {
+                	// Ignore inital popstate that some browsers fire on page load
+  					var initialPop = !popped && location.href == initialURL;
+  					popped = true;
+  					if(initialPop) return;
+  
                     that._parseUrl(true, false);
                 });
             }
@@ -718,6 +727,7 @@
         currentPageData: function(callback) {
             callback(this._pageData);
         }
+        
     };
 
     $.fn[pluginName] = function (options) {

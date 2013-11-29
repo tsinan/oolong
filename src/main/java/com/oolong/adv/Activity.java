@@ -50,62 +50,21 @@ public class Activity
 	@Column(name="description")  
 	private String description;
 
+	@Column(name="createTime")  
+	private long createTime;
+	
+	@Column(name="lastUpdateTime")
+	private long lastUpdateTime;
+	
+
 	@Override
 	public String toString()
 	{
-		return "activity [company=" + company + ", activityName="
-				+ activityName + ", linkman=" + linkman + ", linkmanPhone="
-				+ linkmanPhone + ", description=" + description + "]";
-	}
-
-	public String getCompany()
-	{
-		return company;
-	}
-
-	public void setCompany(String company)
-	{
-		this.company = company;
-	}
-
-	public String getActivityName()
-	{
-		return activityName;
-	}
-
-	public void setActivityName(String activityName)
-	{
-		this.activityName = activityName;
-	}
-
-	public String getLinkman()
-	{
-		return linkman;
-	}
-
-	public void setLinkman(String linkman)
-	{
-		this.linkman = linkman;
-	}
-
-	public String getLinkmanPhone()
-	{
-		return linkmanPhone;
-	}
-
-	public void setLinkmanPhone(String linkmanPhone)
-	{
-		this.linkmanPhone = linkmanPhone;
-	}
-
-	public String getDescription()
-	{
-		return description;
-	}
-
-	public void setDescription(String description)
-	{
-		this.description = description;
+		return "Activity [id=" + id + ", company=" + company
+				+ ", activityName=" + activityName + ", linkman=" + linkman
+				+ ", linkmanPhone=" + linkmanPhone + ", description="
+				+ description + ", createTime=" + createTime
+				+ ", lastUpdateTime=" + lastUpdateTime + "]";
 	}
 
 	public Long getId()
@@ -116,6 +75,75 @@ public class Activity
 	public void setId(Long id)
 	{
 		this.id = id;
+	}
+	public String getCompany()
+	{
+		return company;
+	}
+
+	public void setCompany(String company)
+	{
+		this.company = company.trim();
+	}
+
+	public String getActivityName()
+	{
+		return activityName;
+	}
+
+	public void setActivityName(String activityName)
+	{
+		this.activityName = activityName.trim();
+	}
+
+	public String getLinkman()
+	{
+		return linkman;
+	}
+
+	public void setLinkman(String linkman)
+	{
+		this.linkman = linkman.trim();
+	}
+
+	public String getLinkmanPhone()
+	{
+		return linkmanPhone;
+	}
+
+	public void setLinkmanPhone(String linkmanPhone)
+	{
+		this.linkmanPhone = linkmanPhone.trim();
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description.trim();
+	}
+
+	public long getCreateTime()
+	{
+		return createTime;
+	}
+
+	public void setCreateTime(long createTime)
+	{
+		this.createTime = createTime;
+	}
+
+	public long getLastUpdateTime()
+	{
+		return lastUpdateTime;
+	}
+
+	public void setLastUpdateTime(long lastUpdateTime)
+	{
+		this.lastUpdateTime = lastUpdateTime;
 	}
 	
 	

@@ -29,29 +29,14 @@
             		<a class="navbar-brand" href="#">Project name</a>
           		</div>
 	          	<div class="collapse navbar-collapse">
-		            <ul class="nav navbar-nav">
-						<li><a href="<%=contextPath%>/">首页</a></li>
-						<li class="dropdown">
-							<a href="#adv" class="dropdown-toggle" data-toggle="dropdown">广告管理 <b class="caret"></b></a>
-							<ul class="dropdown-menu">
-								<li><a href="<%=contextPath%>/activities/create">新建广告活动</a></li>
-			                  	<li><a href="<%=contextPath%>/activities/list">查看广告活动</a></li>
-			                  	<li class="divider"></li>
-			                  	<li><a href="#">新建广告订单</a></li>
-								<li><a href="#">待处理广告订单</a></li>
-			                  	<li><a href="#">已通过广告订单</a></li>
-			                  	<li><a href="#">查看广告订单</a></li>
-			                </ul>
+		       		<ul class="nav navbar-nav">
+						<li class="active"><a href="#">首页</a></li>
+						<li>
+							<a href="activities/listPage">广告管理</a>
 						</li>
-		              	<li class="dropdown">
-		              		<a href="#user" class="dropdown-toggle" data-toggle="dropdown">用户管理 <b class="caret"></b></a>
-		              		<ul class="dropdown-menu">
-								<li><a href="#">公司信息</a></li>
-			                  	<li><a href="#">我的信息</a></li>
-			                </ul>
-		              	</li>
+						<li><a href="#resource">资源管理</a></li>
 		              	<li><a href="#report">报表管理</a></li>
-		              	<li><a href="#media">媒体编码</a></li>
+		              	<li><a href="#system">系统管理</a></li>
 		            </ul>
 				</div>
 			</div>
