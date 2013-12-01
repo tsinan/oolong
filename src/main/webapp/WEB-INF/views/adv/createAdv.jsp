@@ -18,7 +18,7 @@
 			//}, 
 			submitSuccess: function (form, event) {
 				event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
- 				request("activities", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
+ 				request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
 			}
 		});
 	})
@@ -129,55 +129,130 @@
       			<div class="col-md-8" style="border: 1px solid #f1f1f1;">
 					<!-- main area -->
 					<div id="legend" style="margin-top:5px;margin-bottom:5px">
-			        	<a class="btn btn-default btn-sm" href="activities/listPage" role="button">
-							<span class="glyphicon glyphicon-list"></span> 查看广告活动
+			        	<a class="btn btn-default btn-sm" href="advs/listPage" role="button">
+							<span class="glyphicon glyphicon-list"></span> 查看广告订单
 						</a>&nbsp;
+						
 				    </div>
-				      	
+				    				      	
 					<form class="form-horizontal" onreset="resetForm()" novalidate>
 			    	<fieldset>
         				<div class="form-group ">
-          					<label class="control-label col-sm-2">公司名称：</label>
-							<div class="col-sm-8 controls">
-					            <select name="company" class="form-control input-xlarge" data-validation-required-message="请为广告活动选择公司" required>
+          					<label class="control-label col-sm-2">广告活动：</label>
+							<div class="col-sm-4 controls">
+					            <select name="company" class="form-control input-sm" style="line-height:18px;padding:2px 0"
+					            data-validation-required-message="请为广告活动选择公司" required>
 					            	<option> </option>
 					      			<option>杯京公司</option>
 					      			<option>极难公司</option>
 					      			<option>航舟公司</option>
 					      			<option>程度公司</option>
 					      		</select>
-					      		<p class="help-block">必需：请在列表中选择公司</p>
+					      		<p class="help-block"></p>
           					</div>
 						</div>
 						
         				<div class="form-group">
-							<label class="control-label col-sm-2" for="input01">广告活动名称：</label>
-							<div class="col-sm-8 controls">
-								<input id="activityName" name="activityName" type="text" placeholder="例如：页游广告投放测试" class="form-control input-xlarge" 
+							<label class="control-label col-sm-2" for="input01">广告订单名称：</label>
+							<div class="col-sm-4 controls">
+								<input id="activityName" name="activityName" type="text" placeholder="例如：页游广告投放测试" class="form-control input-sm" 
             						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{3,30}" 
         							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入3至30个字符" 
         							data-validation-ajax-ajax="activities/checkNameIfDup"
         							required>
-            					<p class="help-block">必需：3-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
+            					<p class="help-block"></p>
             					
           					</div>
+          					<label class="control-label col-sm-2" for="input01">需求量（CPM）：</label>
+          					<div class="col-sm-2 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
 						</div>
-						<div class="form-group ">
-          					<label class="control-label col-sm-2" for="input01">联系人：</label>
-          					<div class="col-sm-8 ">
-            					<input name="linkman" type="text" placeholder="" class="form-control input-xlarge">
+						
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">展现形式：</label>
+          					<div class="col-sm-4">
+            					<select name="company" class="form-control input-sm" style="line-height:18px;padding:2px 0"
+            						data-validation-required-message="请为广告活动选择公司" disabled>
+					            	<option>自定义</option>
+					            	<!-- <option>弹窗</option>  
+					      			<option>背投</option>
+					      			<option>替换</option>   
+					      			<option>自定义</option> -->
+					      		</select>
+            					<p class="help-block"></p>
+          					</div>
+          					
+          					<label class="control-label col-sm-2">广告尺寸：</label>
+							<div class="col-sm-2">
+								<input name="linkman" type="text" placeholder="" class="form-control input-sm" disabled>
     							<p class="help-block"></p>
           					</div>
         				</div>
         				<div class="form-group ">
-          					<label class="control-label col-sm-2" for="input01">联系电话：</label>
-          					<div class="col-sm-6">
-            					<input name="linkmanPhone" type="text" placeholder="例如：0531-88888888" class="form-control input-xlarge">
-            					<p class="help-block">请输入座机（带区号）或手机</p>
+          					<label class="control-label col-sm-2" for="input01">广告链接地址：</label>
+          					<div class="col-sm-4 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
+        				</div>
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">广告素材上传：</label>
+          					<div class="col-sm-4 ">
+            					<input name="linkman" type="file" placeholder="" >
+    							<p class="help-block"></p>
+          					</div>
+        				</div>
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">推广方式：</label>
+          					<div class="col-sm-3 ">
+            					<div >
+									<label class="radio-inline">
+								    	<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+								    	普通
+								  	</label>
+								  	<label class="radio-inline">
+								    	<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								    	精准
+								  	</label>
+								</div>
+          					</div>
+          					<label class="control-label col-sm-2" for="input01">关联网站分类：</label>
+          					<div class="col-sm-3 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
+        				</div>
+        				
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">全局推送：</label>
+          					<div class="col-sm-3 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
+          					<label class="control-label col-sm-2" for="input01">虚拟域：</label>
+          					<div class="col-sm-3 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
+        				</div>
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">免推送网站：</label>
+          					<div class="col-sm-8 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
+          					</div>
+        				</div>
+        				<div class="form-group ">
+          					<label class="control-label col-sm-2" for="input01">有效时间：</label>
+          					<div class="col-sm-8 ">
+            					<input name="linkman" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
           					</div>
         				</div>
         				<div class="form-group">
-							<label class="control-label col-sm-2">描述信息：</label>
+							<label class="control-label col-sm-2">广告说明：</label>
 							<div class="col-sm-8">
 								<div class="textarea">
                   					<textarea name="description" type="" class="form-control" rows="3"></textarea>
@@ -196,7 +271,7 @@
   					</form>
       				<!-- end of area -->
       			</div>
-      		
+      			
       			<div class="col-md-2" ></div>
       		</div>
       	</div>

@@ -30,17 +30,17 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.oolong.exception.DuplicationNameException;
 
 /**
- * 活动处理控制器，页面跳转、增、删、改、查、校验
+ * 广告处理控制器，页面跳转、增、删、改、查、校验
  * 
  * @author liumeng
- * @since 2013-11-20
+ * @since 2013-12-1
  */
 @Controller
-@RequestMapping(value = "/activities")
-public class ActivityController
+@RequestMapping(value = "/advs")
+public class AdvController
 {
 	private static final Logger logger = LoggerFactory
-			.getLogger(ActivityController.class);
+			.getLogger(AdvController.class);
 
 	@Autowired
 	private ActivityRepository activityRepo;
@@ -51,19 +51,19 @@ public class ActivityController
 	@RequestMapping(value = "/createPage", method = RequestMethod.GET)
 	public String toCreateActivityPage()
 	{
-		return "adv/createActivity";
+		return "adv/createAdv";
 	}
 
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
 	public String toListActivityPage()
 	{
-		return "adv/listActivity";
+		return "adv/listAdv";
 	}
 
 	@RequestMapping(value = "/editPage", method = RequestMethod.GET)
 	public String toEditActivityPage(HttpServletRequest request)
 	{
-		return "adv/editActivity";
+		return "adv/editAdv";
 	}
 
 	/******************************************************
