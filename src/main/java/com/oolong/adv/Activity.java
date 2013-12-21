@@ -12,7 +12,9 @@ import javax.validation.constraints.Size;
 
 
 /**
- *
+ * 广告活动
+ * 
+ * 类似于广告分类，先创建广告活动之后，才能够在活动下面创建广告订单
  * @author liumeng
  * @since 2013-11-20
  */
@@ -33,7 +35,7 @@ public class Activity
 	/** 广告活动名称，必需 */
 	@NotNull
 	@Size(min=1, max=100)
-	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{3,30}")
+	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
 	@Column(name="activityName")  
 	private String activityName;
 	

@@ -1,7 +1,7 @@
 package com.oolong.exception;
 
 /**
- *
+ * 
  * @author liumeng
  * @since 2013-11-24
  */

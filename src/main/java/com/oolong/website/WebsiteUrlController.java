@@ -1,4 +1,4 @@
-package com.oolong.adv;
+package com.oolong.website;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
@@ -31,42 +30,30 @@ import com.oolong.exception.DuplicationNameException;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
- * 活动处理控制器，页面跳转、增、删、改、查、校验
+ * 关联网站地址处理控制器，页面跳转、增、删、改、查、校验
  * 
  * @author liumeng
- * @since 2013-11-20
+ * @since 2013-12-07
  */
 @Controller
-@RequestMapping(value = "/activities")
-public class ActivityController
+@RequestMapping(value = "/websites/{id}/websiteUrls")
+public class WebsiteUrlController
 {
-	
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
-			.getLogger(ActivityController.class);
+			.getLogger(WebsiteUrlController.class);
 
 	@Autowired
-	private ActivityRepository activityRepo;
+	private WebsiteUrlRepository websiteUrlRepo;
 
 	/******************************************************
 	 * 页面跳转
 	 ******************************************************/
-	@RequestMapping(value = "/createPage", method = RequestMethod.GET)
-	public String toCreateActivityPage()
-	{
-		return "adv/createActivity";
-	}
 
-	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
-	public String toListActivityPage()
+	@RequestMapping(value = "/listUrl", method = RequestMethod.GET)
+	public String toListWebsiteUrlPage()
 	{
-		return "adv/listActivity";
-	}
-
-	@RequestMapping(value = "/editPage", method = RequestMethod.GET)
-	public String toEditActivityPage(HttpServletRequest request)
-	{
-		return "adv/editActivity";
+		return "resource/listWebsiteUrl";
 	}
 
 	/******************************************************
@@ -74,7 +61,7 @@ public class ActivityController
 	 ******************************************************/
 
 	/**
-	 * 查询活动列表
+	 * 查询关联网站地址列表
 	 * 
 	 * @param query 查询条件
 	 * @param page 当前页数
@@ -87,42 +74,60 @@ public class ActivityController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query,
-			@RequestParam Integer page, @RequestParam Integer pageSize,
-			@RequestParam String sortColumn, @RequestParam String sortOrder)
+	Map<String, Object> list(@PathVariable("id") long websiteId,
+			@RequestParam String query, @RequestParam Integer page,
+			@RequestParam Integer pageSize, @RequestParam String sortColumn,
+			@RequestParam String sortOrder)
 	{
 		// 构造分页和排序对象
 		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
 				.fromString(sortOrder) : Direction.DESC;
 		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "lastUpdateTime");
+				sortColumn, "url");
 
-		// 获取查询字符串，格式为“活动公司|活动名称”
 		// TODO 需要考虑解码
-		String[] queryCond = query.split("|");
-		String actiName = null;
-		if(queryCond.length == 3)
+		String queryUrl = null;
+		if (query != null && query.length() > 0)
 		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "%"+queryCond[2]+"%";
+			queryUrl = "%" + query + "%";
 		}
 		else
 		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "";
+			queryUrl = "";
 		}
 
-		List<Activity> list = null;
+		// 查询
+		List<WebsiteUrl> list = null;
 		long count = 0;
-		if (actiName.length() > 0)
+		if (queryUrl.length() > 0)
 		{
-			list = activityRepo.findByActivityNameLike(actiName, pageable);
-			count = activityRepo.countByActivityNameLike(actiName);
+			list = websiteUrlRepo.findByWebsiteIdAndUrlLike(websiteId, queryUrl, pageable);
+			count = websiteUrlRepo.countByWebsiteIdAndUrlLike(websiteId, queryUrl);
 		}
 		else
 		{
-			list = activityRepo.findAll(pageable).getContent();
-			count = activityRepo.count();
+			list = websiteUrlRepo.findByWebsiteId(websiteId, pageable);
+			count = websiteUrlRepo.countByWebsiteId(websiteId);
+		}
+
+		// 添加显示类型名称
+		for (WebsiteUrl websiteUrl : list)
+		{
+			switch (websiteUrl.getUrlType())
+			{
+			case 1:
+				websiteUrl.setUrlTypeName("精确匹配");
+				break;
+			case 2:
+				websiteUrl.setUrlTypeName("前缀匹配");
+				break;
+			case 3:
+				websiteUrl.setUrlTypeName("包含匹配");
+				break;
+			default:
+				websiteUrl.setUrlTypeName("精确匹配");
+				break;
+			}
 		}
 
 		// 查询并返回结果
@@ -134,83 +139,44 @@ public class ActivityController
 		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
 				+ sortOrder);
 		result.put("query", query);
+		
 		return result;
-	}
-
-	/**
-	 * 根据id查询活动
-	 * 
-	 * @param id
-	 * @return
-	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	@ResponseStatus(value = HttpStatus.OK)
-	@Transactional
-	public @ResponseBody
-	Activity get(@PathVariable("id") long id)
-	{
-		// 查询并返回结果
-		return activityRepo.findOne(id);
 	}
 
 	/**
 	 * 创建新活动
 	 * 
-	 * @param activity json格式封装的广告活动对象
-	 * @return 创建成功的广告活动
+	 * @param websiteUrl json格式封装的关联网站对象
+	 * @return 创建成功的关联网站
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	Activity create(@Valid @RequestBody Activity activity,
+	WebsiteUrl create(@PathVariable("id") long websiteId,
+			@Valid @RequestBody WebsiteUrl websiteUrl,
 			HttpServletResponse reponse)
 	{
-		// TODO 根据时间和随机数生成活动编码，需要编码吗？
-
-		// 校验活动名称不可重复
-		if (activityRepo.findByActivityName(activity.getActivityName()).size() > 0)
+		// 校验URL不可重复
+		if (websiteUrlRepo.findByUrl(websiteUrl.getUrl()).size() > 0)
 		{
-			throw new DuplicationNameException("ActivityName duplication.");
+			throw new DuplicationNameException("WebsiteUrl duplication.");
 		}
 
-		// TODO 活动总数不超过限制，按公司还是按管理员？
-
 		// 存入数据库
-		long now = System.currentTimeMillis();
-		activity.setCreateTime(now);
-		activity.setLastUpdateTime(now);
-		activityRepo.save(activity);
+		websiteUrl.setWebsiteId(websiteId);
+		websiteUrlRepo.save(websiteUrl);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/activities/" + activity.getId());
+		reponse.setHeader("Location", "/websites/" + websiteUrl.getWebsiteId()
+				+ "/" + websiteUrl.getId());
 
 		// 返回创建成功的活动信息
-		return activity;
+		return websiteUrl;
 	}
 
 	/**
-	 * 修改活动
-	 * 
-	 * @param id
-	 * @param activity
-	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
-	@ResponseStatus(value = HttpStatus.OK)
-	@Transactional
-	public @ResponseBody
-	Activity put(@PathVariable("id") long id,
-			@Valid @RequestBody Activity activity)
-	{
-		activity.setId(id);
-		activity.setLastUpdateTime(System.currentTimeMillis());
-		activityRepo.save(activity);
-
-		return activity;
-	}
-
-	/**
-	 * 删除活动
+	 * 删除网站地址
 	 * 
 	 * @param ids
 	 */
@@ -227,7 +193,7 @@ public class ActivityController
 			idArry.add(Long.valueOf(id));
 		}
 
-		activityRepo.batchDelete(idArry);
+		websiteUrlRepo.batchDelete(idArry);
 	}
 
 	/**
@@ -237,47 +203,44 @@ public class ActivityController
 	 * @param field 请求URL中携带的待校验字段名
 	 * @return 返回json对象，详细内容见AjaxValidateFieldResult
 	 */
-	@RequestMapping(value = "checkNameIfDup", method = RequestMethod.GET)
+	@RequestMapping(value = "checkUrlIfDup", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody
 	AjaxValidateFieldResult ajaxValidateName(
 			@RequestParam("value") String value,
-			@RequestParam("field") String field,
-			@RequestParam(value = "exceptId", required = false) Long exceptId)
+			@RequestParam("field") String field)
 	{
-		String activityName = "";
+		String url = "";
 		try
 		{
-			activityName = new String(value.getBytes("iso-8859-1"), "utf-8");
+			url = new String(value.getBytes("iso-8859-1"), "utf-8");
 		}
 		catch (UnsupportedEncodingException e)
 		{
 			// do nothing...
 		}
-		activityName = activityName.trim();
+		url = url.trim();
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
-		result.setValue(activityName);
+		result.setValue(url);
 
-		List<Activity> activities = activityRepo
-				.findByActivityName(activityName);
-		if (activities == null || activities.size() == 0
-				|| activities.get(0).getId() == exceptId)
+		List<WebsiteUrl> websiteUrls = websiteUrlRepo.findByUrl(url);
+		if (websiteUrls == null || websiteUrls.size() == 0)
 		{
 			result.setValid(true);
-			result.setMessage("活动名称尚未使用，请继续输入其他信息");
+			result.setMessage("站点地址未重复，请继续输入其他信息");
 		}
 		else
 		{
 			result.setValid(false);
-			result.setMessage("已经存在同名活动，请输入其他活动名称");
+			result.setMessage("已经存在相同站点地址，请输入其他站点地址");
 		}
 
 		return result;
 	}
 
-	public void setActivityRepo(ActivityRepository activityRepo)
+	public void setWebsiteUrlRepo(WebsiteUrlRepository websiteUrlRepo)
 	{
-		this.activityRepo = activityRepo;
+		this.websiteUrlRepo = websiteUrlRepo;
 	}
 }

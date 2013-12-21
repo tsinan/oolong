@@ -2,7 +2,7 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-	<%@ include file="../include/include_head.jsp" %>
+<%@ include file="../include/include_head.jsp" %>	
 </head>
 <body>
 	<!-- Wrap all page content here -->
@@ -17,14 +17,15 @@
       			</div>
       			
       			<div class="col-md-8" style="border-width: 0px 1px;border-style:solid;border-color:#f1f1f1;">
-
-					<form class="form-horizontal" novalidate>
+					<!-- main area -->
+				      	
+					<form class="form-horizontal" onreset="resetForm()" novalidate>
 			    	<fieldset>
-				      	<div class="panel panel-default">
-						<div class="panel-heading">活动信息</div>
+			    		<div id="panelBasicInfo" class="panel panel-default">
+						<div class="panel-heading">关联网站信息</div>
 						<div class="panel-body">
-						
-						<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
+        				
+        				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 						 	<strong>修改成功！</strong> 
 						</div>
@@ -33,45 +34,20 @@
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
 						 	<strong>修改失败！</strong> 
 						</div>
-						
-        				<div class="form-group ">	<!-- 公司名称 -->
-          					<label class="control-label col-sm-3">公司名称：</label>
+        				
+						<div class="form-group">		<!-- 关联网站名称 -->
+							<label class="control-label col-sm-3"  >关联网站名称：</label>
 							<div class="col-sm-6 controls">
-					            <select id="company" name="company" class="form-control input-sm" 
-					            	style="line-height:18px;padding:2px 0">
-					      			<option>杯京公司</option>
-					      			<option>极难公司</option>
-					      			<option>航舟公司</option>
-					      			<option>程度公司</option>
-					      		</select>
-					      		<p class="help-block">必需：请在列表中选择公司</p>
-          					</div>
-						</div>
-						<div class="form-group">	<!-- 活动名称 -->
-							<label class="control-label col-sm-3"  >广告活动名称：</label>
-							<div class="col-sm-6 controls">
-								<input id="activityName" name="activityName" type="text" placeholder="例如：页游广告投放测试" class="form-control input-sm" 
+								<input id="websiteName" name="websiteName" type="text" placeholder="例如：新闻网站" class="form-control input-sm" 
             						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
-        							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符">
+        							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
+        							data-validation-ajax-ajax="websites/checkNameIfDup">
             					<p class="help-block">必需：2-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
             					
           					</div>
 						</div>
-						<div class="form-group ">	<!-- 联系人 -->
-          					<label class="control-label col-sm-3"  >联系人：</label>
-          					<div class="col-sm-6 controls">
-            					<input id="linkman" name="linkman" type="text" placeholder="" class="form-control input-sm">
-    							<p class="help-block"></p>
-          					</div>
-        				</div>
-        				<div class="form-group ">	<!-- 联系电话 -->
-          					<label class="control-label col-sm-3"  >联系电话：</label>
-          					<div class="col-sm-6 controls">
-            					<input id="linkmanPhone" name="linkmanPhone" type="text" placeholder="例如：0531-88888888" class="form-control input-sm">
-            					<p class="help-block">请输入座机（带区号）或手机</p>
-          					</div>
-        				</div>
-        				<div class="form-group">	<!-- 描述信息 -->
+						
+						<div class="form-group">		<!-- 描述信息 -->
 							<label class="control-label col-sm-3">描述信息：</label>
 							<div class="col-sm-6 controls">
 								<div class="textarea">
@@ -79,7 +55,7 @@
             					</div>
           					</div>
         				</div>
-        				<div class="form-group">	<!-- 按钮 -->
+        				<div class="form-group">		<!-- 按钮 -->
 							<div class="col-sm-3">
           					</div>
 							<div class="col-sm-6">
@@ -91,7 +67,7 @@
 						</div>
 					</fieldset>
   					</form>
-      				
+      				<!-- end of area -->
       			</div>
       		
       			<div class="col-md-2" ></div>
@@ -101,15 +77,17 @@
   	
   	<%@ include file="../include/include_bottom.jsp" %>
 
+	
 <%@ include file="../include/include_js.jsp" %>
 <script type="text/javascript" src="resources/plugin/jqBootstrapValidation.js"></script>
+<script type="text/javascript" src="resources/plugin/handlebars-1.0.rc.1.js"></script>
+<script type="text/javascript" src="resources/plugin/simplePagingGrid-0.6.0.0.js"></script>
 <script>
-
 
 $(function (){ 
 	// 分析URL，控制nav_top和nav_left
 	controlNav();
-	
+
 	// 提取URL查询参数
 	var param = location.search.split("&");
 	var editId = param[0].split("=")[1];
@@ -117,23 +95,20 @@ $(function (){
 	var query = param[2].split("=")[1]
 
 	// 设置ajax校验URL
-	$("#activityName").attr("data-validation-ajax-ajax","activities/checkNameIfDup?exceptId="+editId);
+	$("#websiteName").attr("data-validation-ajax-ajax","websites/checkNameIfDup?exceptId="+editId);
 
 	// 注册页面返回按钮事件
 	$("#returnToListBtn").click(function(){
-		window.location = "activities/listPage?paging="+paging+"&query="+query;
+		window.location = "websites/listPage?paging="+paging+"&query="+query;
 	});
 
 	// 加载待修改的活动信息
-	$.get('activities/'+editId, 
+	$.get('websites/'+editId, 
 			null, 
-			function(activity){
+			function(website){
 				// 加载数据到表单
-				$("#company").val(activity.company);
-				$("#activityName").val(activity.activityName);
-				$("#linkman").val(activity.linkman);
-				$("#linkmanPhone").val(activity.linkmanPhone);
-				$("#description").val(activity.description);
+				$("#websiteName").val(website.websiteName);
+				$("#description").val(website.description);
 			}, 
 			"json");
 
@@ -145,8 +120,10 @@ $(function (){
 						paging,	query);  
 		}
 	});
+	
+	
 })
-
+	
 // 向服务端提交请求
 function sendRequest(editId, data, paging, query){      
 
@@ -155,14 +132,15 @@ function sendRequest(editId, data, paging, query){
         async:false,  
         contentType: "application/json;charset=UTF-8",  
         dataType: "json",  
-        url: "activities/"+editId+"?_method=PUT",  
+        url: "websites/"+editId+"?_method=PUT",  
         data: data,   
-        success: function(activity){
+        success: function(website){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
         	$(".alert-warning").css("display","none");
         },  
         error: function(error){
+        
         	// 操作结果显示
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
@@ -172,7 +150,7 @@ function sendRequest(editId, data, paging, query){
         	if(response.code == '450')
         	{
         		// 高亮活动名称字段，提示用户修改
-        		$formGroup = $("#activityName").parents(".form-group").first();
+        		$formGroup = $("#websiteName").parents(".form-group").first();
       			$formGroup.removeClass("has-success has-warning").addClass("has-error");
       			$formGroup.find(".help-block").first().text(response.message);
         	}
@@ -184,8 +162,8 @@ function sendRequest(editId, data, paging, query){
         },  
     });         
 }
-	
-</script>	
+
+</script>
 </body>
 </html>
 

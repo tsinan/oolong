@@ -1,7 +1,7 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <!-- left nav -->
-<div class="panel-group" id="accordion">
-	<div class="panel panel-default">
+<div class="panel-group" id="accordion" style="position:fixed;width:170px">
+	<div id="panelActivity" class="panel panel-default">	<!-- 广告活动 -->
     	<div class="panel-heading">
       	<h4 class="panel-title">
         	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
@@ -9,8 +9,8 @@
         	</a>
       	</h4>
     	</div>
-	    <div id="collapseOne" class="panel-collapse collapse in">
-	      	<div class="panel-body">
+	    <div id="collapseOne" class="panel-collapse collapse">
+	      	<div class="panel-body" style="padding:5px">
 	      	<ul class="nav nav-pills nav-stacked">
 				<li id="leftNav_newActi"><a href="activities/createPage">新建广告活动</a></li>
 				<li id="leftNav_viewActi"><a href="activities/listPage">查看广告活动	</a></li>
@@ -18,7 +18,7 @@
 	      	</div>
 	    </div>
 	</div>
-	<div class="panel panel-default">
+	<div id="panelAdv" class="panel panel-default">	<!-- 广告订单 -->
 	    <div class="panel-heading">
 	    <h4 class="panel-title">
 	        <a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
@@ -27,7 +27,7 @@
 	    </h4>
 	    </div>
     	<div id="collapseTwo" class="panel-collapse collapse">
-      		<div class="panel-body">
+      		<div class="panel-body" style="padding:5px">
       		<ul class="nav nav-pills nav-stacked">
 				<li id="leftNav_newAdv"><a href="advs/createPage">新建广告订单</a></li>
 				<li id="leftNav_viewNoAuditAdv"><a href="#">待处理广告订单<span class="badge pull-right">14</span></a></li>
@@ -36,5 +36,44 @@
 			</ul>
       		</div>
     	</div>
-  	</div> 
+  	</div>
+  	
+  	<div id="panelArea" class="panel panel-default" style="margin-top: 0px;">	<!-- 区域 -->
+    	<div class="panel-heading">
+      	<h4 class="panel-title">
+        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+          	区域管理
+        	</a>
+      	</h4>
+    	</div>
+	    <div id="collapseThree" class="panel-collapse collapse">
+	      	<div class="panel-body" style="padding:5px">
+	      	<ul class="nav nav-pills nav-stacked">
+	      		<li id="leftNav_newVArea"><a href="activities/createPage">新建虚拟域</a></li>
+	      		<li id="leftNav_viewVArea"><a href="activities/createPage">查看虚拟域</a></li>
+				<li id="leftNav_configPhArea"><a href="activities/createPage">物理域配置</a></li>
+			</ul>
+	      	</div>
+	    </div>
+	</div>
+	<div id="panelWebsite" class="panel panel-default">	<!-- 关联网站 -->
+    	<div class="panel-heading">
+      	<h4 class="panel-title">
+        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+          	关联网站
+        	</a>
+      	</h4>
+    	</div>
+	    <div id="collapseFour" class="panel-collapse collapse">
+	      	<div class="panel-body" style="padding:5px">
+	      	<ul class="nav nav-pills nav-stacked">
+	      		<li id="leftNav_newWebsite"><a href="websites/createPage">新建关联网站</a></li>
+	      		<li id="leftNav_viewWebsite"><a href="websites/listPage">查看关联网站</a></li>
+			</ul>
+	      	</div>
+	    </div>
+	</div>
+	<!-- TODO 查询网站地址 -->
+	
+	
 </div>	<!-- end of left nav -->
