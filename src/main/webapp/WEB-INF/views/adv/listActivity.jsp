@@ -177,7 +177,7 @@ $(function(){
 	
 	// 刷新列表
 	$("#refreshButton").click(function(){
-		$("#activityGrid").simplePagingGrid("refresh","activities?query="+query);
+		$("#activityGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -185,7 +185,7 @@ $(function(){
 	// 注册删除关闭对话框并刷新列表
 	$("#giveupDelete").click(function(){
 		$("#deleteDialog").modal('hide');
-		$("#activityGrid").simplePagingGrid('refresh');
+		$("#activityGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -316,7 +316,7 @@ function sendConfirmDelete(ids)
         success: function(activity){
         	// 关闭对话框并刷新列表
 			$('#deleteDialog').modal('hide');
-			$("#activityGrid").simplePagingGrid('refresh');
+			$("#activityGrid").simplePagingGrid("refresh");
         },  
         error: function(error){
         	// 提示删除错误

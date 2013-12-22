@@ -19,7 +19,7 @@
       			<div class="col-md-8" style="border-width: 0px 1px;border-style:solid;border-color:#f1f1f1;">
 					<!-- main area -->
 				      	
-					<form class="form-horizontal" onreset="resetForm()" novalidate>
+					<form class="form-horizontal" novalidate>
 			    	<fieldset>
 			    		<div class="panel panel-default">
 						<div class="panel-heading">活动信息</div>
@@ -137,7 +137,7 @@ function sendRequest(data){
         	$(".alert-warning").css("display","none");
 			
 			// 清空表单
-			resetForm();
+			$("form")[0].reset();
         },  
         error: function(error){
         
@@ -158,25 +158,10 @@ function sendRequest(data){
         	else
         	{
         		// 清空表单
-				resetForm();
+				$("form")[0].reset();
         	}
         },  
     });         
-}
-
-// 清空表单
-function resetForm()
-{	
-	$("form")[0].reset();
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation("destroy");
-	
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
-		submitSuccess: function (form, event) {
-			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			sendRequest(JSON.stringify(serializeObject(form.serializeArray())));  
-		}
-	});
-	return false;
 }
 	
 </script>

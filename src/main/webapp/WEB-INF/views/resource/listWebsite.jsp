@@ -151,7 +151,7 @@ $(function(){
 	        			"\"{{websiteName}}\",\"{{urlCount}}\","+
 	        			"\"{{descrition}}\");' "+
 	        			">删除</a>"+
-	        "<a href='websites/{{id}}/websiteUrls/listUrl?id={{id}}&paging={{../paging}}&query={{../query}}' " +
+	        "<a href='websites/{{id}}/websiteUrls/listPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
 	        			"style='margin-right:15px'>管理站点地址</a> "
 	    ],
         dataUrl: "websites?query="+query
@@ -166,7 +166,7 @@ $(function(){
 	
 	// 刷新列表
 	$("#refreshButton").click(function(){
-		$("#websiteGrid").simplePagingGrid("refresh","websites?query="+query);
+		$("#websiteGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -174,7 +174,7 @@ $(function(){
 	// 注册删除关闭对话框并刷新列表
 	$("#giveupDelete").click(function(){
 		$("#deleteDialog").modal('hide');
-		$("#websiteGrid").simplePagingGrid('refresh');
+		$("#websiteGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	// 批量删除
@@ -302,7 +302,7 @@ function sendConfirmDelete(ids)
         success: function(activity){
         	// 关闭对话框并刷新列表
 			$('#deleteDialog').modal('hide');
-			$("#websiteGrid").simplePagingGrid('refresh');
+			$("#websiteGrid").simplePagingGrid("refresh");
         },  
         error: function(error){
         	// 提示删除错误

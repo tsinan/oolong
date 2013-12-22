@@ -160,7 +160,7 @@ public class WebsiteController
 	}
 
 	/**
-	 * 创建新活动
+	 * 创建新关联网站
 	 * 
 	 * @param website json格式封装的关联网站对象
 	 * @return 创建成功的关联网站
@@ -195,7 +195,7 @@ public class WebsiteController
 	 * 修改活动
 	 * 
 	 * @param id
-	 * @param activity
+	 * @param website
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.OK)

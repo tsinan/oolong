@@ -1,4 +1,4 @@
-package com.oolong.website;
+package com.oolong.global;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -30,30 +30,30 @@ import com.oolong.exception.DuplicationNameException;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
- * 关联网站地址处理控制器，页面跳转、增、删、改、查、校验
+ * 免推送地址处理控制器，页面跳转、增、删、改、查、校验
  * 
  * @author liumeng
- * @since 2013-12-07
+ * @since 2013-12-22
  */
 @Controller
-@RequestMapping(value = "/websites/{id}/websiteUrls")
-public class WebsiteUrlController
+@RequestMapping(value = "/freePushUrls")
+public class FreePushUrlController
 {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
-			.getLogger(WebsiteUrlController.class);
+			.getLogger(FreePushUrlController.class);
 
 	@Autowired
-	private WebsiteUrlRepository websiteUrlRepo;
+	private FreePushUrlRepository freePushUrlRepo;
 
 	/******************************************************
 	 * 页面跳转
 	 ******************************************************/
 
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
-	public String toListWebsiteUrlPage()
+	public String toListFreePushUrlPage()
 	{
-		return "resource/listWebsiteUrl";
+		return "resource/listFreePushUrl";
 	}
 
 	/******************************************************
@@ -61,7 +61,7 @@ public class WebsiteUrlController
 	 ******************************************************/
 
 	/**
-	 * 查询关联网站地址列表
+	 * 查询免推送地址列表
 	 * 
 	 * @param query 查询条件
 	 * @param page 当前页数
@@ -74,10 +74,9 @@ public class WebsiteUrlController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@PathVariable("id") long websiteId,
-			@RequestParam String query, @RequestParam Integer page,
-			@RequestParam Integer pageSize, @RequestParam String sortColumn,
-			@RequestParam String sortOrder)
+	Map<String, Object> list(@RequestParam String query, 
+			@RequestParam Integer page,	@RequestParam Integer pageSize, 
+			@RequestParam String sortColumn,@RequestParam String sortOrder)
 	{
 		// 构造分页和排序对象
 		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
@@ -97,38 +96,19 @@ public class WebsiteUrlController
 		}
 
 		// 查询
-		List<WebsiteUrl> list = null;
+		List<FreePushUrl> list = null;
 		long count = 0;
 		if (queryUrl.length() > 0)
 		{
-			list = websiteUrlRepo.findByWebsiteIdAndUrlLike(websiteId, queryUrl, pageable);
-			count = websiteUrlRepo.countByWebsiteIdAndUrlLike(websiteId, queryUrl);
+			list = freePushUrlRepo.findByUrlLike( queryUrl, pageable);
+			count = freePushUrlRepo.countByUrlLike( queryUrl);
 		}
 		else
 		{
-			list = websiteUrlRepo.findByWebsiteId(websiteId, pageable);
-			count = websiteUrlRepo.countByWebsiteId(websiteId);
+			list = freePushUrlRepo.findAll(pageable).getContent();
+			count = freePushUrlRepo.count();
 		}
 
-		// 添加显示类型名称
-		for (WebsiteUrl websiteUrl : list)
-		{
-			switch (websiteUrl.getUrlType())
-			{
-			case 1:
-				websiteUrl.setUrlTypeName("精确匹配");
-				break;
-			case 2:
-				websiteUrl.setUrlTypeName("前缀匹配");
-				break;
-			case 3:
-				websiteUrl.setUrlTypeName("包含匹配");
-				break;
-			default:
-				websiteUrl.setUrlTypeName("精确匹配");
-				break;
-			}
-		}
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -144,35 +124,32 @@ public class WebsiteUrlController
 	}
 
 	/**
-	 * 创建新地址
+	 * 创建新活动
 	 * 
-	 * @param websiteUrl json格式封装的关联网站对象
-	 * @return 创建成功的关联网站地址
+	 * @param freePushUrl json格式封装的关联网站对象
+	 * @return 创建成功的关联网站
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	WebsiteUrl create(@PathVariable("id") long websiteId,
-			@Valid @RequestBody WebsiteUrl websiteUrl,
+	FreePushUrl create(@Valid @RequestBody FreePushUrl freePushUrl,
 			HttpServletResponse reponse)
 	{
 		// 校验URL不可重复
-		if (websiteUrlRepo.findByUrl(websiteUrl.getUrl()).size() > 0)
+		if (freePushUrlRepo.findByUrl(freePushUrl.getUrl()).size() > 0)
 		{
 			throw new DuplicationNameException("WebsiteUrl duplication.");
 		}
 
 		// 存入数据库
-		websiteUrl.setWebsiteId(websiteId);
-		websiteUrlRepo.save(websiteUrl);
+		freePushUrlRepo.save(freePushUrl);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/websites/" + websiteUrl.getWebsiteId()
-				+ "/" + websiteUrl.getId());
+		reponse.setHeader("Location", "/freePushUrls/"+ freePushUrl.getId());
 
 		// 返回创建成功的活动信息
-		return websiteUrl;
+		return freePushUrl;
 	}
 
 	/**
@@ -193,7 +170,7 @@ public class WebsiteUrlController
 			idArry.add(Long.valueOf(id));
 		}
 
-		websiteUrlRepo.batchDelete(idArry);
+		freePushUrlRepo.batchDelete(idArry);
 	}
 
 	/**
@@ -224,8 +201,8 @@ public class WebsiteUrlController
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
 		result.setValue(url);
 
-		List<WebsiteUrl> websiteUrls = websiteUrlRepo.findByUrl(url);
-		if (websiteUrls == null || websiteUrls.size() == 0)
+		List<FreePushUrl> freePushUrls = freePushUrlRepo.findByUrl(url);
+		if (freePushUrls == null || freePushUrls.size() == 0)
 		{
 			result.setValid(true);
 			result.setMessage("站点地址未重复，请继续输入其他信息");
@@ -239,8 +216,9 @@ public class WebsiteUrlController
 		return result;
 	}
 
-	public void setWebsiteUrlRepo(WebsiteUrlRepository websiteUrlRepo)
+	public void setFreePushUrlRepo(FreePushUrlRepository freePushUrlRepo)
 	{
-		this.websiteUrlRepo = websiteUrlRepo;
+		this.freePushUrlRepo = freePushUrlRepo;
 	}
+
 }

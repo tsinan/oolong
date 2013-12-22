@@ -17,58 +17,58 @@
       			</div>
       			
       			<div class="col-md-8" style="border-width: 0px 1px;border-style:solid;border-color:#f1f1f1;">
-					<!-- main area -->
-				      	
-					<form class="form-horizontal" onreset="resetForm()" novalidate>
-			    	<fieldset>
-			    		<div id="panelBasicInfo" class="panel panel-default">
-						<div class="panel-heading">关联网站信息</div>
-						<div class="panel-body">
-        				
-        				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
-						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>添加成功！</strong> 
+				<!-- main area -->
+			      	
+				<form class="form-horizontal"  novalidate>
+		    	<fieldset>
+		    		<div id="panelBasicInfo" class="panel panel-default">
+					<div class="panel-heading">关联网站信息</div>
+					<div class="panel-body">
+    				
+    				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
+					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					 	<strong>添加成功！</strong> 
+					</div>
+					
+					<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
+					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+					 	<strong>添加失败！</strong>
+					</div>
+    				
+					<div class="form-group">		<!-- 关联网站名称 -->
+						<label class="control-label col-sm-3"  >关联网站名称：</label>
+						<div class="col-sm-6 controls">
+							<input id="websiteName" name="websiteName" type="text" placeholder="例如：新闻网站" class="form-control input-sm" 
+        						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
+    							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
+    							data-validation-ajax-ajax="websites/checkNameIfDup">
+        					<p class="help-block">必需：2-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
+        					
+      					</div>
+					</div>
+					
+					<div class="form-group">		<!-- 描述信息 -->
+						<label class="control-label col-sm-3">描述信息：</label>
+						<div class="col-sm-6 controls">
+							<div class="textarea">
+              					<textarea id="description" name="description" type="" class="form-control" rows="3"></textarea>
+        					</div>
+      					</div>
+    				</div>
+    				<div class="form-group">		<!-- 按钮 -->
+						<div class="col-sm-3">
+      					</div>
+						<div class="col-sm-6">
+							<button class="btn btn-primary" type="submit">提交</button>&nbsp;
+							<button class="btn btn-warning" type="reset">重置</button>
 						</div>
-						
-						<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
-						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>添加失败！</strong>
-						</div>
-        				
-						<div class="form-group">		<!-- 关联网站名称 -->
-							<label class="control-label col-sm-3"  >关联网站名称：</label>
-							<div class="col-sm-6 controls">
-								<input id="websiteName" name="websiteName" type="text" placeholder="例如：新闻网站" class="form-control input-sm" 
-            						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
-        							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
-        							data-validation-ajax-ajax="websites/checkNameIfDup">
-            					<p class="help-block">必需：2-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
-            					
-          					</div>
-						</div>
-						
-						<div class="form-group">		<!-- 描述信息 -->
-							<label class="control-label col-sm-3">描述信息：</label>
-							<div class="col-sm-6 controls">
-								<div class="textarea">
-                  					<textarea id="description" name="description" type="" class="form-control" rows="3"></textarea>
-            					</div>
-          					</div>
-        				</div>
-        				<div class="form-group">		<!-- 按钮 -->
-							<div class="col-sm-3">
-          					</div>
-							<div class="col-sm-6">
-								<button class="btn btn-primary" type="submit">提交</button>&nbsp;
-								<button class="btn btn-warning" type="reset">重置</button>
-							</div>
-						</div>
-						</div>
-						</div>
-						
-					</fieldset>
-  					</form>
-      				<!-- end of area -->
+					</div>
+					</div>
+					</div>
+					
+				</fieldset>
+				</form>
+  				<!-- end of area -->
       			</div>
       		
       			<div class="col-md-2" ></div>
@@ -112,7 +112,7 @@ function sendRequest(data){
         	$(".alert-success").css("display","block");
         	$(".alert-warning").css("display","none");
         	
-        	resetForm();
+        	$("form")[0].reset();
         },  
         error: function(error){
         
@@ -132,25 +132,10 @@ function sendRequest(data){
         	// 其他错误属于系统异常，弹出对话框，指导用户选择下一步操作
         	else
         	{
-        		resetForm();
+        		$("form")[0].reset();
         	}
         },  
     });         
-}
-
-// 清空表单
-function resetForm()
-{	
-	$("form")[0].reset();
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation("destroy");
-	
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
-		submitSuccess: function (form, event) {
-			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			sendRequest(JSON.stringify(serializeObject(form.serializeArray())));  
-		}
-	});
-	return false;
 }
 	
 </script>

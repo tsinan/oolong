@@ -38,20 +38,36 @@
     	</div>
   	</div>
   	
-  	<div id="panelArea" class="panel panel-default" style="margin-top: 0px;">	<!-- 区域 -->
+  	<div id="panelGlobal" class="panel panel-default" style="margin-top: 0px;">	<!-- 推送配置-->
     	<div class="panel-heading">
       	<h4 class="panel-title">
         	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
-          	区域管理
+          	推送配置
         	</a>
       	</h4>
     	</div>
 	    <div id="collapseThree" class="panel-collapse collapse">
 	      	<div class="panel-body" style="padding:5px">
 	      	<ul class="nav nav-pills nav-stacked">
+	      		<li id="leftNav_configGlobal"><a href="globalConfig/editPage">推送间隔配置</a></li>
+	      		<li id="leftNav_freePushWebsite"><a href="freePushUrls/listPage">免推送网站配置</a></li>
+			</ul>
+	      	</div>
+	    </div>
+	</div>
+  	<div id="panelArea" class="panel panel-default">	<!-- 区域 -->
+    	<div class="panel-heading">
+      	<h4 class="panel-title">
+        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+          	区域管理
+        	</a>
+      	</h4>
+    	</div>
+	    <div id="collapseFour" class="panel-collapse collapse">
+	      	<div class="panel-body" style="padding:5px">
+	      	<ul class="nav nav-pills nav-stacked">
 	      		<li id="leftNav_newVArea"><a href="activities/createPage">新建虚拟域</a></li>
 	      		<li id="leftNav_viewVArea"><a href="activities/createPage">查看虚拟域</a></li>
-				<li id="leftNav_configPhArea"><a href="activities/createPage">物理域配置</a></li>
 			</ul>
 	      	</div>
 	    </div>
@@ -59,12 +75,12 @@
 	<div id="panelWebsite" class="panel panel-default">	<!-- 关联网站 -->
     	<div class="panel-heading">
       	<h4 class="panel-title">
-        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseFour">
+        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseFive">
           	关联网站
         	</a>
       	</h4>
     	</div>
-	    <div id="collapseFour" class="panel-collapse collapse">
+	    <div id="collapseFive" class="panel-collapse collapse">
 	      	<div class="panel-body" style="padding:5px">
 	      	<ul class="nav nav-pills nav-stacked">
 	      		<li id="leftNav_newWebsite"><a href="websites/createPage">新建关联网站</a></li>

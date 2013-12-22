@@ -21,7 +21,7 @@
       			<div class="col-md-8" style="border-width: 0px 1px;border-style:solid;border-color:#f1f1f1;">
 					<!-- main area -->
 									    
-					<form class="form-horizontal" onreset="resetForm()" novalidate>
+					<form class="form-horizontal" novalidate>
 			    	<fieldset>
 						
 					<div class="panel panel-default">
@@ -361,21 +361,6 @@ function createAsTemplate()
 	$("#responseDialog").modal('hide');
 	$("#activityName").val('');
 	$("#activityName").focus();   
-	return false;
-}
-
-// 清空表单
-function resetForm()
-{	
-	$("form")[0].reset();
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation("destroy");
-	
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
-		submitSuccess: function (form, event) {
-			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			request("activities", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
-		}
-	});
 	return false;
 }
 	
