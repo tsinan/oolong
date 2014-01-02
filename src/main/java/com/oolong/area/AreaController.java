@@ -1,4 +1,4 @@
-package com.oolong.website;
+package com.oolong.area;
 
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -31,45 +31,41 @@ import com.oolong.exception.DuplicationNameException;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
- * 关联网站处理控制器，页面跳转、增、删、改、查、校验
+ * 区域处理控制器，页面跳转、增、删、改、查、校验
  * 
  * @author liumeng
- * @since 2013-12-05
+ * @since 2013-12-22
  */
 @Controller
-@RequestMapping(value = "/websites")
-public class WebsiteController
+@RequestMapping(value = "/areas")
+public class AreaController
 {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
-			.getLogger(WebsiteController.class);
+			.getLogger(AreaController.class);
 
 	@Autowired
-	private WebsiteRepository websiteRepo;
+	private AreaRepository areaRepo;
 	
-	@Autowired
-	private WebsiteUrlRepository websiteUrlRepo;
-	
-
 	/******************************************************
 	 * 页面跳转
 	 ******************************************************/
 	@RequestMapping(value = "/createPage", method = RequestMethod.GET)
-	public String toCreateWebsitePage()
+	public String toCreateAreaPage()
 	{
-		return "resource/createWebsite";
+		return "resource/createArea";
 	}
 
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
-	public String toListWebsitePage()
+	public String toListAreaPage()
 	{
-		return "resource/listWebsite";
+		return "resource/listArea";
 	}
 
 	@RequestMapping(value = "/editPage", method = RequestMethod.GET)
-	public String toEditWebsitePage(HttpServletRequest request)
+	public String toEditAreaPage(HttpServletRequest request)
 	{
-		return "resource/editWebsite";
+		return "resource/editArea";
 	}
 
 
@@ -102,35 +98,35 @@ public class WebsiteController
 				sortColumn, "lastUpdateTime");
 
 		// TODO 需要考虑解码
-		String websiteName = null;
+		String areaName = null;
 		if (query != null && query.length() > 0)
 		{
-			websiteName = "%"+ query +"%";
+			areaName = "%"+ query +"%";
 		}
 		else
 		{
-			websiteName = "";
+			areaName = "";
 		}
 
-		List<Website> list = null;
+		List<Area> list = null;
 		long count = 0;
-		if (websiteName.length() > 0)
+		if (areaName.length() > 0)
 		{
-			list = websiteRepo.findByWebsiteNameLike(websiteName, pageable);
-			count = websiteRepo.countByWebsiteNameLike(websiteName);
+			list = areaRepo.findByAreaNameLike(areaName, pageable);
+			count = areaRepo.countByAreaNameLike(areaName);
 		}
 		else
 		{
-			list = websiteRepo.findAll(pageable).getContent();
-			count = websiteRepo.count();
+			list = areaRepo.findAll(pageable).getContent();
+			count = areaRepo.count();
 		}
 		
 		// 查找URL数量
-		for(Website website:list)
-		{
-			long urlCount = websiteUrlRepo.countByWebsiteId(website.getId());
-			website.setUrlCount(urlCount);
-		}
+//		for(Area area:list)
+//		{
+//			long urlCount = websiteUrlRepo.countByWebsiteId(area.getId());
+//			area.setUrlCount(urlCount);
+//		}
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -144,7 +140,7 @@ public class WebsiteController
 	}
 
 	/**
-	 * 根据id查询关联网站
+	 * 根据id查询区域
 	 * 
 	 * @param id
 	 * @return
@@ -153,66 +149,66 @@ public class WebsiteController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Website get(@PathVariable("id") long id)
+	Area get(@PathVariable("id") long id)
 	{
 		// 查询并返回结果
-		return websiteRepo.findOne(id);
+		return areaRepo.findOne(id);
 	}
 
 	/**
-	 * 创建新关联网站
+	 * 创建新区域
 	 * 
-	 * @param website json格式封装的关联网站对象
-	 * @return 创建成功的关联网站
+	 * @param area json格式封装的关联网站对象
+	 * @return 创建成功的区域
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	Website create(@Valid @RequestBody Website website,
+	Area create(@Valid @RequestBody Area area,
 			HttpServletResponse reponse)
 	{
 		// 校验关联网站名称不可重复
-		if (websiteRepo.findByWebsiteName(website.getWebsiteName()).size() > 0)
+		if (areaRepo.findByAreaName(area.getAreaName()).size() > 0)
 		{
-			throw new DuplicationNameException("WebsiteName duplication.");
+			throw new DuplicationNameException("AreaName duplication.");
 		}
 
 		// 存入数据库
 		long now = System.currentTimeMillis();
-		website.setCreateTime(now);
-		website.setLastUpdateTime(now);
-		websiteRepo.save(website);
+		area.setCreateTime(now);
+		area.setLastUpdateTime(now);
+		areaRepo.save(area);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/websites/" + website.getId());
+		reponse.setHeader("Location", "/areas/" + area.getId());
 
 		// 返回创建成功的活动信息
-		return website;
+		return area;
 	}
 
 	/**
-	 * 修改关联网站
+	 * 修改区域
 	 * 
 	 * @param id
-	 * @param website
+	 * @param area
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.PUT, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Website put(@PathVariable("id") long id,
-			@Valid @RequestBody Website website)
+	Area put(@PathVariable("id") long id,
+			@Valid @RequestBody Area area)
 	{
-		website.setId(id);
-		website.setLastUpdateTime(System.currentTimeMillis());
-		websiteRepo.save(website);
+		area.setId(id);
+		area.setLastUpdateTime(System.currentTimeMillis());
+		areaRepo.save(area);
 
-		return website;
+		return area;
 	}
 
 	/**
-	 * 删除关联网站
+	 * 删除区域
 	 * 
 	 * @param ids
 	 */
@@ -229,8 +225,8 @@ public class WebsiteController
 			idArry.add(Long.valueOf(id));
 		}
 		
-		websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
-		websiteRepo.batchDelete(idArry);
+//		websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
+		areaRepo.batchDelete(idArry);
 	}
 
 	/**
@@ -248,45 +244,40 @@ public class WebsiteController
 			@RequestParam("field") String field,
 			@RequestParam(value = "exceptId", required = false) Long exceptId)
 	{
-		String websiteName = "";
+		String areaName = "";
 		try
 		{
-			websiteName = new String(value.getBytes("iso-8859-1"), "utf-8");
+			areaName = new String(value.getBytes("iso-8859-1"), "utf-8");
 		}
 		catch (UnsupportedEncodingException e)
 		{
 			// do nothing...
 		}
-		websiteName = websiteName.trim();
+		areaName = areaName.trim();
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
-		result.setValue(websiteName);
+		result.setValue(areaName);
 
-		List<Website> websites = websiteRepo
-				.findByWebsiteName(websiteName);
-		if (websites == null || websites.size() == 0
-				|| websites.get(0).getId() == exceptId)
+		List<Area> areas = areaRepo
+				.findByAreaName(areaName);
+		if (areas == null || areas.size() == 0
+				|| areas.get(0).getId() == exceptId)
 		{
 			result.setValid(true);
-			result.setMessage("关联网站名称尚未使用，请继续输入其他信息");
+			result.setMessage("区域名称尚未使用，请继续输入其他信息");
 		}
 		else
 		{
 			result.setValid(false);
-			result.setMessage("已经存在同名关联网站，请输入其他关联网站名称");
+			result.setMessage("已经存在同名区域，请输入其他区域名称");
 		}
 
 		return result;
 	}
 
-	public void setWebsiteRepo(WebsiteRepository websiteRepo)
+	public void setAreaRepo(AreaRepository areaRepo)
 	{
-		this.websiteRepo = websiteRepo;
-	}
-
-	public void setWebsiteUrlRepo(WebsiteUrlRepository websiteUrlRepo)
-	{
-		this.websiteUrlRepo = websiteUrlRepo;
+		this.areaRepo = areaRepo;
 	}
 	
 }

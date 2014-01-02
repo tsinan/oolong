@@ -120,6 +120,7 @@ import org.springframework.web.util.WebUtils;
  * 
  * @author Les Hazlewood
  */
+@SuppressWarnings("rawtypes")
 public class RestExceptionHandler extends AbstractHandlerExceptionResolver
 		implements InitializingBean
 {

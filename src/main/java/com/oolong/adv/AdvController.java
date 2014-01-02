@@ -40,6 +40,7 @@ import com.oolong.web.AjaxValidateFieldResult;
 @RequestMapping(value = "/advs")
 public class AdvController
 {
+	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdvController.class);
 

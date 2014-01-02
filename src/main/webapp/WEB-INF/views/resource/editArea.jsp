@@ -22,7 +22,7 @@
 				<form class="form-horizontal" novalidate>
 		    	<fieldset>
 		    		<div class="panel panel-default">
-					<div class="panel-heading">关联网站信息</div>
+					<div class="panel-heading">区域信息</div>
 					<div class="panel-body">
     				
     				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
@@ -35,14 +35,14 @@
 					 	<strong>修改失败！</strong> 
 					</div>
     				
-					<div class="form-group">		<!-- 关联网站名称 -->
-						<label class="control-label col-sm-3"  >关联网站名称：</label>
+					<div class="form-group">		<!-- 区域名称 -->
+						<label class="control-label col-sm-3">区域名称：</label>
 						<div class="col-sm-6 controls">
-							<input id="websiteName" name="websiteName" type="text" placeholder="例如：新闻网站" class="form-control input-sm" 
-        						required
+							<input id="areaName" name="areaName" type="text" class="form-control input-sm" 
+								required
         						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
     							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
-    							data-validation-ajax-ajax="websites/checkNameIfDup">
+    							data-validation-ajax-ajax="areas/checkNameIfDup">
         					<p class="help-block">必需：2-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
         					
       					</div>
@@ -96,20 +96,20 @@ $(function (){
 	var query = param[2].split("=")[1]
 
 	// 设置ajax校验URL
-	$("#websiteName").attr("data-validation-ajax-ajax","websites/checkNameIfDup?exceptId="+editId);
+	$("#areaName").attr("data-validation-ajax-ajax","areas/checkNameIfDup?exceptId="+editId);
 
 	// 注册页面返回按钮事件
 	$("#returnToListBtn").click(function(){
-		window.location = "websites/listPage?paging="+paging+"&query="+query;
+		window.location = "areas/listPage?paging="+paging+"&query="+query;
 	});
 
 	// 加载待修改的活动信息
-	$.get('websites/'+editId, 
+	$.get('areas/'+editId, 
 			null, 
-			function(website){
+			function(area){
 				// 加载数据到表单
-				$("#websiteName").val(website.websiteName);
-				$("#description").val(website.description);
+				$("#areaName").val(area.areaName);
+				$("#description").val(area.description);
 			}, 
 			"json");
 
@@ -133,9 +133,9 @@ function sendRequest(editId, data, paging, query){
         async:false,  
         contentType: "application/json;charset=UTF-8",  
         dataType: "json",  
-        url: "websites/"+editId+"?_method=PUT",  
+        url: "areas/"+editId+"?_method=PUT",  
         data: data,   
-        success: function(website){
+        success: function(area){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
         	$(".alert-warning").css("display","none");
@@ -151,7 +151,7 @@ function sendRequest(editId, data, paging, query){
         	if(response.code == '450')
         	{
         		// 高亮活动名称字段，提示用户修改
-        		$formGroup = $("#websiteName").parents(".form-group").first();
+        		$formGroup = $("#areaName").parents(".form-group").first();
       			$formGroup.removeClass("has-success has-warning").addClass("has-error");
       			$formGroup.find(".help-block").first().text(response.message);
         	}

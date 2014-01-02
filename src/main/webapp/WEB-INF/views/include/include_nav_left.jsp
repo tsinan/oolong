@@ -66,8 +66,8 @@
 	    <div id="collapseFour" class="panel-collapse collapse">
 	      	<div class="panel-body" style="padding:5px">
 	      	<ul class="nav nav-pills nav-stacked">
-	      		<li id="leftNav_newVArea"><a href="activities/createPage">新建虚拟域</a></li>
-	      		<li id="leftNav_viewVArea"><a href="activities/createPage">查看虚拟域</a></li>
+	      		<li id="leftNav_newArea"><a href="areas/createPage">新建区域</a></li>
+	      		<li id="leftNav_viewArea"><a href="areas/listPage">查看区域</a></li>
 			</ul>
 	      	</div>
 	    </div>

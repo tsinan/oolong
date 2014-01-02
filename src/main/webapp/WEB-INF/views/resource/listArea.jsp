@@ -33,16 +33,16 @@
 					<div id="queryBar" class="row" style="margin:5px auto;border: 1px solid #f1f1f1;display:none;">
 						<form class="form-inline"  novalidate>
 						<div class="form-group ">
-					    	<input id="queryByWebsiteName" class="form-control input-sm" style="width:150px;"  placeholder="关联网站名称">
+					    	<input id="queryByAreaName" class="form-control input-sm" style="width:150px;"  placeholder="区域名称">
 					  	</div>
 					  	
-					  	<button id="doQueryWebsite" class="btn btn-default btn-xs">查询</button>
-					  	<button id="clearQueryWebsite" class="btn btn-default btn-xs">放弃查询</button>
+					  	<button id="doQueryArea" class="btn btn-default btn-xs">查询</button>
+					  	<button id="clearQueryArea" class="btn btn-default btn-xs">放弃查询</button>
 				    	
 						</form>
 					</div>
 					
-					<div id="websiteGrid"></div>
+					<div id="areaGrid"></div>
       				<!-- end of main area -->
       			</div>
       		
@@ -117,16 +117,16 @@ $(function(){
 			$("#queryButton").addClass("active");
 			
 			// 清空查询字符串
-			$("#queryByWebsiteName").val(query);
+			$("#queryByAreaName").val(query);
 		}
 		
 	}
 
 	// 注册表格插件
-    $("#websiteGrid").simplePagingGrid({
+    $("#areaGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","关联网站名称", "站点地址数量", "描述","操作"],
-        columnKeys: ["id","websiteName", "urlCount", "description","operation"],
+        columnNames: ["","区域名称", "IP地址段数量", "描述","操作"],
+        columnKeys: ["id","areaName", "ipCount", "description","operation"],
         columnWidths: ["5%","20%", "20%", "25%", "30%"],
         sortable: [false, true, true, true, false],
         showLoadingOverlay: false,
@@ -140,21 +140,21 @@ $(function(){
 			"<th><input type='checkbox' id='c_all'></th>"
 		],
         cellTemplates: [
-        	"<input type='checkbox' name='{{websiteName}}' id='{{id}}'>",
-	        "{{websiteName}}",
-	        "{{urlCount}}",
+        	"<input type='checkbox' name='{{areaName}}' id='{{id}}'>",
+	        "{{areaName}}",
+	        "{{ipCount}}",
 	        "{{description}}",
-	        "<a href='websites/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
+	        "<a href='areas/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
 	        			"style='margin-right:15px'>修改</a> "+
 	        "<a href='#' style='margin-right:15px' "+
 	        			"onclick='return openDelDialog({{id}},"+
-	        			"\"{{websiteName}}\",{{urlCount}},"+
+	        			"\"{{areaName}}\",{{ipCount}},"+
 	        			"\"{{description}}\");' "+
 	        			">删除</a>"+
-	        "<a href='websites/{{id}}/websiteUrls/listPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
-	        			"style='margin-right:15px'>管理站点地址</a> "
+	        "<a href='areas/{{id}}/areaIps/listPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
+	        			"style='margin-right:15px'>管理IP地址段</a> "
 	    ],
-        dataUrl: "websites?query="+query
+        dataUrl: "areas?query="+query
     });
     
     // 绑定全选按钮事件
@@ -166,7 +166,7 @@ $(function(){
 	
 	// 刷新列表
 	$("#refreshButton").click(function(){
-		$("#websiteGrid").simplePagingGrid("refresh");
+		$("#areaGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -174,7 +174,7 @@ $(function(){
 	// 注册删除关闭对话框并刷新列表
 	$("#giveupDelete").click(function(){
 		$("#deleteDialog").modal('hide');
-		$("#websiteGrid").simplePagingGrid("refresh");
+		$("#areaGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	// 批量删除
@@ -193,22 +193,21 @@ $(function(){
 	});
 	
 	// 查询
-	$("#doQueryWebsite").click(function(){
+	$("#doQueryArea").click(function(){
 		// 替换原有查询字符串
 		// TODO 需要考虑对查询字符串编码
-		query = $("#queryByWebsiteName").val();	
-		$("#websiteGrid").simplePagingGrid("refresh","websites?query="+query);
+		query = $("#queryByAreaName").val();	
+		$("#areaGrid").simplePagingGrid("refresh","areas?query="+query);
 		
-
 		return false;
 	});
 	
 	// 清空查询
-	$("#clearQueryWebsite").click(function(){
+	$("#clearQueryArea").click(function(){
 		// 清空查询字符串
-		$("#queryByWebsiteName").val("");
+		$("#queryByAreaName").val("");
 		query = "";
-		$("#websiteGrid").simplePagingGrid("refresh","websites?query="+query);
+		$("#areaGrid").simplePagingGrid("refresh","areas?query="+query);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");
@@ -219,11 +218,11 @@ $(function(){
 });
 
 // 打开删除对话框
-function openDelDialog(id, websiteName, urlCount, description)
+function openDelDialog(id, areaName, ipCount, description)
 {
 	// 显示活动名称和详细信息
-	$('#deleteDialog .modal-title').text("请确认是否删除关联网站 "+websiteName+"？");
-	$('#deleteDialog .modal-body ul').html("<li>站点地址数量："+urlCount+"</li>"+
+	$('#deleteDialog .modal-title').text("请确认是否删除区域 "+areaName+"？");
+	$('#deleteDialog .modal-body ul').html("<li>IP地址段数量："+ipCount+"</li>"+
 		"<li>描述信息："+description+"</li>");
 
 	// 绑定confirmDelete按钮的click事件
@@ -265,7 +264,7 @@ function openBatchDelDialog()
 	else
 	{
 		// 显示活动名称和详细信息
-		$('#deleteDialog .modal-title').text("请确认是否删除下列关联网站？");
+		$('#deleteDialog .modal-title').text("请确认是否删除下列区域？");
 
 		var nameDisplay = "";
 		for(idx in batchNames){
@@ -297,16 +296,16 @@ function sendConfirmDelete(ids)
         async:false,  // 同步执行，根据返回结果确定是否关闭对话框
         contentType: "application/json;charset=UTF-8",  
         dataType: "json", 
-        url: "websites/"+ids+"?_method=delete",  
+        url: "areas/"+ids+"?_method=delete",  
         data: null, 
-        success: function(website){
+        success: function(area){
         	// 关闭对话框并刷新列表
 			$('#deleteDialog').modal('hide');
-			$("#websiteGrid").simplePagingGrid("refresh");
+			$("#areaGrid").simplePagingGrid("refresh");
         },  
         error: function(error){
         	// 提示删除错误
-        	$('#deleteDialog .modal-title').text("在删除关联网站时发生了异常，请点击“确认”重复尝试或者点击“放弃”返回活动列表。");
+        	$('#deleteDialog .modal-title').text("在删除区域时发生了异常，请点击“确认”重复尝试或者点击“放弃”返回区域列表。");
         	$('#deleteDialog .modal-title').css("font-color","red");
         }
 	});       

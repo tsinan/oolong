@@ -29,23 +29,23 @@ public class Activity
 	/** 公司名，必需 */
 	@NotNull
 	@Size(min=1, max=100)
-	@Column(name="company")  
+	@Column(name="company",length=100)  
 	private String company;
 	
 	/** 广告活动名称，必需 */
 	@NotNull
 	@Size(min=1, max=100)
 	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
-	@Column(name="activityName")  
+	@Column(name="activityName",length=100)  
 	private String activityName;
 	
 	@NotNull
 	@Size(max=100)
-	@Column(name="linkman")  
+	@Column(name="linkman",length=100)  
 	private String linkman;
 	
 	@Size(max=100)
-	@Column(name="linkmanPhone")  
+	@Column(name="linkmanPhone",length=100)  
 	private String linkmanPhone;
 	
 	@Size(max=200)

@@ -20,7 +20,7 @@
 				
 				<!-- main area -->  	
 				<div class="panel panel-default">
-				<div class="panel-heading">关联网站地址 - <strong id="websiteName"></strong></div>
+				<div class="panel-heading">区域IP地址段 - <strong id="areaName"></strong></div>
 				<div class="panel-body">
 					
 					<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
@@ -49,16 +49,16 @@
 						<div id="queryBar" class="row" style="margin:5px auto;border: 1px solid #f1f1f1;display:none;">
 							<form class="form-inline"  novalidate>
 							<div class="form-group" style="margin:5px;">
-								<input id="queryByWebsiteUrl" class="form-control input-sm" style="width:150px;"  placeholder="网站地址">
+								<input id="queryByAreaIp" class="form-control input-sm" style="width:150px;"  placeholder="网站地址">
 						  	</div>
 						  	
-						  	<button id="doQueryWebsiteUrl" class="btn btn-default btn-xs">查询</button>
-						  	<button id="clearQueryWebsiteUrl" class="btn btn-default btn-xs">放弃查询</button>
+						  	<button id="doQueryAreaIp" class="btn btn-default btn-xs">查询</button>
+						  	<button id="clearQueryAreaIp" class="btn btn-default btn-xs">放弃查询</button>
 					    	
 							</form>
 						</div>
 						
-	        			<div id="websiteUrlGrid"></div>
+	        			<div id="areaIpGrid"></div>
 					
 					</div>
 					<div class="col-sm-6">
@@ -66,39 +66,45 @@
 						<form class="form-horizontal" novalidate>
 						<fieldset>
 						
-						<div class="form-group ">		<!-- 匹配类型 -->
-	      					<label class="control-label col-sm-2" style="padding-left:0px;padding-right:0px">类型：</label>
-							<div class="col-sm-9 controls">
-					            <select id="urlType" name="urlType" class="form-control input-sm" 
-					            	style="line-height:18px;padding:2px 0;width:245px">
-					            	<option value="1">精确匹配</option>
-					      			<option value="2">前缀匹配</option>
-					      			<option value="3">包含匹配</option>
-					      		</select>
-	      					</div>
-						</div>
-						
-						<div class="form-group ">		<!-- 链接 -->
-	      					<label class="control-label col-sm-2" style="padding-left:0px;padding-right:0px">地址：</label>
-	      					<div class="col-sm-9 controls">
-	        					<div class="input-group">
-									<span class="input-group-addon" style="padding:8px 8px;width:60px">http(s)://</span>
-									<input id="url" name="url" type="text" 
-											class="form-control input-sm" style="width:180px"
+						<!-- 地址类型 -->
+						<input type="hidden" name="ipType" value="2">
+												
+						<div class="form-group ">		<!-- IP起始地址 -->
+	      					<label class="control-label col-sm-3" style="padding-left:0px;padding-right:0px">起始地址：</label>
+	      					<div class="col-sm-8 controls">
+	        					<input id="ipStartText" name="ipStartText" type="text" 
+											class="form-control input-sm" placeholder="例如：10.1.1.1" 
 											required
-											max="100" data-validation-max-message="最长输入100个字符"
-											data-validation-regex-regex="[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?"
-	        								data-validation-regex-message="请输入正确的网站URL" 
-	        								data-validation-ajax-ajax="websites/0/websiteUrls/checkUrlIfDup">
-								</div>
+											data-validation-regex-regex="((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))"
+	        								data-validation-regex-message="请输入正确的IP地址" 
+	        								data-validation-callback-callback="ips_callback_function">
 								<p class="help-block"></p>
 	      					</div>
 	        			</div>
-		        			
+	        			       			
+	        			<div class="form-group ">		<!-- 掩码长度 -->
+	      					<label class="control-label col-sm-3" style="padding-left:0px;padding-right:0px">掩码长度：</label>
+	      					<div class="col-sm-8 controls">
+	        					<input id="maskLength" name="maskLength" type="number" 
+											class="form-control input-sm" placeholder="例如：24"
+											min="1" max="32" 
+											data-validation-max-message="掩码长度为1-32"
+											data-validation-callback-callback="ips_callback_function">
+								<p class="help-block"></p>
+	      					</div>
+	        			</div>
+		        		
+						<div id="ipCheckMessage" class="form-group has-warning" style="display:none">		<!-- 冲突提示信息 -->
+	      					<label class="col-sm-3"></label>
+	      					<div class="col-sm-9 controls">
+	        					<p class="help-block">注意：IP段地址冲突，请确认后重新填写。</p>
+	      					</div>
+	        			</div>
+		        		
 		    			<div class="form-group">		<!-- 按钮 -->
 							<div class="col-sm-2" style="padding-left:0px;padding-right:0px"></div>
 							<div class="col-sm-9">
-								<button type="submit" class="btn btn-primary btn-sm" >提交</button>
+								<button type="submit" class="btn btn-primary btn-sm" >提交</button>&nbsp;
         						<button id="returnToListBtn" type="button" class="btn btn-default btn-sm">返回</button>
 							</div>
 						</div> 
@@ -159,14 +165,14 @@ $(function (){
 
 	// 注册页面返回按钮事件
 	$("#returnToListBtn").click(function(){
-		window.location = "websites/listPage?paging="+paging+"&query="+query;
+		window.location = "areas/listPage?paging="+paging+"&query="+query;
 	});
 	
 	// 加载待修改的活动信息
-	$.get('websites/'+editId, null, 
-			function(website){
+	$.get('areas/'+editId, null, 
+			function(area){
 				// 加载数据到表单
-				$("#websiteName").text(website.websiteName);
+				$("#areaName").text(area.areaName);
 			}, 
 			"json");
 	
@@ -174,22 +180,30 @@ $(function (){
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
 		submitSuccess: function(form,event){
 			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			sendRequest(editId,form.serializeArray());
+			// 判断是否IP段冲突
+			if($('#ipCheckMessage').css('display') == "block")
+			{
+				$('#ipCheckMessage').removeClass("has-warning").addClass("has-error");			
+			}
+			else
+			{
+				sendRequest(editId,form.serializeArray());
+			}
 		}
 	});
 	
 	// 表格函数
-	var urlQuery="";
+	var ipQuery="";
 
 	// 注册表格插件
-    $("#websiteUrlGrid").simplePagingGrid({
+    $("#areaIpGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","类型", "地址","操作"],
-        columnKeys: ["id","urlTypeName", "url","operation"],
-        columnWidths: ["10%","20%", "55%","15%"],
-        sortable: [false, true, true, false],
+        columnNames: ["","IP地址段","操作"],
+        columnKeys: ["id","ipStartText","operation"],
+        columnWidths: ["10%","65%", "25%"],
+        sortable: [false, true, false],
         showLoadingOverlay: false,
-    	initialSortColumn: "url",
+    	initialSortColumn: "ipStartText",
         sortOrder: "asc",
         pageNumber: 0,
         pageSize: 10,
@@ -200,14 +214,13 @@ $(function (){
 			"<th><input type='checkbox' id='c_all'></th>"
 		],
     	cellTemplates: [
-    		"<input type='checkbox' name='{{url}}' id='{{id}}'>",
-	        "{{urlTypeName}}",
-	        "{{url}}",
+    		"<input type='checkbox' name='{{ipStartText}}/{{maskLength}}' id='{{id}}'>",
+	        "{{ipStartText}}/{{maskLength}}",
 	        "<a href='#' style='margin-right:5px' "+
-	        			"onclick='return openDelDialog({{id}},\"{{url}}\",{{websiteId}});' "+
+	        			"onclick='return openDelDialog({{id}},\"{{ipStartText}}/{{maskLength}}\",{{areaId}});' "+
 	        			">删除</a>"
 	    ],
-    	dataUrl: "websites/"+editId+"/websiteUrls?query="+urlQuery
+    	dataUrl: "areas/"+editId+"/areaIps?query="+ipQuery
     	
     });
     
@@ -221,7 +234,7 @@ $(function (){
 	// 刷新列表
 	$("#refreshButton").click(function(){
 		closeAlertBar();
-		$("#websiteUrlGrid").simplePagingGrid("refresh");
+		$("#areaIpGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -229,7 +242,7 @@ $(function (){
 	// 注册删除关闭对话框并刷新列表
 	$("#giveupDelete").click(function(){
 		$("#deleteDialog").modal('hide');
-		$("#websiteUrlGrid").simplePagingGrid("refresh");
+		$("#areaIpGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	// 批量删除
@@ -251,26 +264,26 @@ $(function (){
 	});
 	
 	// 查询
-	$("#doQueryWebsiteUrl").click(function(){
+	$("#doQueryAreaIp").click(function(){
 		
 		closeAlertBar();
 				
 		// 替换原有查询字符串
 		// TODO 需要考虑对查询字符串编码
-		urlQuery = $("#queryByWebsiteUrl").val();	
-		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?query="+urlQuery);
+		ipQuery = $("#queryByAreaIp").val();	
+		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?query="+ipQuery);
 		return false;
 	});
 	
 	// 清空查询
-	$("#clearQueryWebsiteUrl").click(function(){
+	$("#clearQueryAreaIp").click(function(){
 	
 		closeAlertBar();
 	
 		// 清空查询字符串
-		$("#queryByWebsiteUrl").val("");
-		urlQuery = "";
-		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?query="+urlQuery);
+		$("#queryByAreaIp").val("");
+		ipQuery = "";
+		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?query="+ipQuery);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");
@@ -281,7 +294,7 @@ $(function (){
 })
 
 
-function sendRequest(websiteId,data)
+function sendRequest(areaId,data)
 {
 	// 提交添加请求
 	$.ajax({  
@@ -289,41 +302,43 @@ function sendRequest(websiteId,data)
         async:false,  // 同步执行，根据返回结果确定是否关闭对话框
         contentType: "application/json;charset=UTF-8",  
         dataType: "json", 
-        url: "websites/"+websiteId+"/websiteUrls/",  
+        url: "areas/"+areaId+"/areaIps/",  
         data: JSON.stringify(serializeObject(data)), 
-        success: function(websiteUrl){
+        success: function(areaIp){
         	// 关闭对话框并刷新列表
         	$(".alert-success").css("display","block");
         	$(".alert-warning").css("display","none");
-			$("#websiteUrlGrid").simplePagingGrid("refresh");
+			$("#areaIpGrid").simplePagingGrid("refresh");
 			
 			// 清空input
-			$("#url").val("");
+			$("#ipStartText").val("");
+			$("#maskLength").val("");
         },  
         error: function(error){
         	// 提示删除错误
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
-			$("#websiteUrlGrid").simplePagingGrid("refresh");
+			$("#areaIpGrid").simplePagingGrid("refresh");
 
 			// 清空input
-			$("#url").val("");
+			$("#ipStartText").val("");
+			$("#maskLength").val("");
         }
 	});    
 }
 
 // 打开删除对话框
-function openDelDialog(id, websiteUrl, websiteId)
+function openDelDialog(id, areaIp, areaId)
 {
 	closeAlertBar();
 		
 	// 显示活动名称和详细信息
 	$('#deleteDialog .modal-title').text("请确认是否删除？");
-	$('#deleteDialog .modal-body ul').html("<li>网站地址："+websiteUrl+"</li>");
+	$('#deleteDialog .modal-body ul').html("<li>区域IP地址段："+areaIp+"</li>");
 
 	// 绑定confirmDelete按钮的click事件
 	$("#confirmDelete").click(function(){
-		sendConfirmDelete(websiteId,id);
+		sendConfirmDelete(areaId,id);
 		$("#confirmDelete").unbind('click'); //解除绑定
 		return false;
 	}); 		
@@ -337,7 +352,7 @@ function openDelDialog(id, websiteUrl, websiteId)
 }
 
 // 打开批量删除对话框
-function openBatchDelDialog(websiteId)
+function openBatchDelDialog(areaId)
 {
 	closeAlertBar();
 	// 获取选中的ID数组
@@ -361,7 +376,7 @@ function openBatchDelDialog(websiteId)
 	else
 	{
 		// 显示活动名称和详细信息
-		$('#deleteDialog .modal-title').text("请确认是否删除下列网站地址？");
+		$('#deleteDialog .modal-title').text("请确认是否删除下列区域IP地址段？");
 
 		var nameDisplay = "";
 		for(idx in batchNames){
@@ -371,7 +386,7 @@ function openBatchDelDialog(websiteId)
 		
 		// 绑定confirmDelete按钮的click事件
 		$("#confirmDelete").click(function(){
-			sendConfirmDelete(websiteId,batchIds.join(","));
+			sendConfirmDelete(areaId,batchIds.join(","));
 			$("#confirmDelete").unbind('click'); //解除绑定
 			return false;
 		}); 
@@ -386,27 +401,76 @@ function openBatchDelDialog(websiteId)
 }
 
 // 绑定confirmDelete按钮的click事件
-function sendConfirmDelete(websiteId, ids)
+function sendConfirmDelete(areaId, ids)
 { 
 	$.ajax({  
 		type: "POST",  
         async:false,  // 同步执行，根据返回结果确定是否关闭对话框
         contentType: "application/json;charset=UTF-8",  
         dataType: "json", 
-        url: "websites/"+websiteId+"/websiteUrls/"+ids+"?_method=delete",  
+        url: "areas/"+areaId+"/areaIps/"+ids+"?_method=delete",  
         data: null, 
-        success: function(websiteUrl){
+        success: function(areaIp){
         	// 关闭对话框并刷新列表
 			$('#deleteDialog').modal('hide');
-			$("#websiteUrlGrid").simplePagingGrid("refresh");
+			$("#areaIpGrid").simplePagingGrid("refresh");
         },  
         error: function(error){
         	// 提示删除错误
-        	$('#deleteDialog .modal-title').text("在删除网站地址时发生了异常，请点击“确认”重复尝试或者点击“放弃”返回管理网站地址。");
+        	$('#deleteDialog .modal-title').text("在删除区域Ip地址段发生了异常，请点击“确认”重复尝试或者点击“放弃”返回管理区域IP地址段。");
         	$('#deleteDialog .modal-title').css("font-color","red");
         }
 	});       
 } 
+
+// 校验方法
+function ips_callback_function($el, value, callback) 
+{
+	var isValid = false;
+
+	// 清除提示信息
+	$('#ipCheckMessage').hide();
+
+	// 提取输入值
+	var ip = $('#ipStartText').val();
+	var maskLength = $('#maskLength').val();
+	
+	// 判断是否输入格式正确，若不满足IP地址规则，则不需要进行ajax校验
+	var ipValid = /((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))/.test(ip);
+	if( ipValid == true )
+	{
+		// 若mask长度非法，不进行校验
+		if(maskLength >=1 && maskLength <= 32)
+		{
+			// 向后台请求校验
+			$.ajax({  
+				type: "GET",  
+		        async:false,  // 同步执行，根据返回结果确定是否关闭对话框
+		        contentType: "application/json;charset=UTF-8",  
+		        dataType: "json", 
+		        url: "areas/0/areaIps/checkIpSegmentIfDup?ip="+ip+"&maskLength="+maskLength,  
+		        data: null, 
+		        success: function(result){
+		        	// 根据返回值判断是否通过校验
+		        	if( result.valid == false)
+		        	{
+		        		$('#ipCheckMessage').show();
+		        	}
+		        },  
+		        error: function(error){
+		        	// 异常情况下，认为校验通过，不处理
+		        }
+			});       
+		}
+	}
+	
+	// 根据校验结果回调
+    callback({
+      value: value,
+      valid: true,
+      message: "IP段地址冲突，请确认后重新填写。"
+    });
+}
 
 </script>
 </body>

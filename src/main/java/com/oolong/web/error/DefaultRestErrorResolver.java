@@ -44,6 +44,7 @@ import org.springframework.web.servlet.mvc.multiaction.NoSuchRequestHandlingMeth
  * 
  * @author Les Hazlewood
  */
+@SuppressWarnings("rawtypes")
 public class DefaultRestErrorResolver implements RestErrorResolver,
 		MessageSourceAware, InitializingBean
 {

@@ -30,7 +30,7 @@ import com.oolong.exception.DuplicationNameException;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
- * 关联网站地址处理控制器，页面跳转、增、删、改、查、校验
+ * 关联网站地址处理控制器，页面跳转、增、删、查、校验
  * 
  * @author liumeng
  * @since 2013-12-07

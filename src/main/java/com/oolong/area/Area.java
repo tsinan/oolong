@@ -1,4 +1,4 @@
-package com.oolong.website;
+package com.oolong.area;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -13,30 +13,28 @@ import javax.validation.constraints.Size;
 
 
 /**
- * 关联网站
- * 
- * 关联网站是一组网站地址的集合，在配置广告订单时，允许广告主选择关联网站
+ * 区域
  * 
  * @author liumeng
- * @since 2013-12-07
+ * @since 2013-12-22
  */
 @Entity
-@Table(name="T_WEBSITE") 
-public class Website
+@Table(name="T_AREA") 
+public class Area
 {
 	@Id  
     @GeneratedValue(strategy = GenerationType.AUTO)  
 	private Long id;
 	
-	/** 关联网站名称，必需 */
+	/** 区域名称，必需 */
 	@NotNull
 	@Size(min=1, max=100)
 	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
-	@Column(name="websiteName", length=100)  
-	private String websiteName;
+	@Column(name="areaName",length=100)  
+	private String areaName;
 	
 	@Transient
-	private long urlCount;
+	private long ipCount;
 	
 	@Size(max=200)
 	@Column(name="description")  
@@ -51,10 +49,9 @@ public class Website
 	@Override
 	public String toString()
 	{
-		return "Website [id=" + id + ", websiteName=" + websiteName
-				+ ", urlCount=" + urlCount + ", description=" + description
-				+ ", createTime=" + createTime + ", lastUpdateTime="
-				+ lastUpdateTime + "]";
+		return "Area [id=" + id + ", areaName=" + areaName + ", ipCount="
+				+ ipCount + ", description=" + description + ", createTime="
+				+ createTime + ", lastUpdateTime=" + lastUpdateTime + "]";
 	}
 
 	public Long getId()
@@ -67,14 +64,14 @@ public class Website
 		this.id = id;
 	}
 
-	public String getWebsiteName()
+	public String getAreaName()
 	{
-		return websiteName;
+		return areaName;
 	}
 
-	public void setWebsiteName(String websiteName)
+	public void setAreaName(String areaName)
 	{
-		this.websiteName = websiteName;
+		this.areaName = areaName;
 	}
 
 	public String getDescription()
@@ -107,15 +104,14 @@ public class Website
 		this.lastUpdateTime = lastUpdateTime;
 	}
 
-	public long getUrlCount()
+	public long getIpCount()
 	{
-		return urlCount;
+		return ipCount;
 	}
 
-	public void setUrlCount(long urlCount)
+	public void setIpCount(long ipCount)
 	{
-		this.urlCount = urlCount;
+		this.ipCount = ipCount;
 	}
-	
 
 }

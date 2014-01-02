@@ -104,6 +104,45 @@ function controlResourceNav(path)
 		$(".panel-group .panel-collapse li").removeClass("active");	
 		$("#leftNav_freePushWebsite").addClass("active");
 	}
+	// 区域管理
+	else if(path.indexOf('/areas/createPage')>=0)
+	{
+		// 顶部导航设置
+		$(".navbar-fixed-top .navbar-nav li").removeClass("active");
+		$("#topNav_resource").addClass("active");
+		
+		// 左侧导航panel设置
+		$(".panel-group .panel").addClass("collapse");
+		$("#panelGlobal").removeClass("collapse");
+		$("#panelArea").removeClass("collapse");
+		$("#panelWebsite").removeClass("collapse");	
+		
+		$(".panel-group .panel-collapse").removeClass("in");
+		$("#panelArea .panel-collapse").addClass("in");
+		
+		$(".panel-group .panel-collapse li").removeClass("active");	
+		$("#leftNav_newArea").addClass("active");
+	}
+	else if((path.indexOf('/areas/listPage')>=0) 
+			|| (path.indexOf('/areas/editPage')>=0)
+			|| (path.indexOf('/areas')>=0 && path.indexOf('listPage')>=0))
+	{
+		// 顶部导航设置
+		$(".navbar-fixed-top .navbar-nav li").removeClass("active");
+		$("#topNav_resource").addClass("active");
+		
+		// 左侧导航panel设置
+		$(".panel-group .panel").addClass("collapse");
+		$("#panelGlobal").removeClass("collapse");
+		$("#panelArea").removeClass("collapse");
+		$("#panelWebsite").removeClass("collapse");		
+		
+		$(".panel-group .panel-collapse").removeClass("in");
+		$("#panelArea .panel-collapse").addClass("in");
+		
+		$(".panel-group .panel-collapse li").removeClass("active");	
+		$("#leftNav_viewArea").addClass("active");
+	}
 	// 关联网站
 	else if(path.indexOf('/websites/createPage')>=0)
 	{

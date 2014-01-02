@@ -21,7 +21,7 @@
 			      	
 				<form class="form-horizontal"  novalidate>
 		    	<fieldset>
-		    		<div id="panelBasicInfo" class="panel panel-default">
+		    		<div class="panel panel-default">
 					<div class="panel-heading">关联网站信息</div>
 					<div class="panel-body">
     				
@@ -39,6 +39,7 @@
 						<label class="control-label col-sm-3"  >关联网站名称：</label>
 						<div class="col-sm-6 controls">
 							<input id="websiteName" name="websiteName" type="text" placeholder="例如：新闻网站" class="form-control input-sm" 
+        						required
         						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
     							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
     							data-validation-ajax-ajax="websites/checkNameIfDup">
@@ -59,8 +60,7 @@
 						<div class="col-sm-3">
       					</div>
 						<div class="col-sm-6">
-							<button class="btn btn-primary" type="submit">提交</button>&nbsp;
-							<button class="btn btn-warning" type="reset">重置</button>
+							<button class="btn btn-primary" type="submit">提交</button>
 						</div>
 					</div>
 					</div>

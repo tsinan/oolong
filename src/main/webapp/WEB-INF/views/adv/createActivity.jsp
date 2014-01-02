@@ -86,8 +86,7 @@
 							<div class="col-sm-3">
           					</div>
 							<div class="col-sm-6">
-								<button class="btn btn-primary" type="submit">提交</button>&nbsp;
-								<button class="btn btn-warning" type="reset">重置</button>
+								<button class="btn btn-primary" type="submit">提交</button>
 							</div>
 						</div>
 						</div>

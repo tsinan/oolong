@@ -1,6 +1,5 @@
-package com.oolong.global;
+package com.oolong.area;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,33 +26,34 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.util.IpUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
- * 免推送地址处理控制器，页面跳转、增、删、改、查、校验
+ * 区域IP段处理控制器，页面跳转、增、删、查、校验
  * 
  * @author liumeng
  * @since 2013-12-22
  */
 @Controller
-@RequestMapping(value = "/freePushUrls")
-public class FreePushUrlController
+@RequestMapping(value = "/areas/{id}/areaIps")
+public class IpSegmentController
 {
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
-			.getLogger(FreePushUrlController.class);
+			.getLogger(IpSegmentController.class);
 
 	@Autowired
-	private FreePushUrlRepository freePushUrlRepo;
+	private IpSegmentRepository ipSegmentRepo;
 
 	/******************************************************
 	 * 页面跳转
 	 ******************************************************/
 
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
-	public String toListFreePushUrlPage()
+	public String toListIpSegmentPage()
 	{
-		return "resource/listFreePushUrl";
+		return "resource/listAreaIp";
 	}
 
 	/******************************************************
@@ -61,7 +61,7 @@ public class FreePushUrlController
 	 ******************************************************/
 
 	/**
-	 * 查询免推送地址列表
+	 * 查询IP地址段列表
 	 * 
 	 * @param query 查询条件
 	 * @param page 当前页数
@@ -74,41 +74,55 @@ public class FreePushUrlController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query, 
-			@RequestParam Integer page,	@RequestParam Integer pageSize, 
-			@RequestParam String sortColumn,@RequestParam String sortOrder)
+	Map<String, Object> list(@PathVariable("id") long areaId,
+			@RequestParam String query, @RequestParam Integer page,
+			@RequestParam Integer pageSize, @RequestParam String sortColumn,
+			@RequestParam String sortOrder)
 	{
 		// 构造分页和排序对象
 		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
 				.fromString(sortOrder) : Direction.DESC;
 		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "url");
+				sortColumn, "ipStart");
 
 		// TODO 需要考虑解码
-		String queryUrl = null;
+		long queryIp = 0;
 		if (query != null && query.length() > 0)
 		{
-			queryUrl = "%" + query + "%";
-		}
-		else
-		{
-			queryUrl = "";
+			queryIp = IpUtil.convertIpAddressFromText(query);
 		}
 
 		// 查询
-		List<FreePushUrl> list = null;
+		List<IpSegment> list = null;
 		long count = 0;
-		if (queryUrl.length() > 0)
+		if (queryIp > 0)
 		{
-			list = freePushUrlRepo.findByUrlLike( queryUrl, pageable);
-			count = freePushUrlRepo.countByUrlLike( queryUrl);
+			list = ipSegmentRepo.findByAreaIdAndIpAddr(areaId, queryIp,
+					pageable);
+			count = ipSegmentRepo.countByAreaIdAndIpAddr(areaId, queryIp);
 		}
 		else
 		{
-			list = freePushUrlRepo.findAll(pageable).getContent();
-			count = freePushUrlRepo.count();
+			list = ipSegmentRepo.findByAreaId(areaId, pageable);
+			count = ipSegmentRepo.countByAreaId(areaId);
 		}
 
+		// 添加显示类型名称
+		for (IpSegment ipSegment : list)
+		{
+			switch (ipSegment.getIpType())
+			{
+			case 1:
+				ipSegment.setIpTypeName("IP起止地址");
+				break;
+			case 2:
+				ipSegment.setIpTypeName("IP掩码");
+				break;
+			default:
+				ipSegment.setIpTypeName("IP起止地址");
+				break;
+			}
+		}
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -119,41 +133,50 @@ public class FreePushUrlController
 		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
 				+ sortOrder);
 		result.put("query", query);
-		
+
 		return result;
 	}
 
 	/**
-	 * 创建新活动
+	 * 创建新IP地址段
 	 * 
-	 * @param freePushUrl json格式封装的关联网站对象
-	 * @return 创建成功的关联网站
+	 * @param ipSegment json格式封装的关联网站对象
+	 * @return 创建成功的IP地址段
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	FreePushUrl create(@Valid @RequestBody FreePushUrl freePushUrl,
-			HttpServletResponse reponse)
+	IpSegment create(@PathVariable("id") long areaId,
+			@Valid @RequestBody IpSegment ipSegment, HttpServletResponse reponse)
 	{
-		// 校验URL不可重复
-		if (freePushUrlRepo.findByUrl(freePushUrl.getUrl()).size() > 0)
+		// 计算起止IP地址
+		long[] address = IpUtil.computeIpAddressByMask(
+				ipSegment.getIpStartText(), ipSegment.getMaskLength());
+		ipSegment.setIpStart(address[0]);
+		ipSegment.setIpEnd(address[1]);
+
+		// 校验IP不可重叠
+		if (ipSegmentRepo.findConflictsByIpAddress(ipSegment.getIpStart(),
+				ipSegment.getIpEnd()).size() > 0)
 		{
-			throw new DuplicationNameException("FreePushUrl duplication.");
+			throw new DuplicationNameException("IpAddress duplication.");
 		}
 
 		// 存入数据库
-		freePushUrlRepo.save(freePushUrl);
+		ipSegment.setAreaId(areaId);
+		ipSegmentRepo.save(ipSegment);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/freePushUrls/"+ freePushUrl.getId());
+		reponse.setHeader("Location", "/areas/" + ipSegment.getAreaId() + "/"
+				+ ipSegment.getId());
 
 		// 返回创建成功的活动信息
-		return freePushUrl;
+		return ipSegment;
 	}
 
 	/**
-	 * 删除网站地址
+	 * 删除IP地址段
 	 * 
 	 * @param ids
 	 */
@@ -170,55 +193,45 @@ public class FreePushUrlController
 			idArry.add(Long.valueOf(id));
 		}
 
-		freePushUrlRepo.batchDelete(idArry);
+		ipSegmentRepo.batchDelete(idArry);
 	}
-
+	
 	/**
 	 * 响应页面ajax校验请求
 	 * 
-	 * @param value 请求URL中携带的待校验值
-	 * @param field 请求URL中携带的待校验字段名
+	 * @param ip 请求URL中携带的待校验IP
+	 * @param maskLength 请求URL中携带的待校验掩码长度
 	 * @return 返回json对象，详细内容见AjaxValidateFieldResult
 	 */
-	@RequestMapping(value = "checkUrlIfDup", method = RequestMethod.GET)
+	@RequestMapping(value = "checkIpSegmentIfDup", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody
 	AjaxValidateFieldResult ajaxValidateName(
-			@RequestParam("value") String value,
-			@RequestParam("field") String field)
+			@RequestParam("ip") String ip,
+			@RequestParam("maskLength") int maskLength)
 	{
-		String url = "";
-		try
-		{
-			url = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		url = url.trim();
-
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
-		result.setValue(url);
+		
+		// 计算起止IP地址
+		long[] address = IpUtil.computeIpAddressByMask(
+				ip, maskLength);
 
-		List<FreePushUrl> freePushUrls = freePushUrlRepo.findByUrl(url);
-		if (freePushUrls == null || freePushUrls.size() == 0)
+		// 校验IP不可重叠
+		if (ipSegmentRepo.findConflictsByIpAddress(address[0],
+				address[1]).size() > 0)
 		{
-			result.setValid(true);
-			result.setMessage("站点地址未重复，请继续输入其他信息");
+			result.setValid(false);
 		}
 		else
 		{
-			result.setValid(false);
-			result.setMessage("已经存在相同站点地址，请输入其他站点地址");
+			result.setValid(true);
 		}
 
 		return result;
 	}
 
-	public void setFreePushUrlRepo(FreePushUrlRepository freePushUrlRepo)
+	public void setIpSegmentRepo(IpSegmentRepository ipSegmentRepo)
 	{
-		this.freePushUrlRepo = freePushUrlRepo;
+		this.ipSegmentRepo = ipSegmentRepo;
 	}
-
 }

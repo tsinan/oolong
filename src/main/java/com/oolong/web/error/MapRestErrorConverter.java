@@ -63,6 +63,7 @@ import java.util.Map;
  *
  * @author Les Hazlewood
  */
+@SuppressWarnings("rawtypes")
 public class MapRestErrorConverter implements RestErrorConverter<Map> {
 
     private static final String DEFAULT_STATUS_KEY = "status";

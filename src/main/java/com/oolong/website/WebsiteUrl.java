@@ -6,6 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -19,7 +20,7 @@ import javax.validation.constraints.Size;
  * @since 2013-12-07
  */
 @Entity
-@Table(name = "T_WEBSITEURL")
+@Table(name = "T_WEBSITE_URL")
 public class WebsiteUrl
 {
 	@Id
@@ -33,6 +34,7 @@ public class WebsiteUrl
 	@Column(name = "urlType")
 	private int urlType;
 
+	@Transient
 	private String urlTypeName;
 
 	/** 关联网站名称，必需 */

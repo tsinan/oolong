@@ -17,7 +17,7 @@ import javax.validation.constraints.Size;
  * @since 2013-12-22
  */
 @Entity
-@Table(name = "T_FREEPUSHURL")
+@Table(name = "T_FREEPUSH_URL")
 public class FreePushUrl
 {
 	@Id
