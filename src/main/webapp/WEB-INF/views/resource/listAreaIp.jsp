@@ -75,6 +75,7 @@
 	        					<input id="ipStartText" name="ipStartText" type="text" 
 											class="form-control input-sm" placeholder="例如：10.1.1.1" 
 											required
+											data-validation-required-message="请输入正确的IP地址"
 											data-validation-regex-regex="((?:(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d)))\.){3}(?:25[0-5]|2[0-4]\d|((1\d{2})|([1-9]?\d))))"
 	        								data-validation-regex-message="请输入正确的IP地址" 
 	        								data-validation-callback-callback="ips_callback_function">
@@ -87,6 +88,8 @@
 	      					<div class="col-sm-8 controls">
 	        					<input id="maskLength" name="maskLength" type="number" 
 											class="form-control input-sm" placeholder="例如：24"
+											required
+											data-validation-required-message="掩码长度为1-32"
 											min="1" max="32" 
 											data-validation-max-message="掩码长度为1-32"
 											data-validation-callback-callback="ips_callback_function">

@@ -53,6 +53,8 @@
 							<div class="col-sm-6 controls">
 								<input id="activityName" name="activityName" type="text" placeholder="例如：页游广告投放测试" 
 									class="form-control input-sm" 
+									required
+									data-validation-required-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符"
             						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
         							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
         							data-validation-ajax-ajax="activities/checkNameIfDup">

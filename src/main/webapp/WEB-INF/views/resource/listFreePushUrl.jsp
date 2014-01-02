@@ -74,6 +74,7 @@
 											class="form-control input-sm" style="width:180px"
 											max="100" data-validation-max-message="最长输入100个字符"
 											required
+											data-validation-required-message="请输入正确的免推送网站URL"
 											data-validation-regex-regex="[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?"
 	        								data-validation-regex-message="请输入正确的免推送网站URL" 
 	        								data-validation-ajax-ajax="freePushUrls/checkUrlIfDup">
