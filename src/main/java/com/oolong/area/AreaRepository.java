@@ -16,9 +16,9 @@ public interface AreaRepository extends JpaRepository<Area,Long>
 {
 	List<Area> findByAreaName(String areaName);
 	
-	List<Area> findByAreaNameLike(String areaName, Pageable pageable);
+	List<Area> findByAreaNameLike(String areaNameLike, Pageable pageable);
 
-	long countByAreaNameLike(String areaName);
+	long countByAreaNameLike(String areaNameLike);
 	
 	
 	@Modifying

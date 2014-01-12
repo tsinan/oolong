@@ -1,6 +1,5 @@
 package com.oolong.website;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +12,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -46,10 +44,9 @@ public class WebsiteController
 
 	@Autowired
 	private WebsiteRepository websiteRepo;
-	
+
 	@Autowired
 	private WebsiteUrlRepository websiteUrlRepo;
-	
 
 	/******************************************************
 	 * 页面跳转
@@ -72,7 +69,6 @@ public class WebsiteController
 		return "resource/editWebsite";
 	}
 
-
 	/******************************************************
 	 * 功能接口
 	 ******************************************************/
@@ -91,42 +87,34 @@ public class WebsiteController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query,
-			@RequestParam Integer page, @RequestParam Integer pageSize,
-			@RequestParam String sortColumn, @RequestParam String sortOrder)
+	Map<String, Object> list(@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) String sortColumn,
+			@RequestParam(required = false) String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "lastUpdateTime");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "lastUpdateTime");
 
-		// TODO 需要考虑解码
-		String websiteName = null;
-		if (query != null && query.length() > 0)
-		{
-			websiteName = "%"+ query +"%";
-		}
-		else
-		{
-			websiteName = "";
-		}
+		// 解析查询条件
+		String websiteNameLike = TextUtil.buildLikeText(query);
 
 		List<Website> list = null;
 		long count = 0;
-		if (websiteName.length() > 0)
+		if (websiteNameLike.length() > 0)
 		{
-			list = websiteRepo.findByWebsiteNameLike(websiteName, pageable);
-			count = websiteRepo.countByWebsiteNameLike(websiteName);
+			list = websiteRepo.findByWebsiteNameLike(websiteNameLike, pageable);
+			count = websiteRepo.countByWebsiteNameLike(websiteNameLike);
 		}
 		else
 		{
 			list = websiteRepo.findAll(pageable).getContent();
 			count = websiteRepo.count();
 		}
-		
+
 		// 查找URL数量
-		for(Website website:list)
+		for (Website website : list)
 		{
 			long urlCount = websiteUrlRepo.countByWebsiteId(website.getId());
 			website.setUrlCount(urlCount);
@@ -201,8 +189,7 @@ public class WebsiteController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Website put(@PathVariable("id") long id,
-			@Valid @RequestBody Website website)
+	Website put(@PathVariable("id") long id, @Valid @RequestBody Website website)
 	{
 		website.setId(id);
 		website.setLastUpdateTime(System.currentTimeMillis());
@@ -228,7 +215,7 @@ public class WebsiteController
 		{
 			idArry.add(Long.valueOf(id));
 		}
-		
+
 		websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
 		websiteRepo.batchDelete(idArry);
 	}
@@ -246,24 +233,14 @@ public class WebsiteController
 	AjaxValidateFieldResult ajaxValidateName(
 			@RequestParam("value") String value,
 			@RequestParam("field") String field,
-			@RequestParam(value = "exceptId", required = false) Long exceptId)
+			@RequestParam(required = false) Long exceptId)
 	{
-		String websiteName = "";
-		try
-		{
-			websiteName = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		websiteName = websiteName.trim();
+		String websiteName = TextUtil.parseTextFromInput(value);
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
 		result.setValue(websiteName);
 
-		List<Website> websites = websiteRepo
-				.findByWebsiteName(websiteName);
+		List<Website> websites = websiteRepo.findByWebsiteName(websiteName);
 		if (websites == null || websites.size() == 0
 				|| websites.get(0).getId() == exceptId)
 		{
@@ -288,5 +265,5 @@ public class WebsiteController
 	{
 		this.websiteUrlRepo = websiteUrlRepo;
 	}
-	
+
 }

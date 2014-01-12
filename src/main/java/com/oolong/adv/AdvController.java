@@ -1,7 +1,7 @@
 package com.oolong.adv;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.exception.InputValidateException;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -45,7 +47,15 @@ public class AdvController
 			.getLogger(AdvController.class);
 
 	@Autowired
-	private ActivityRepository activityRepo;
+	private AdvRepository advRepo;
+
+	@Autowired
+	private AdvWebsiteRelationRepository awrRepo;
+	
+	@Autowired
+	private AdvAreaRelationRepository aarRepo;
+
+
 
 	/******************************************************
 	 * 页面跳转
@@ -73,7 +83,7 @@ public class AdvController
 	 ******************************************************/
 
 	/**
-	 * 查询活动列表
+	 * 查询广告列表
 	 * 
 	 * @param query 查询条件
 	 * @param page 当前页数
@@ -96,32 +106,19 @@ public class AdvController
 		Pageable pageable = new PageRequest(page, pageSize, direction,
 				sortColumn, "lastUpdateTime");
 
-		// 获取查询字符串，格式为“活动公司|活动名称”
-		// TODO 需要考虑解码
-		String[] queryCond = query.split("|");
-		String actiName = null;
-		if(queryCond.length == 3)
-		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "%"+queryCond[2]+"%";
-		}
-		else
-		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "";
-		}
+		String advNameLike = TextUtil.buildLikeText(query);
 
-		List<Activity> list = null;
+		List<Adv> list = null;
 		long count = 0;
-		if (actiName.length() > 0)
+		if (advNameLike.length() > 0)
 		{
-			list = activityRepo.findByActivityNameLike(actiName, pageable);
-			count = activityRepo.countByActivityNameLike(actiName);
+			list = advRepo.findByAdvNameLike(advNameLike, pageable);
+			count = advRepo.countByAdvNameLike(advNameLike);
 		}
 		else
 		{
-			list = activityRepo.findAll(pageable).getContent();
-			count = activityRepo.count();
+			list = advRepo.findAll(pageable).getContent();
+			count = advRepo.count();
 		}
 
 		// 查询并返回结果
@@ -136,7 +133,7 @@ public class AdvController
 	}
 
 	/**
-	 * 根据id查询活动
+	 * 根据id查询广告
 	 * 
 	 * @param id
 	 * @return
@@ -145,46 +142,69 @@ public class AdvController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Activity get(@PathVariable("id") long id)
+	Adv get(@PathVariable("id") long id)
 	{
 		// 查询并返回结果
-		return activityRepo.findOne(id);
+		return advRepo.findOne(id);
 	}
 
 	/**
-	 * 创建新活动
+	 * 创建新广告
 	 * 
-	 * @param activity json格式封装的广告活动对象
+	 * @param adv json格式封装的广告订单对象
 	 * @return 创建成功的广告活动
 	 */
 	@RequestMapping(method = RequestMethod.POST, headers = "Content-Type=application/json")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	Activity create(@Valid @RequestBody Activity activity,
-			HttpServletResponse reponse)
+	Adv create(@Valid @RequestBody Adv adv, HttpServletResponse reponse)
 	{
-		// TODO 根据时间和随机数生成活动编码，需要编码吗？
-
-		// 校验活动名称不可重复
-		if (activityRepo.findByActivityName(activity.getActivityName()).size() > 0)
+		// 校验广告订单名称不可重复
+		if (advRepo.findByAdvName(adv.getAdvName()).size() > 0)
 		{
-			throw new DuplicationNameException("ActivityName duplication.");
+			throw new DuplicationNameException("AdvName duplication.");
 		}
 
-		// TODO 活动总数不超过限制，按公司还是按管理员？
+		// 时间格式校验
+		Date startDate = TextUtil.parseDateFromInput(adv.getStartDate());
+		Date endDate = TextUtil.parseDateFromInput(adv.getEndDate());
+		if (startDate == null || endDate == null)
+		{
+			throw new InputValidateException("StartDate or EndDate is null.");
+		}
+		else if (startDate.after(endDate))
+		{
+			throw new InputValidateException("StartDate is later than EndDate.");
+		}
 
 		// 存入数据库
 		long now = System.currentTimeMillis();
-		activity.setCreateTime(now);
-		activity.setLastUpdateTime(now);
-		activityRepo.save(activity);
+		adv.setCreateTime(now);
+		adv.setLastUpdateTime(now);
+		advRepo.save(adv);
+
+		// 关联网站关系保存
+		for (String websiteId : adv.getWebsite())
+		{
+			AdvWebsiteRelation awr = new AdvWebsiteRelation(adv.getId(),
+					Long.valueOf(websiteId));
+			awrRepo.save(awr);
+		}
+
+		// 推送区域关系保存
+		for (String areaId : adv.getAreas())
+		{
+			AdvAreaRelation aar = new AdvAreaRelation(adv.getId(),
+					Long.valueOf(areaId));
+			aarRepo.save(aar);
+		}
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/activities/" + activity.getId());
+		reponse.setHeader("Location", "/advs/" + adv.getId());
 
 		// 返回创建成功的活动信息
-		return activity;
+		return adv;
 	}
 
 	/**
@@ -197,14 +217,13 @@ public class AdvController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Activity put(@PathVariable("id") long id,
-			@Valid @RequestBody Activity activity)
+	Adv put(@PathVariable("id") long id, @Valid @RequestBody Adv adv)
 	{
-		activity.setId(id);
-		activity.setLastUpdateTime(System.currentTimeMillis());
-		activityRepo.save(activity);
+		adv.setId(id);
+		adv.setLastUpdateTime(System.currentTimeMillis());
+		advRepo.save(adv);
 
-		return activity;
+		return adv;
 	}
 
 	/**
@@ -226,7 +245,7 @@ public class AdvController
 			idArry.add(Long.valueOf(id));
 		}
 
-		activityRepo.batchDelete(idArry);
+		advRepo.batchDelete(idArry);
 	}
 
 	/**
@@ -244,39 +263,38 @@ public class AdvController
 			@RequestParam("field") String field,
 			@RequestParam(value = "exceptId", required = false) Long exceptId)
 	{
-		String activityName = "";
-		try
-		{
-			activityName = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		activityName = activityName.trim();
+		String advName = TextUtil.parseTextFromInput(value);
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
-		result.setValue(activityName);
+		result.setValue(advName);
 
-		List<Activity> activities = activityRepo
-				.findByActivityName(activityName);
-		if (activities == null || activities.size() == 0
-				|| activities.get(0).getId() == exceptId)
+		List<Adv> advs = advRepo.findByAdvName(advName);
+		if (advs == null || advs.size() == 0 || advs.get(0).getId() == exceptId)
 		{
 			result.setValid(true);
-			result.setMessage("活动名称尚未使用，请继续输入其他信息");
+			result.setMessage("广告订单名称尚未使用，请继续输入其他信息");
 		}
 		else
 		{
 			result.setValid(false);
-			result.setMessage("已经存在同名活动，请输入其他活动名称");
+			result.setMessage("已经存在同名广告订单，请输入其他广告订单名称");
 		}
 
 		return result;
 	}
 
-	public void setActivityRepo(ActivityRepository activityRepo)
+	public void setAdvRepository(AdvRepository advRepo)
 	{
-		this.activityRepo = activityRepo;
+		this.advRepo = advRepo;
+	}
+
+	public void setAwrRepo(AdvWebsiteRelationRepository awrRepo)
+	{
+		this.awrRepo = awrRepo;
+	}
+	
+	public void setAarRepo(AdvAreaRelationRepository aarRepo)
+	{
+		this.aarRepo = aarRepo;
 	}
 }

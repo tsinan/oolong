@@ -6,8 +6,10 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 /**
  * 区域IP地址段
@@ -27,21 +29,22 @@ public class IpSegment
 	private Long areaId;
 
 	/**
-	 * 1：起止地址
-	 * 2：掩码段
+	 * ipToIp：起止地址
+	 * ipMask：掩码段
 	 */
 	@NotNull
-	@Column(name = "ipType")
-	private int ipType;
-
-	@Transient
-	private String ipTypeName;
+	@Size(min=1, max=10)
+	@Column(name = "ipType",length=10)
+	private String ipType;
 
 	@NotNull
+	@Size(min=1, max=100)
 	@Column(name = "ipStartText",length=100)
 	private String ipStartText;
 	
 	@NotNull
+	@Min(1)
+	@Max(32)
 	@Column(name = "maskLength")
 	private int maskLength;
 
@@ -55,7 +58,7 @@ public class IpSegment
 	public String toString()
 	{
 		return "IpSegment [id=" + id + ", areaId=" + areaId + ", ipType="
-				+ ipType + ", ipTypeName=" + ipTypeName + ", ipStartText="
+				+ ipType + ", ipStartText="
 				+ ipStartText + ", maskLength=" + maskLength + ", ipStart="
 				+ ipStart + ", ipEnd=" + ipEnd + "]";
 	}
@@ -80,24 +83,14 @@ public class IpSegment
 		this.areaId = areaId;
 	}
 
-	public int getIpType()
+	public String getIpType()
 	{
 		return ipType;
 	}
 
-	public void setIpType(int ipType)
+	public void setIpType(String ipType)
 	{
 		this.ipType = ipType;
-	}
-
-	public String getIpTypeName()
-	{
-		return ipTypeName;
-	}
-
-	public void setIpTypeName(String ipTypeName)
-	{
-		this.ipTypeName = ipTypeName;
 	}
 
 	public String getIpStartText()

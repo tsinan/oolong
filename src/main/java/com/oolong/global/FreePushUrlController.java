@@ -1,6 +1,5 @@
 package com.oolong.global;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -12,9 +11,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -74,41 +72,31 @@ public class FreePushUrlController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query, 
-			@RequestParam Integer page,	@RequestParam Integer pageSize, 
-			@RequestParam String sortColumn,@RequestParam String sortOrder)
+	Map<String, Object> list(@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) String sortColumn,
+			@RequestParam(required = false) String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "url");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "url");
 
-		// TODO 需要考虑解码
-		String queryUrl = null;
-		if (query != null && query.length() > 0)
-		{
-			queryUrl = "%" + query + "%";
-		}
-		else
-		{
-			queryUrl = "";
-		}
-
+		String urlLike = TextUtil.buildLikeText(query);
+		
 		// 查询
 		List<FreePushUrl> list = null;
 		long count = 0;
-		if (queryUrl.length() > 0)
+		if (urlLike.length() > 0)
 		{
-			list = freePushUrlRepo.findByUrlLike( queryUrl, pageable);
-			count = freePushUrlRepo.countByUrlLike( queryUrl);
+			list = freePushUrlRepo.findByUrlLike(urlLike, pageable);
+			count = freePushUrlRepo.countByUrlLike(urlLike);
 		}
 		else
 		{
 			list = freePushUrlRepo.findAll(pageable).getContent();
 			count = freePushUrlRepo.count();
 		}
-
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -119,7 +107,7 @@ public class FreePushUrlController
 		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
 				+ sortOrder);
 		result.put("query", query);
-		
+
 		return result;
 	}
 
@@ -146,7 +134,7 @@ public class FreePushUrlController
 		freePushUrlRepo.save(freePushUrl);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
-		reponse.setHeader("Location", "/freePushUrls/"+ freePushUrl.getId());
+		reponse.setHeader("Location", "/freePushUrls/" + freePushUrl.getId());
 
 		// 返回创建成功的活动信息
 		return freePushUrl;
@@ -187,16 +175,7 @@ public class FreePushUrlController
 			@RequestParam("value") String value,
 			@RequestParam("field") String field)
 	{
-		String url = "";
-		try
-		{
-			url = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		url = url.trim();
+		String url = TextUtil.parseTextFromInput(value);
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
 		result.setValue(url);

@@ -71,9 +71,9 @@
 							<div class="col-sm-9 controls">
 					            <select id="urlType" name="urlType" class="form-control input-sm" 
 					            	style="line-height:18px;padding:2px 0;width:245px">
-					            	<option value="1">精确匹配</option>
-					      			<option value="2">前缀匹配</option>
-					      			<option value="3">包含匹配</option>
+					            	<option value="accurate">精确匹配</option>
+					      			<option value="prefix">前缀匹配</option>
+					      			<option value="contain">包含匹配</option>
 					      		</select>
 	      					</div>
 						</div>
@@ -186,7 +186,7 @@ $(function (){
     $("#websiteUrlGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
         columnNames: ["","类型", "地址","操作"],
-        columnKeys: ["id","urlTypeName", "url","operation"],
+        columnKeys: ["id","urlType", "url","operation"],
         columnWidths: ["10%","20%", "55%","15%"],
         sortable: [false, true, true, false],
         showLoadingOverlay: false,
@@ -202,7 +202,7 @@ $(function (){
 		],
     	cellTemplates: [
     		"<input type='checkbox' name='{{url}}' id='{{id}}'>",
-	        "{{urlTypeName}}",
+	        "{{urlType}}",
 	        "{{url}}",
 	        "<a href='#' style='margin-right:5px' "+
 	        			"onclick='return openDelDialog({{id}},\"{{url}}\",{{websiteId}});' "+

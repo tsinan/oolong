@@ -33,16 +33,7 @@
 					
 					<div id="queryBar" class="row" style="margin:5px auto;border: 1px solid #f1f1f1;display:none;">
 						<form class="form-inline"  novalidate>
-						<div class="form-group ">
-					    	<select id="queryByCompany" class="form-control input-sm" style="width:150px;line-height:18px;padding:2px 0">
-				            	<option value="" style="font-color:#f1f1f1">活动所属公司</option>
-				      			<option>杯京公司</option>
-				      			<option>极难公司</option>
-				      			<option>航舟公司</option>
-				      			<option>程度公司</option>
-				      		</select>
-					  	</div>
-						<div class="form-group" style="margin:5px;">
+						<div class="form-group">
 							<input id="queryByActiName" class="form-control input-sm" style="width:150px;"  placeholder="活动名称">
 					  	</div>
 					  	
@@ -105,7 +96,7 @@ $(function(){
 		var pageSize = 12;		// 默认每页记录数
 		var sortColumn = "lastUpdateTime";		// 默认排序字段
 		var sortOrder = "desc";					// 默认排序
-		var query = "|";						// 查询字符串		
+		var query = "";						// 查询字符串		
 	}
 	else
 	{
@@ -119,18 +110,15 @@ $(function(){
 		
 		// 查询参数，以|分隔
 		var query = param[1].split("=")[1];
-		var company = query.split("|")[0];
-		var actiName = query.split("|")[1];
 		
 		// 有查询参数时，将查询区域打开
-		if(query != "|")
+		if(query != "")
 		{
 			$("#queryBar").css("display","block");
 			$("#queryButton").addClass("active");
 			
 			// 清空查询字符串
-			$("#queryByCompany").val(company);
-			$("#queryByActiName").val(actiName);
+			$("#queryByActiName").val(query);
 		}
 	}
 
@@ -209,7 +197,7 @@ $(function(){
 	$("#doQueryActivities").click(function(){
 		// 替换原有查询字符串
 		// TODO 需要考虑对查询字符串编码
-		query = $("#queryByCompany").val()+"|"+$("#queryByActiName").val();	
+		query = $("#queryByActiName").val();	
 		$("#activityGrid").simplePagingGrid("refresh","activities?query="+query);
 		
 		return false;
@@ -220,7 +208,7 @@ $(function(){
 		// 清空查询字符串
 		$("#queryByCompany").val("");
 		$("#queryByActiName").val("");
-		query = "|";
+		query = "";
 		$("#activityGrid").simplePagingGrid("refresh","activities?query="+query);
 		
 		// 关闭查询区域

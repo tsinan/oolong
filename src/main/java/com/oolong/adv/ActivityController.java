@@ -1,6 +1,5 @@
 package com.oolong.adv;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +12,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -40,7 +38,7 @@ import com.oolong.web.AjaxValidateFieldResult;
 @RequestMapping(value = "/activities")
 public class ActivityController
 {
-	
+
 	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(ActivityController.class);
@@ -87,37 +85,25 @@ public class ActivityController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query,
-			@RequestParam Integer page, @RequestParam Integer pageSize,
-			@RequestParam String sortColumn, @RequestParam String sortOrder)
+	Map<String, Object> list(@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) String sortColumn,
+			@RequestParam(required = false) String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "lastUpdateTime");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "lastUpdateTime");
 
-		// 获取查询字符串，格式为“活动公司|活动名称”
-		// TODO 需要考虑解码
-		String[] queryCond = query.split("|");
-		String actiName = null;
-		if(queryCond.length == 3)
-		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "%"+queryCond[2]+"%";
-		}
-		else
-		{
-			// String company = queryCond[0]; // 暂不考虑
-			actiName = "";
-		}
+		// 需要考虑解码
+		String actiNameLike = TextUtil.buildLikeText(query);
 
 		List<Activity> list = null;
 		long count = 0;
-		if (actiName.length() > 0)
+		if (actiNameLike.length() > 0)
 		{
-			list = activityRepo.findByActivityNameLike(actiName, pageable);
-			count = activityRepo.countByActivityNameLike(actiName);
+			list = activityRepo.findByActivityNameLike(actiNameLike, pageable);
+			count = activityRepo.countByActivityNameLike(actiNameLike);
 		}
 		else
 		{
@@ -245,16 +231,7 @@ public class ActivityController
 			@RequestParam("field") String field,
 			@RequestParam(value = "exceptId", required = false) Long exceptId)
 	{
-		String activityName = "";
-		try
-		{
-			activityName = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		activityName = activityName.trim();
+		String activityName = TextUtil.parseTextFromInput(value);
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
 		result.setValue(activityName);

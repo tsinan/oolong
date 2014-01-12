@@ -1,6 +1,5 @@
 package com.oolong.area;
 
-import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,9 +12,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -47,6 +45,10 @@ public class AreaController
 	@Autowired
 	private AreaRepository areaRepo;
 	
+	@Autowired
+	private IpSegmentRepository ipSegmentRepo;
+
+
 	/******************************************************
 	 * 页面跳转
 	 ******************************************************/
@@ -68,7 +70,6 @@ public class AreaController
 		return "resource/editArea";
 	}
 
-
 	/******************************************************
 	 * 功能接口
 	 ******************************************************/
@@ -87,46 +88,37 @@ public class AreaController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam String query,
-			@RequestParam Integer page, @RequestParam Integer pageSize,
-			@RequestParam String sortColumn, @RequestParam String sortOrder)
+	Map<String, Object> list(@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) String sortColumn,
+			@RequestParam(required = false) String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "lastUpdateTime");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "lastUpdateTime");
 
-		// TODO 需要考虑解码
-		String areaName = null;
-		if (query != null && query.length() > 0)
-		{
-			areaName = "%"+ query +"%";
-		}
-		else
-		{
-			areaName = "";
-		}
+		String areaNameLike = TextUtil.buildLikeText(query);
 
 		List<Area> list = null;
 		long count = 0;
-		if (areaName.length() > 0)
+		if (areaNameLike.length() > 0)
 		{
-			list = areaRepo.findByAreaNameLike(areaName, pageable);
-			count = areaRepo.countByAreaNameLike(areaName);
+			list = areaRepo.findByAreaNameLike(areaNameLike, pageable);
+			count = areaRepo.countByAreaNameLike(areaNameLike);
 		}
 		else
 		{
 			list = areaRepo.findAll(pageable).getContent();
 			count = areaRepo.count();
 		}
-		
-		// 查找URL数量
-//		for(Area area:list)
-//		{
-//			long urlCount = websiteUrlRepo.countByWebsiteId(area.getId());
-//			area.setUrlCount(urlCount);
-//		}
+
+		// 查找IP段数量
+		 for(Area area:list)
+		 {
+			 long ipCount = ipSegmentRepo.countByAreaId(area.getId());
+			 area.setIpCount(ipCount);
+		 }
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -165,8 +157,7 @@ public class AreaController
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
 	public @ResponseBody
-	Area create(@Valid @RequestBody Area area,
-			HttpServletResponse reponse)
+	Area create(@Valid @RequestBody Area area, HttpServletResponse reponse)
 	{
 		// 校验关联网站名称不可重复
 		if (areaRepo.findByAreaName(area.getAreaName()).size() > 0)
@@ -197,8 +188,7 @@ public class AreaController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Area put(@PathVariable("id") long id,
-			@Valid @RequestBody Area area)
+	Area put(@PathVariable("id") long id, @Valid @RequestBody Area area)
 	{
 		area.setId(id);
 		area.setLastUpdateTime(System.currentTimeMillis());
@@ -224,8 +214,8 @@ public class AreaController
 		{
 			idArry.add(Long.valueOf(id));
 		}
-		
-//		websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
+
+		// websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
 		areaRepo.batchDelete(idArry);
 	}
 
@@ -244,22 +234,12 @@ public class AreaController
 			@RequestParam("field") String field,
 			@RequestParam(value = "exceptId", required = false) Long exceptId)
 	{
-		String areaName = "";
-		try
-		{
-			areaName = new String(value.getBytes("iso-8859-1"), "utf-8");
-		}
-		catch (UnsupportedEncodingException e)
-		{
-			// do nothing...
-		}
-		areaName = areaName.trim();
+		String areaName = TextUtil.parseTextFromInput(value);
 
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
 		result.setValue(areaName);
 
-		List<Area> areas = areaRepo
-				.findByAreaName(areaName);
+		List<Area> areas = areaRepo.findByAreaName(areaName);
 		if (areas == null || areas.size() == 0
 				|| areas.get(0).getId() == exceptId)
 		{
@@ -279,5 +259,9 @@ public class AreaController
 	{
 		this.areaRepo = areaRepo;
 	}
-	
+
+	public void setIpSegmentRepo(IpSegmentRepository ipSegmentRepo)
+	{
+		this.ipSegmentRepo = ipSegmentRepo;
+	}
 }

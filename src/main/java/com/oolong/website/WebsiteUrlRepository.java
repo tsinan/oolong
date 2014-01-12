@@ -20,9 +20,9 @@ public interface WebsiteUrlRepository extends JpaRepository<WebsiteUrl,Long>
 	long countByWebsiteId(Long websiteId);
 	
 	
-	List<WebsiteUrl> findByWebsiteIdAndUrlLike(Long websiteId, String url, Pageable pageable);
+	List<WebsiteUrl> findByWebsiteIdAndUrlLike(Long websiteId, String urlLike, Pageable pageable);
 
-	long countByWebsiteIdAndUrlLike(Long websiteId, String url);
+	long countByWebsiteIdAndUrlLike(Long websiteId, String urlLike);
 	
 	List<WebsiteUrl> findByUrl(String url);
 	

@@ -16,9 +16,9 @@ public interface WebsiteRepository extends JpaRepository<Website,Long>
 {
 	List<Website> findByWebsiteName(String websiteName);
 	
-	List<Website> findByWebsiteNameLike(String websiteName, Pageable pageable);
+	List<Website> findByWebsiteNameLike(String websiteNameLike, Pageable pageable);
 
-	long countByWebsiteNameLike(String websiteName);
+	long countByWebsiteNameLike(String websiteNameLike);
 	
 	
 	@Modifying

@@ -67,7 +67,7 @@
 						<fieldset>
 						
 						<!-- 地址类型 -->
-						<input type="hidden" name="ipType" value="2">
+						<input type="hidden" name="ipType" value="ipMask">
 												
 						<div class="form-group ">		<!-- IP起始地址 -->
 	      					<label class="control-label col-sm-3" style="padding-left:0px;padding-right:0px">起始地址：</label>
@@ -429,8 +429,6 @@ function sendConfirmDelete(areaId, ids)
 // 校验方法
 function ips_callback_function($el, value, callback) 
 {
-	var isValid = false;
-
 	// 清除提示信息
 	$('#ipCheckMessage').hide();
 

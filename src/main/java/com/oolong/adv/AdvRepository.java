@@ -10,18 +10,18 @@ import org.springframework.data.jpa.repository.Query;
 /**
  *
  * @author liumeng
- * @since 2013-11-23
+ * @since 2014-1-7
  */
-public interface ActivityRepository extends JpaRepository<Activity,Long>
+public interface AdvRepository extends JpaRepository<Adv,Long>
 {
-	List<Activity> findByActivityName(String activityName);
+	List<Adv> findByAdvName(String advName);
 	
-	List<Activity> findByActivityNameLike(String activityNameLike, Pageable pageable);
+	List<Adv> findByAdvNameLike(String advNameLike, Pageable pageable);
 
-	long countByActivityNameLike(String activityNameLike);
+	long countByAdvNameLike(String advNameLike);
 	
 	@Modifying
-	@Query("delete from Activity a where a.id in ( ?1 )")
+	@Query("delete from Adv a where a.id in ( ?1 )")
 	void batchDelete(List<Long> ids);
 	
 }

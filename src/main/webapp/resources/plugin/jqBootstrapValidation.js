@@ -485,7 +485,7 @@
                 }
               } else {
                 $controlGroup.removeClass("has-warning has-error has-success");
-                if (value.length > 0) {
+                if (value != null && value.length > 0) {		// add by liumeng at 2014-1-12 "value != null" 
                   $controlGroup.addClass("has-success");
                 }
                 $helpBlock.html($helpBlock.data("original-contents"));

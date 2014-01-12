@@ -11,9 +11,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +25,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.oolong.exception.DuplicationNameException;
 import com.oolong.util.IpUtil;
+import com.oolong.util.TextUtil;
 import com.oolong.web.AjaxValidateFieldResult;
 
 /**
@@ -75,17 +74,16 @@ public class IpSegmentController
 	@Transactional
 	public @ResponseBody
 	Map<String, Object> list(@PathVariable("id") long areaId,
-			@RequestParam String query, @RequestParam Integer page,
-			@RequestParam Integer pageSize, @RequestParam String sortColumn,
-			@RequestParam String sortOrder)
+			@RequestParam(required = false) String query,
+			@RequestParam(required = false) Integer page,
+			@RequestParam(required = false) Integer pageSize,
+			@RequestParam(required = false) String sortColumn,
+			@RequestParam(required = false) String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "ipStart");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "ipStart");
 
-		// TODO 需要考虑解码
 		long queryIp = 0;
 		if (query != null && query.length() > 0)
 		{
@@ -105,23 +103,6 @@ public class IpSegmentController
 		{
 			list = ipSegmentRepo.findByAreaId(areaId, pageable);
 			count = ipSegmentRepo.countByAreaId(areaId);
-		}
-
-		// 添加显示类型名称
-		for (IpSegment ipSegment : list)
-		{
-			switch (ipSegment.getIpType())
-			{
-			case 1:
-				ipSegment.setIpTypeName("IP起止地址");
-				break;
-			case 2:
-				ipSegment.setIpTypeName("IP掩码");
-				break;
-			default:
-				ipSegment.setIpTypeName("IP起止地址");
-				break;
-			}
 		}
 
 		// 查询并返回结果
@@ -195,7 +176,7 @@ public class IpSegmentController
 
 		ipSegmentRepo.batchDelete(idArry);
 	}
-	
+
 	/**
 	 * 响应页面ajax校验请求
 	 * 
@@ -206,19 +187,17 @@ public class IpSegmentController
 	@RequestMapping(value = "checkIpSegmentIfDup", method = RequestMethod.GET)
 	@ResponseStatus(value = HttpStatus.OK)
 	public @ResponseBody
-	AjaxValidateFieldResult ajaxValidateName(
-			@RequestParam("ip") String ip,
+	AjaxValidateFieldResult ajaxValidateName(@RequestParam("ip") String ip,
 			@RequestParam("maskLength") int maskLength)
 	{
 		AjaxValidateFieldResult result = new AjaxValidateFieldResult();
-		
+
 		// 计算起止IP地址
-		long[] address = IpUtil.computeIpAddressByMask(
-				ip, maskLength);
+		long[] address = IpUtil.computeIpAddressByMask(ip, maskLength);
 
 		// 校验IP不可重叠
-		if (ipSegmentRepo.findConflictsByIpAddress(address[0],
-				address[1]).size() > 0)
+		if (ipSegmentRepo.findConflictsByIpAddress(address[0], address[1])
+				.size() > 0)
 		{
 			result.setValid(false);
 		}

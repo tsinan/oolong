@@ -3,8 +3,7 @@
 <html lang="zh-CN">
 <head>
 	<%@ include file="../include/include_head.jsp" %>
-    <link href="resources/plugin/bootstrap-datetimepicker.min.css" rel="stylesheet" type="text/css">
-
+    <link href="resources/plugin/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 	<!-- Wrap all page content here -->
@@ -27,107 +26,144 @@
 					<div class="panel panel-default">
 					<div class="panel-heading">基本信息</div>
 					<div class="panel-body">
+					
+						<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
+						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						 	<strong>添加成功！</strong> 
+						</div>
+						
+						<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
+						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+						 	<strong>添加失败！</strong> 
+						</div>
+					
         				<div class="form-group ">	<!-- 活动名称 -->
           					<label class="control-label col-sm-3">广告活动：</label>
 							<div class="col-sm-6 controls">
-								<!-- 
-					            <div class="input-group">
-				                    <input class="form-control input-sm" size="24" type="text" name="activity"  placeholder="">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-				                </div> -->
-				                <select class="form-control">
-								  	<option>虚拟域一</option>
-									<option>虚拟域二</option>
-									<option>虚拟域三</option>
-									<option>虚拟域四</option>
-									<option>虚拟域五</option>
+				                <select id="activityId" name="activityId" class="form-control" 
+				                	min="1" data-validation-min-message="请选择广告活动">
+				                	<option value='0'>---</option>
 								</select>
 					      		<p class="help-block"></p>
           					</div>
-          					
 						</div>
 						<div class="form-group">	<!-- 订单名称 -->
 							<label class="control-label col-sm-3">广告订单名称：</label>
 							<div class="col-sm-6 controls">
 								<input id="advName" name="advName" type="text" class="form-control input-sm" 
+									required
+									data-validation-required-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符"
             						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
         							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
         							data-validation-ajax-ajax="advs/checkNameIfDup">
             					<p class="help-block"></p>
-            					
           					</div>
 						</div>
 						<div class="form-group ">	<!-- 生效时间 -->
           					<label class="control-label col-sm-3">生效日期：</label>
           					<div class="col-sm-6 controls" >
             					<div class="input-group date form_date" 
-            									data-date="" data-date-format="yyyy年mm年dd日" data-link-format="yyyy-mm-dd">
-				                    <input class="form-control input-sm" style="" size="24" type="text" value="" readonly>
+            									data-date="" data-date-format="yyyy-mm-dd" >
+				                    <input id="startDate" name="startDate" class="form-control input-sm" 
+				                    	style="" size="24" type="text" value="" 
+				                    	data-validation-callback-callback="date_callback_function"
+				                    	readonly>
 									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 				                </div>
           					</div>
         				</div>
-        				<div class="form-group ">	<!-- 生效时间 -->
+        				<div class="form-group ">	<!-- 失效时间 -->
           					<label class="control-label col-sm-3">失效日期：</label>
           					<div class="col-sm-6 controls" >
             					<div class="input-group date form_date" 
-            									data-date="" data-date-format="yyyy年mm年dd日" data-link-format="yyyy-mm-dd">
-				                    <input class="form-control input-sm" style="" size="24" type="text" value="" readonly>
+            									data-date="" data-date-format="yyyy-mm-dd">
+				                    <input id="endDate" name="endDate" class="form-control input-sm" 
+				                    	style="" size="24" type="text" value="" 
+				                    	data-validation-callback-callback="date_callback_function"
+				                    	readonly>
 									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 				                </div>
           					</div>
         				</div>
+						<div id="dateCheckMessage" class="form-group has-warning" style="display:none"><!-- 冲突提示信息 -->
+	      					<label class="col-sm-3"></label>
+	      					<div class="col-sm-6 controls">
+	        					<p class="help-block">生效日期晚于失效日期，请确认后重新选择。</p>
+	      					</div>
+	        			</div>
 						<div class="form-group">	<!-- 优先级/CPM -->
           					<label class="control-label col-sm-3">需求量（CPM）：</label>
           					<div class="col-sm-2 controls">
-            					<input name="pri" type="text" placeholder="" class="form-control input-sm">
-    							<p class="help-block"></p>
+            					<input id="cpm" name="cpm" type="number" value="1000" class="form-control input-sm"
+            						required min="1" max="99999"
+									data-validation-required-message="需求量（CPM）可输入范围为：1-99999"
+            						data-validation-min-message="需求量（CPM）可输入范围为：1-99999"
+            						data-validation-max-message="需求量（CPM）可输入范围为：1-99999">
+    							<p class="help-block">[1-99999]</p>
           					</div>
           					
           					<label class="control-label col-sm-2">优先级：</label>
           					<div class="col-sm-2 controls">
-            					<input name="cpm" type="text" placeholder="" class="form-control input-sm">
-    							<p class="help-block"></p>
+            					<input id="priority" name="priority" type="number" value="5" class="form-control input-sm"
+            						required min="1" max="9"
+									data-validation-required-message="需求量（CPM）可输入范围为：1-99999"
+            						data-validation-min-message="优先级可输入范围为：1-9"
+            						data-validation-max-message="优先级可输入范围为：1-9">
+    							<p class="help-block">[1-9]</p>
           					</div>
 						</div>
 					</div>
-					</div>
+					</div><!-- end of 基本信息 -->
 						
-
 					<div class="panel panel-default">
 					<div class="panel-heading">广告物料</div>
 					<div class="panel-body">
+						<div class="form-group ">		<!-- 广告物料类型 -->
+          					<label class="control-label col-sm-3" >物料类型：</label>
+          					<div class="col-sm-6 controls">
+            					<div>
+									<label class="radio-inline" style="margin-right:20px">
+								    	<input type="radio" name="advType" id="advTypeUrl" value="url" checked
+								    		onclick="switchAdvType('url');">
+								    	外部物料
+								  	</label>
+								  	<label class="radio-inline" style="margin-right:20px">
+								    	<input type="radio" name="advType" id="advTypeFile" value="file"
+								    		onclick="switchAdvType('file');">
+								    	上传文件
+								  	</label>
+								</div>
+          					</div>
+        				</div>
 						<div class="form-group ">		<!-- 链接 -->
           					<label class="control-label col-sm-3">广告链接地址：</label>
           					<div class="col-sm-6 controls">
             					<div class="input-group">
 									<span class="input-group-addon" style="width:65px">http://</span>
-									<input type="text" class="form-control input-sm" style="width:277px"  placeholder="Username">
+									<input id="advUrl" name="advUrl" type="text" 
+										class="form-control input-sm" style="width:277px" placeholder=""
+										required
+										data-validation-required-message="请输入正确的URL"
+										max="100" data-validation-max-message="最长输入100个字符"
+										data-validation-regex-regex="[\w\-_]+(\.[\w\-_]+)+([\w\-\.,@?^=%&amp;:/~\+#]*[\w\-\@?^=%&amp;/~\+#])?"
+        								data-validation-regex-message="请输入正确的URL" >
 								</div>
     							<p class="help-block"></p>
           					</div>
-          					
         				</div>
         				<div class="form-group ">		<!-- 文件 -->
           					<label class="control-label col-sm-3" >广告素材上传：</label>
           					<div class="col-sm-6 controls">
           						<input id="lefile" type="file" style="position: fixed; left: -500px;">
 								<div class="input-group" style="padding-right: 0;padding-left: 0px;">
-				                    <input id="fileCover" class="form-control input-sm" size="24" type="text" name="linkman"  placeholder="">
+				                    <input id="advFile" name="advFile" size="24" type="text" 
+				                    	class="form-control input-sm" placeholder="" readonly>
 									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
 				                </div>
-								 
-								<script type="text/javascript">
-								$('input[id=lefile]').change(function() {
-								$('#fileCover').val($(this).val());
-								});
-								</script>
-								
-								
           					</div>
         				</div>
     				</div>
-    				</div>
+    				</div><!-- end of 广告物料类型 -->
 
     				<div class="panel panel-default">
     				<div class="panel-heading">推送范围</div>
@@ -137,11 +173,13 @@
           					<div class="col-sm-6 controls">
             					<div>
 									<label class="radio-inline" style="margin-right:20px">
-								    	<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+								    	<input type="radio" name="spreadType" id="spreadTypeNormal" value="normal" 
+								    		onclick="return switchSpreadType('normal');" checked>
 								    	普通
 								  	</label>
 								  	<label class="radio-inline" style="margin-right:20px">
-								    	<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								    	<input type="radio" name="spreadType" id="spreadTypeAccurate" value="accurate"
+								    		onclick="return switchSpreadType('accurate');" >
 								    	精准
 								  	</label>
 								</div>
@@ -150,53 +188,35 @@
         				<div class="form-group ">		<!-- 关联网站 -->
           					<label class="control-label col-sm-3" >关联网站推送：</label>
           					<div class="col-sm-6 controls">
-            					<!-- <div class="input-group" style="padding-right: 0;padding-left: 0px;">
-				                    <input class="form-control input-sm" size="24" type="text" name="linkman"  placeholder="">
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
-				                </div>  -->
-				                <select multiple class="form-control">
-								  	<option>兴趣一</option>
-									<option>兴趣二</option>
-									<option>兴趣三</option>
-									<option>兴趣四</option>
-									<option>兴趣五</option>
-								</select>
+				                <select id="website" name="website" class="form-control" multiple readonly></select>
     							<p class="help-block"></p>
           					</div>
         				</div>
-        				<div class="form-group ">		<!-- 推送范围 -->
+        				        				<div class="form-group ">		<!-- 推送范围 -->
           					<label class="control-label col-sm-3">推送范围：</label>
           					<div class="col-sm-6 controls">
             					<div >
 									<label class="radio-inline" style="margin-right:20px">
-								    	<input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+								    	<input type="radio" name="scope" id="scopeGlobal" value="global" 
+								    		onclick="return switchScope('global')" checked>
 								    	全局
 								  	</label>
 								  	<label class="radio-inline" style="margin-right:20px">
-								    	<input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+								    	<input type="radio" name="scope" id="scopeArea" value="area"
+								    		onclick="return switchScope('area')">
 								    	虚拟域
 								  	</label>
 								</div>
           					</div>
         				</div>
         				<div class="form-group ">		<!-- 推送虚拟域 -->
-          					
           					<label class="control-label col-sm-3">虚拟域：</label>
           					<div class="col-sm-6 controls">
-	          					<select multiple class="form-control">
-									  	<option>虚拟域一</option>
-										<option>虚拟域二</option>
-										<option>虚拟域三</option>
-										<option>虚拟域四</option>
-										<option>虚拟域五</option>
-								</select>
+	          					<select id="area" name="area" class="form-control" multiple readonly></select>
     							<p class="help-block"></p>
           					</div>
         				</div>
-        				
-        				
-    				</div>
-    				</div>
+    				</div><!-- end of 推广方式 -->
         				
         			<div class="panel panel-default">
     				<div class="panel-heading">附加信息</div>
@@ -205,23 +225,21 @@
 							<label class="control-label col-sm-3">广告说明：</label>
 							<div class="col-sm-6 controls">
 								<div class="textarea">
-                  					<textarea name="description" type="" class="form-control" rows="3"></textarea>
+                  					<textarea id="description" name="description"  type="" class="form-control" rows="3"></textarea>
             					</div>
           					</div>
         				</div>
-        				
 					</div>
-					</div>
+					</div><!-- end of 附加信息 -->
 					
 					<div class="panel panel-default" style="border-style:none">
 					<div class="panel-body">
-					<div class="form-group">
-						<div class="col-sm-3">
+						<div class="form-group">
+							<div class="col-sm-3"></div>
+							<div class="col-sm-6">
+								<button class="btn btn-primary" type="submit">提交</button>
+							</div>
 						</div>
-						<div class="col-sm-6">
-							<button class="btn btn-primary" type="submit">提交</button>
-						</div>
-					</div>
 					</div>
 					</div>
 					</fieldset>
@@ -236,27 +254,26 @@
   	
   	<%@ include file="../include/include_bottom.jsp" %>
 	
-	<!-- Response Dialog -->
-	<div class="modal fade" id="responseDialog">
+	<!-- Warning Dialog -->
+	<div class="modal fade" id="warningDialog">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
 		        	<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  -->
-		        	<h4 class="modal-title"></h4>
+		        	<h4 class="modal-title">告警</h4>
 		      	</div>
       			<div class="modal-body">
-        			
+        			当前没有可用的广告活动，请点击“确认”进入添加广告活动页面。
       			</div>
 				<div class="modal-footer">
-		        	
+		        	<a href="activities/createPage" class="btn btn-default btn-sm" role="button">确认</a>
 		      	</div>
     		</div><!-- /.modal-content -->
   		</div><!-- /.modal-dialog -->
-	</div><!-- end of Response Dialog -->
+	</div><!-- end of Warning Dialog -->
 
 <%@ include file="../include/include_js.jsp" %>
 <script type="text/javascript" src="resources/plugin/jqBootstrapValidation.js"></script>
-<script type="text/javascript" src="resources/plugin/bootstrap-filestyle.js"></script>
 <script type="text/javascript" src="resources/plugin/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript" src="resources/plugin/bootstrap-datetimepicker.zh-CN.js"></script>
 <script>
@@ -265,18 +282,16 @@ $(function (){
 	// 分析URL，控制nav_top和nav_left
 	controlNav();
 
-	// 注册校验器
-	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
-		//submitError: function (form, event) {		// 测试时重名时使用
-		//	event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-		//	request("activities", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
-		//}, 
-		submitSuccess: function (form, event) {
-			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
-		}
-	});
+	// 加载活动列表
+	loadActivities();
 	
+	// 加载关联网站
+	loadWebsite();
+	
+	// 加载区域
+	loadArea();
+
+	// 时间选择器注册
     $('.form_date').datetimepicker({
         language:  'zh-CN',
         weekStart: 1,
@@ -287,6 +302,35 @@ $(function (){
 		minView: 2,
 		forceParse: 0
     });
+    
+    // 文件上传控件
+    $('input[id=lefile]').change(function() {
+		$('#advFile').val($(this).val());
+	});
+    
+	// 注册校验器
+	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
+		//submitError: function (form, event) {		// 测试时重名时使用
+		//	event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
+		//	request("activities", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
+		//}, 
+		submitSuccess: function (form, event) {
+			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
+			// 判断是否生效/失效日期冲突
+			if($('#dateCheckMessage').css('display') == "block")
+			{
+				$('#dateCheckMessage').removeClass("has-warning").addClass("has-error");			
+			}
+			else
+			{
+				request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
+			}
+			
+			
+		}
+	});
+	
+    
 })
 	
 // 向服务端提交请求
@@ -299,70 +343,215 @@ function request(url, method, param){
         dataType: "json",  
         url: url,  
         data: param,   
-        success: function(activity){
-        	// 创建成功时，在弹出窗口中显示活动名称，并指导用户下一步操作
-        	$("#responseDialog .modal-title").text("操作成功");
-        	
-        	var innerHtml = "<p>广告活动： "+activity.activityName+" 创建完成，请选择下一步操作：</p>";
-        	innerHtml += "<ul><li><a href=\"#\">为此广告活动新建广告定单</a> （默认，当关闭对话框时选择此操作）</li>";
-        	innerHtml += "<li><a href=\"activities/listPage\">查看当前广告活动列表</a></li>";
-        	innerHtml += "<li><a href=\"activities/createPage\">继续创建广告活动</a></li>";
-        	innerHtml += "<li><a href=\"#\" onclick=\"return createAsTemplate();\">创建新的广告活动（以当前广告活动为模板）</a></li>";
-        	innerHtml += "</ul>";
-        	$("#responseDialog .modal-body").html(innerHtml);
-        	
-        	var footerHtml = "<a href=\"activities/createPage\" class=\"btn btn-default btn-sm\" role=\"button\">关闭</a>";
-        	$("#responseDialog .modal-footer").html(footerHtml);
-        	
-        	// 显示对话框
-        	$('#responseDialog').modal({
-        		backdrop: 'static',
-				keyboard: false
-			});
+        success: function(adv){
+        	// 操作结果显示
+        	$(".alert-success").css("display","block");
+        	$(".alert-warning").css("display","none");
+			
+			// 清空表单
+			$("form")[0].reset();
         },  
         error: function(error){
+        	// 操作结果显示
+        	$(".alert-success").css("display","none");
+        	$(".alert-warning").css("display","block");
+        	
         	var response = error.responseJSON;
         	// 如果是450错误，说明是用户输入有误，需要重新显示表单并触发校验
         	if(response.code == '450')
         	{
-        		// 高亮活动名称字段，提示用户修改
-        		$formGroup = $("#activityName").parents(".form-group").first();
+        		// 高亮广告名称字段，提示用户修改
+        		$formGroup = $("#advName").parents(".form-group").first();
       			$formGroup.removeClass("has-success has-warning").addClass("has-error");
       			$formGroup.find(".help-block").first().text(response.message);
         	}
         	// 其他错误属于系统异常，弹出对话框，指导用户选择下一步操作
         	else
         	{
-        		$("#responseDialog .modal-title").text("操作失败");
-        		
-        		var innerHtml = "<p>失败原因: "+response.message+" ，请选择下一步操作：</p>";
-            	innerHtml += "<ul><li><a href=\"activities/createPage\">创建新的广告活动</a> （默认，当关闭对话框时选择此操作）</li>";
-            	innerHtml += "<li><a href=\"activities/listPage\">查看当前广告活动列表</a></li>";
-            	innerHtml += "</ul>";
-            	$("#responseDialog .modal-body").html(innerHtml);
-            	
-            	var footerHtml = "<a href=\"activities/createPage\" class=\"btn btn-default btn-sm\" role=\"button\">关闭</a>";
-            	$("#responseDialog .modal-footer").html(footerHtml);
-        	
-        		// 显示对话框
-            	$('#responseDialog').modal({
-            		backdrop: 'static',
-					keyboard: false
-				});
+        		// 清空表单
+				$("form")[0].reset();
         	}
         },  
     });         
 }
 
-// 关闭对话框，保留除活动名称外的其他字段
-function createAsTemplate()
+// 加载广告活动
+function loadActivities()
 {
-	$("#responseDialog").modal('hide');
-	$("#activityName").val('');
-	$("#activityName").focus();   
-	return false;
+	$.get("activities?sortColumn=activityName&sortOrder=ASC", 
+			null, 
+			function(activites){
+				// 加载数据到表单
+				var array = activites.currentPage;
+				if(array.length == 0)
+				{
+					// 弹出窗口提示用户先配置活动
+					$('#warningDialog').modal({
+				            		backdrop: 'static',
+									keyboard: false
+								});
+					return;
+				}
+				else
+				{
+					for(idx in array)
+					{
+						var option = "<option value='"+array[idx].id+"'>"+array[idx].activityName+"</option>";
+						$(option).appendTo("#activityId");
+					}
+					return;
+				}
+				
+			}, 
+			"json");
+}
+
+// 加载关联网站
+function loadWebsite()
+{
+	$.get("websites?sortColumn=websiteName&sortOrder=ASC", 
+			null, 
+			function(websites){
+				// 加载数据到表单
+				var array = websites.currentPage;
+				if(array.length == 0)
+				{
+					// 提示当前没有可用的关联网站
+					$("<option value='0'>--尚未添加关联网站--</option>").appendTo("#website");
+					return;
+				}
+				else
+				{
+					for(idx in array)
+					{
+						var option = "<option value='"+array[idx].id+"'>"+array[idx].websiteName+"</option>";
+						$(option).appendTo("#website");
+					}
+					return;
+				}
+				
+			}, 
+			"json");
+}
+
+// 加载区域
+function loadArea()
+{
+	$.get("areas?sortColumn=areaName&sortOrder=ASC", 
+			null, 
+			function(areas){
+				// 加载数据到表单
+				var array = areas.currentPage;
+				if(array.length == 0)
+				{
+					// 提示当前没有可用的区域
+					$("<option value='0'>--尚未添加区域--</option>").appendTo("#area");
+					return;
+				}
+				else
+				{
+					for(idx in array)
+					{
+						var option = "<option value='"+array[idx].id+"'>"+array[idx].areaName+"</option>";
+						$(option).appendTo("#area");
+					}
+					return;
+				}
+				
+			}, 
+			"json");
+}
+
+// 广告物料类型切换
+function switchAdvType(advType)
+{
+	if(advType === 'url')
+	{
+		$("#advUrl").removeAttr("readonly");
+		$("#advFile").attr("readonly","readonly");
+	}
+	else if(advType === 'file')
+	{
+		$("#advUrl").attr("readonly","readonly");
+		$("#advFile").removeAttr("readonly");
+	}
+}
+
+// 推广类型切换
+function switchSpreadType(spreadType)
+{
+	var option0 = $("#website option[value='0']").length;
+	if(spreadType === 'normal')
+	{
+		$("#website").attr("readonly","readonly");
+		return true;
+	}
+	else if(spreadType === 'accurate' && option0 !== 1)
+	{
+		$("#website").removeAttr("readonly");
+		return true;
+	}
+	else
+	{
+		$("#website").attr("readonly","readonly");
+		return false;
+	}
 }
 	
+// 推广范围切换
+function switchScope(scope)
+{
+	var option0 = $("#area option[value='0']").length;
+	if(scope === 'global')
+	{
+		$("#area").attr("readonly","readonly");
+		return true;
+	}
+	else if(scope === 'area' && option0 !== 1)
+	{
+		$("#area").removeAttr("readonly");
+		return true;
+	}
+	else
+	{
+		$("#area").attr("readonly","readonly");
+		return false;
+	}
+}
+
+// 校验方法
+function date_callback_function($el, value, callback) 
+{
+	// 清除提示信息
+	$('#dateCheckMessage').hide();
+
+	// 提取输入值
+	var startDate = $('#startDate').val();
+	var endDate = $('#endDate').val();
+	
+	// 判断是否输入格式正确，若生效时间未输入，则不需要进行ajax校验
+	if( startDate != null && startDate.length >0 )
+	{
+		// 若失效时间未输入，不进行校验
+		if( endDate != null && endDate.length >0 )
+		{
+			var start = Date.parse(startDate);
+			var end = Date.parse(endDate);
+			// 判断生效时间与失效时间是否有效
+        	if( start > end )
+        	{
+        		$('#dateCheckMessage').show();
+        	}
+		}
+	}
+	
+	// 根据校验结果回调
+    callback({
+      value: value,
+      valid: true,
+      message: "生效时间/失效时间冲突，请确认后重新填写。"
+    });
+}
 </script>
 </body>
 </html>

@@ -15,9 +15,9 @@ import org.springframework.data.jpa.repository.Query;
 public interface FreePushUrlRepository extends JpaRepository<FreePushUrl,Long>
 {
 
-	List<FreePushUrl> findByUrlLike(String url, Pageable pageable);
+	List<FreePushUrl> findByUrlLike(String urlLike, Pageable pageable);
 
-	long countByUrlLike(String url);
+	long countByUrlLike(String urlLike);
 	
 	List<FreePushUrl> findByUrl(String url);
 	

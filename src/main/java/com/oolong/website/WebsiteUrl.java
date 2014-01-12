@@ -6,7 +6,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -30,14 +29,13 @@ public class WebsiteUrl
 	@Column(name = "websiteId")
 	private Long websiteId;
 
+	/** accurate:精确匹配;prefix:前缀匹配;contain:包含匹配 */
 	@NotNull
-	@Column(name = "urlType")
-	private int urlType;
+	@Size(min=1, max=10)
+	@Column(name = "urlType",length=10)
+	private String urlType;
 
-	@Transient
-	private String urlTypeName;
-
-	/** 关联网站名称，必需 */
+	/** URL，必需 */
 	@NotNull
 	@Size(min = 1, max = 100)
 	@Pattern(regexp = "[\\w\\-_]+(\\.[\\w\\-_]+)+([\\w\\-\\.,@?^=%&amp;:/~\\+#]*[\\w\\-\\@?^=%&amp;/~\\+#])?")
@@ -71,12 +69,12 @@ public class WebsiteUrl
 		this.websiteId = websiteId;
 	}
 
-	public int getUrlType()
+	public String getUrlType()
 	{
 		return urlType;
 	}
 
-	public void setUrlType(int urlType)
+	public void setUrlType(String urlType)
 	{
 		this.urlType = urlType;
 	}
@@ -89,16 +87,6 @@ public class WebsiteUrl
 	public void setUrl(String url)
 	{
 		this.url = url;
-	}
-
-	public String getUrlTypeName()
-	{
-		return urlTypeName;
-	}
-
-	public void setUrlTypeName(String urlTypeName)
-	{
-		this.urlTypeName = urlTypeName;
 	}
 
 }
