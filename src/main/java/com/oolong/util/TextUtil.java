@@ -1,8 +1,8 @@
 package com.oolong.util;
 
 import java.io.UnsupportedEncodingException;
-import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.springframework.data.domain.PageRequest;
@@ -90,9 +90,10 @@ public class TextUtil
 	
 	public static Date parseDateFromInput(String inputText)
 	{
+		SimpleDateFormat sf = new SimpleDateFormat("yyyy-mm-dd");
 		try
 		{
-			return DateFormat.getInstance().parse(inputText);
+			return sf.parse(inputText);
 		}
 		catch (ParseException e)
 		{

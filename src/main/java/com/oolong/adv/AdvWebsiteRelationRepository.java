@@ -1,5 +1,7 @@
 package com.oolong.adv;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 /**
@@ -9,5 +11,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
  */
 public interface AdvWebsiteRelationRepository extends JpaRepository<AdvWebsiteRelation,Long>
 {
-	
+	List<AdvWebsiteRelation> findByAdvId(Long advId);
 }

@@ -158,7 +158,7 @@
 								<div class="input-group" style="padding-right: 0;padding-left: 0px;">
 				                    <input id="advFile" name="advFile" size="24" type="text" 
 				                    	class="form-control input-sm" placeholder="" readonly>
-									<span class="input-group-addon"><span class="glyphicon glyphicon-th"></span></span>
+									<span class="input-group-addon" onclick="return openChooseWindow();"><span class="glyphicon glyphicon-th"></span></span>
 				                </div>
           					</div>
         				</div>
@@ -192,7 +192,7 @@
     							<p class="help-block"></p>
           					</div>
         				</div>
-        				        				<div class="form-group ">		<!-- 推送范围 -->
+        				<div class="form-group ">		<!-- 推送范围 -->
           					<label class="control-label col-sm-3">推送范围：</label>
           					<div class="col-sm-6 controls">
             					<div >
@@ -325,7 +325,6 @@ $(function (){
 			{
 				request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));  
 			}
-			
 			
 		}
 	});
@@ -551,6 +550,15 @@ function date_callback_function($el, value, callback)
       valid: true,
       message: "生效时间/失效时间冲突，请确认后重新填写。"
     });
+}
+
+// 打开文件窗口
+function openChooseWindow()
+{
+	if($('input[id=advTypeFile]').get(0).checked)
+	{
+		$('input[id=lefile]').click();
+	}
 }
 </script>
 </body>

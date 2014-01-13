@@ -13,9 +13,7 @@ import javax.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
@@ -51,11 +49,9 @@ public class AdvController
 
 	@Autowired
 	private AdvWebsiteRelationRepository awrRepo;
-	
+
 	@Autowired
 	private AdvAreaRelationRepository aarRepo;
-
-
 
 	/******************************************************
 	 * 页面跳转
@@ -101,10 +97,8 @@ public class AdvController
 			@RequestParam String sortColumn, @RequestParam String sortOrder)
 	{
 		// 构造分页和排序对象
-		Direction direction = Direction.fromStringOrNull(sortOrder) != null ? Direction
-				.fromString(sortOrder) : Direction.DESC;
-		Pageable pageable = new PageRequest(page, pageSize, direction,
-				sortColumn, "lastUpdateTime");
+		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
+				sortOrder, sortColumn, "lastUpdateTime");
 
 		String advNameLike = TextUtil.buildLikeText(query);
 
@@ -185,19 +179,25 @@ public class AdvController
 		advRepo.save(adv);
 
 		// 关联网站关系保存
-		for (String websiteId : adv.getWebsite())
+		if (adv.getWebsite() != null)
 		{
-			AdvWebsiteRelation awr = new AdvWebsiteRelation(adv.getId(),
-					Long.valueOf(websiteId));
-			awrRepo.save(awr);
+			for (String websiteId : adv.getWebsite())
+			{
+				AdvWebsiteRelation awr = new AdvWebsiteRelation(adv.getId(),
+						Long.valueOf(websiteId));
+				awrRepo.save(awr);
+			}
 		}
 
 		// 推送区域关系保存
-		for (String areaId : adv.getAreas())
+		if (adv.getArea() != null)
 		{
-			AdvAreaRelation aar = new AdvAreaRelation(adv.getId(),
-					Long.valueOf(areaId));
-			aarRepo.save(aar);
+			for (String areaId : adv.getArea())
+			{
+				AdvAreaRelation aar = new AdvAreaRelation(adv.getId(),
+						Long.valueOf(areaId));
+				aarRepo.save(aar);
+			}
 		}
 
 		// 返回201码时，需要设置新资源的URL（非强制）
@@ -292,7 +292,7 @@ public class AdvController
 	{
 		this.awrRepo = awrRepo;
 	}
-	
+
 	public void setAarRepo(AdvAreaRelationRepository aarRepo)
 	{
 		this.aarRepo = aarRepo;

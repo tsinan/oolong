@@ -110,7 +110,7 @@ public class Adv
 	
 	/** 推送区域 1:N */
 	@Transient
-	private List<String> areas;
+	private List<String> area;
 	
 	@Size(max=200)
 	@Column(name="description")  
@@ -131,7 +131,7 @@ public class Adv
 				+ ", priority=" + priority + ", advType=" + advType
 				+ ", advUrl=" + advUrl + ", advFile=" + advFile
 				+ ", spreadType=" + spreadType + ", website=" + website
-				+ ", scope=" + scope + ", areas=" + areas + ", description="
+				+ ", scope=" + scope + ", area=" + area + ", description="
 				+ description + ", createTime=" + createTime
 				+ ", lastUpdateTime=" + lastUpdateTime + "]";
 	}
@@ -277,14 +277,14 @@ public class Adv
 		this.scope = scope;
 	}
 
-	public List<String> getAreas()
+	public List<String> getArea()
 	{
-		return areas;
+		return area;
 	}
 
-	public void setAreas(List<String> areas)
+	public void setArea(List<String> area)
 	{
-		this.areas = areas;
+		this.area = area;
 	}
 
 	public String getDescription()
