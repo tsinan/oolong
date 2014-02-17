@@ -167,7 +167,41 @@ public class AdvController
 	Adv get(@PathVariable("id") long id)
 	{
 		// 查询并返回结果
-		return advRepo.findOne(id);
+		Adv adv = advRepo.findOne(id);
+		if(adv == null)
+		{		
+			return null;
+		}
+		
+		adv.setActivityName(actiRepo.findOne(adv.getActivityId()).getActivityName());
+		
+		// 查询关联网站
+		if("accurate".equals(adv.getSpreadType()))
+		{
+			List<String> websites = new ArrayList<String>();
+			
+			List<AdvWebsiteRelation> awrList = awrRepo.findByAdvId(adv.getId());
+			for(AdvWebsiteRelation awr:awrList)
+			{
+				websites.add(String.valueOf(awr.getWebsiteId()));
+			}
+			adv.setWebsite(websites);
+		}
+		
+		// 查询推送区域
+		if("area".equals(adv.getScope()))
+		{
+			List<String> areas = new ArrayList<String>();
+			
+			List<AdvAreaRelation> aarList = aarRepo.findByAdvId(adv.getId());
+			for(AdvAreaRelation aar:aarList)
+			{
+				areas.add(String.valueOf(aar.getAreaId()));
+			}
+			adv.setArea(areas);
+		}
+		
+		return adv;
 	}
 
 	/**

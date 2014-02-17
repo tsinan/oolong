@@ -6,6 +6,7 @@
     <link href="resources/plugin/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -19,7 +20,7 @@
       			
       			<div class="col-md-8" style="border-width: 0px 1px;border-style:solid;border-color:#f1f1f1;">
 					<!-- main area -->
-									    
+						    
 					<form class="form-horizontal" novalidate>
 			    	<fieldset>
 						
@@ -253,7 +254,7 @@
 							<label class="control-label col-sm-3">广告说明：</label>
 							<div class="col-sm-6 controls">
 								<div class="textarea">
-                  					<textarea id="description" name="description"  type="" class="form-control" rows="3"></textarea>
+                  					<textarea id="description" name="description" class="form-control" rows="3"> </textarea>
             					</div>
           					</div>
         				</div>
@@ -464,6 +465,9 @@ function request(url, method, param){
 			switchAdvType("url");
 			switchSpreadType("normal");
 			switchScope("global");
+			
+			// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         	// 操作结果显示
@@ -489,6 +493,9 @@ function request(url, method, param){
 				switchSpreadType("normal");
 				switchScope("global");
         	}
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

@@ -5,6 +5,7 @@
 <%@ include file="../include/include_head.jsp" %>	
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -268,6 +269,9 @@ function sendRequest(data)
 			
 			// 清空input
 			$("#url").val("");
+			
+			// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         	// 提示删除错误
@@ -279,6 +283,9 @@ function sendRequest(data)
 
 			// 清空input
 			$("#url").val("");
+			
+			// 切换到锚点
+			location.hash="anchor_top";
         }
 	});    
 }

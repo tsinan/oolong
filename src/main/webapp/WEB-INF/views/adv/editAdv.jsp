@@ -6,6 +6,7 @@
     <link href="resources/plugin/bootstrap-datetimepicker.css" rel="stylesheet" type="text/css">
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -266,6 +267,7 @@
 							<div class="col-sm-3"></div>
 							<div class="col-sm-6">
 								<button class="btn btn-primary" type="submit">提交</button>
+								<button id="returnToListBtn" class="btn btn-warning" type="button">返回</button>
 							</div>
 						</div>
 					</div>
@@ -356,6 +358,56 @@ $(function (){
 			$('input[id=trueAdvFile]').click();
 		}
 	});
+	
+	// 提取URL查询参数
+	var param = location.search.split("&");
+	var editId = param[0].split("=")[1];
+	var paging = param[1].split("=")[1];
+	var query = param[2].split("=")[1];
+
+	// 设置ajax校验URL
+	$("#advName").attr("data-validation-ajax-ajax","advs/checkNameIfDup?exceptId="+editId);
+
+	// 注册页面返回按钮事件
+	$("#returnToListBtn").click(function(){
+		window.location = "advs/listPage?paging="+paging+"&query="+query;
+	});
+	
+	// 加载待修改的活动信息
+	$.get('advs/'+editId, 
+			null, 
+			function(adv){
+				// 加载数据到表单
+				$("#advName").val(adv.advName);
+				$("#activityName").val(adv.activityName);
+				
+				$("#cpm").val(adv.cpm);
+				$("#priority").val(adv.priority);
+				
+				$("#advType").val(adv.advType);
+				if(adv.advType=="url")
+				{
+					$("#advUrl").val(adv.advUrl);
+				}
+				else if(adv.advType="file")
+				{
+					
+				}
+				
+				$("#spreadType").val(adv.spreadType);
+				if(adv.spreadType=="accurate")
+				{
+				}
+				
+				$("#scope").val(adv.scope);
+				if(adv.scope=="area")
+				{
+					
+				}
+				
+				$("#description").val(adv.description);
+			}, 
+			"json");
     
 	// 注册校验器
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
@@ -464,6 +516,9 @@ function request(url, method, param){
 			switchAdvType("url");
 			switchSpreadType("normal");
 			switchScope("global");
+			
+			// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         	// 操作结果显示
@@ -489,6 +544,9 @@ function request(url, method, param){
 				switchSpreadType("normal");
 				switchScope("global");
         	}
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

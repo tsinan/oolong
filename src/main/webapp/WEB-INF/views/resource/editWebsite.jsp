@@ -5,6 +5,7 @@
 <%@ include file="../include/include_head.jsp" %>	
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -140,6 +141,9 @@ function sendRequest(editId, data, paging, query){
         	$(".alert-success").css("display","block");
         	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(website.lastUpdateTime));
         	$(".alert-warning").css("display","none");
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         
@@ -162,6 +166,9 @@ function sendRequest(editId, data, paging, query){
         	{
         		
         	}
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

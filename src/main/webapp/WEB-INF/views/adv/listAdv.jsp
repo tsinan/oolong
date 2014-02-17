@@ -3,7 +3,6 @@
 <html lang="zh-CN">
 <head>
 	<%@ include file="../include/include_head.jsp" %>
-	
 </head>
 <body>
 	<!-- Wrap all page content here -->

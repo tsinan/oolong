@@ -5,6 +5,7 @@
 <%@ include file="../include/include_head.jsp" %>	
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -169,6 +170,9 @@ function sendRequest(globalConfigId,data){
 					
 				$("#pushTimesPerDay").val(1440);
 			}
+			
+			// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         	// 提示删除错误
@@ -176,6 +180,8 @@ function sendRequest(globalConfigId,data){
         	$(".alert-warning").css("display","block");
         	$(".alert-warning strong").html("修改失败！ 错误信息：" + getErrorMessage(error));
         	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

@@ -5,6 +5,7 @@
 	<%@ include file="../include/include_head.jsp" %>
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -108,7 +109,7 @@ $(function (){
 	var param = location.search.split("&");
 	var editId = param[0].split("=")[1];
 	var paging = param[1].split("=")[1];
-	var query = param[2].split("=")[1]
+	var query = param[2].split("=")[1];
 
 	// 设置ajax校验URL
 	$("#activityName").attr("data-validation-ajax-ajax","activities/checkNameIfDup?exceptId="+editId);
@@ -156,6 +157,9 @@ function sendRequest(editId, data, paging, query){
         	$(".alert-success").css("display","block");
         	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(activity.lastUpdateTime));
         	$(".alert-warning").css("display","none");
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         	// 操作结果显示
@@ -177,6 +181,9 @@ function sendRequest(editId, data, paging, query){
         	{
         		
         	}
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

@@ -5,6 +5,7 @@
 <%@ include file="../include/include_head.jsp" %>	
 </head>
 <body>
+	<a name="anchor_top"></a>
 	<!-- Wrap all page content here -->
     <div id="wrap" >
 		<%@ include file="../include/include_nav_top.jsp" %>
@@ -115,6 +116,9 @@ function sendRequest(data){
         	$(".alert-warning").css("display","none");
         	
         	$("form")[0].reset();
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
         error: function(error){
         
@@ -137,6 +141,9 @@ function sendRequest(data){
         	{
         		$("form")[0].reset();
         	}
+        	
+        	// 切换到锚点
+			location.hash="anchor_top";
         },  
     });         
 }

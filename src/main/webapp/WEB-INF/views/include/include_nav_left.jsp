@@ -30,8 +30,8 @@
       		<div class="panel-body" style="padding:5px">
       		<ul class="nav nav-pills nav-stacked">
 				<li id="leftNav_newAdv"><a href="advs/createPage">新建广告订单</a></li>
-				<li id="leftNav_viewNoAuditAdv"><a href="#">待处理广告订单<span class="badge pull-right">14</span></a></li>
-				<li id="leftNav_viewAuditAdv"><a href="#">已通过广告订单</a></li>
+				<li id="leftNav_viewNoAuditAdv"><a href=".">待处理广告订单</a></li>
+				<li id="leftNav_viewAuditAdv"><a href=".">已通过广告订单</a></li>
 				<li id="leftNav_viewAdv"><a href="advs/listPage">查看广告订单</a></li>
 			</ul>
       		</div>
