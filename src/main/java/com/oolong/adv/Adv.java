@@ -4,9 +4,6 @@ import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.Max;
@@ -15,22 +12,18 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.oolong.platform.domain.Domain;
 
 /**
  * 广告订单
- * 
  * 
  * @author liumeng
  * @since 2014-1-7
  */
 @Entity
 @Table(name="T_ADV") 
-public class Adv
-{
-	@Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-	private Long id;
-	
+public class Adv extends Domain
+{	
 	/** 审核状态 draft:未审核;go:通过;redirect:未通过 */
 	@Column(name="status",length=10)
 	private String status;
@@ -39,6 +32,9 @@ public class Adv
 	@NotNull
 	@Column(name="activityId")  
 	private Long activityId;
+
+	@Transient
+	private String activityName;
 	
 	/** 广告订单名称，必需 */
 	@NotNull
@@ -85,12 +81,15 @@ public class Adv
 	@Column(name="advUrl",length=100)
 	private String advUrl;
 	
-	/** 上传文件路径 */
+	/** 上传文件路径  */
 	@NotNull
 	@Size(min=0, max=100)
 	@Column(name="advFile",length=100)
 	private String advFile;
-		
+	
+	/** 上传文件时在页面显示文件名称，仅用于显示 */
+	@Transient
+	private String advFileDisplay;
 
 	/** 推广类型 normal:普通; accurate:精准 */
 	@NotNull
@@ -119,13 +118,10 @@ public class Adv
 	@Column(name="createTime")  
 	private long createTime;
 	
-	@Column(name="lastUpdateTime")
-	private long lastUpdateTime;
-
 	@Override
 	public String toString()
 	{
-		return "Adv [id=" + id + ", status=" + status + ", activityId="
+		return "Adv [status=" + status + ", activityId="
 				+ activityId + ", advName=" + advName + ", startDate="
 				+ startDate + ", endDate=" + endDate + ", cpm=" + cpm
 				+ ", priority=" + priority + ", advType=" + advType
@@ -133,19 +129,9 @@ public class Adv
 				+ ", spreadType=" + spreadType + ", website=" + website
 				+ ", scope=" + scope + ", area=" + area + ", description="
 				+ description + ", createTime=" + createTime
-				+ ", lastUpdateTime=" + lastUpdateTime + "]";
+				+ ", "+ super.toString() + "]";
 	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
-
+	
 	public String getStatus()
 	{
 		return status;
@@ -164,6 +150,16 @@ public class Adv
 	public void setActivityId(Long activityId)
 	{
 		this.activityId = activityId;
+	}
+
+	public String getActivityName()
+	{
+		return activityName;
+	}
+
+	public void setActivityName(String activityName)
+	{
+		this.activityName = activityName;
 	}
 
 	public String getAdvName()
@@ -247,6 +243,16 @@ public class Adv
 		this.advFile = advFile;
 	}
 
+	public String getAdvFileDisplay()
+	{
+		return advFileDisplay;
+	}
+
+	public void setAdvFileDisplay(String advFileDisplay)
+	{
+		this.advFileDisplay = advFileDisplay;
+	}
+
 	public String getSpreadType()
 	{
 		return spreadType;
@@ -306,16 +312,5 @@ public class Adv
 	{
 		this.createTime = createTime;
 	}
-
-	public long getLastUpdateTime()
-	{
-		return lastUpdateTime;
-	}
-
-	public void setLastUpdateTime(long lastUpdateTime)
-	{
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	
 
 }

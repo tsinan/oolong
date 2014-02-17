@@ -27,12 +27,12 @@
     				
     				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>添加成功！</strong> 
+					 	<strong></strong> 
 					</div>
 					
 					<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>添加失败！</strong>
+					 	<strong></strong>
 					</div>
     				
 					<div class="form-group">		<!-- 关联网站名称 -->
@@ -111,6 +111,7 @@ function sendRequest(data){
         success: function(website){
         	// 关闭对话框并刷新列表
         	$(".alert-success").css("display","block");
+        	$(".alert-success strong").html("添加成功！ 更新时间：" + formatTimeSecond(website.lastUpdateTime));
         	$(".alert-warning").css("display","none");
         	
         	$("form")[0].reset();
@@ -120,6 +121,7 @@ function sendRequest(data){
         	// 提示删除错误
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
+        	$(".alert-warning strong").html("添加失败！ 错误信息：" + getErrorMessage(error));
         		
         	var response = error.responseJSON;
         	// 如果是450错误，说明是用户输入有误，需要重新显示表单并触发校验

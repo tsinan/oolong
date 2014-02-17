@@ -24,9 +24,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.oolong.exception.DuplicationNameException;
-import com.oolong.util.TextUtil;
-import com.oolong.web.AjaxValidateFieldResult;
+import com.oolong.platform.exception.DuplicationNameException;
+import com.oolong.platform.util.TextUtil;
+import com.oolong.platform.util.TimeUtil;
+import com.oolong.platform.web.AjaxValidateFieldResult;
 
 /**
  * 活动处理控制器，页面跳转、增、删、改、查、校验
@@ -163,9 +164,8 @@ public class ActivityController
 		// TODO 活动总数不超过限制，按公司还是按管理员？
 
 		// 存入数据库
-		long now = System.currentTimeMillis();
-		activity.setCreateTime(now);
-		activity.setLastUpdateTime(now);
+		activity.setCreateTime(TimeUtil.getServerTimeSecond());
+		activity.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		activityRepo.save(activity);
 
 		// 返回201码时，需要设置新资源的URL（非强制）
@@ -189,7 +189,7 @@ public class ActivityController
 			@Valid @RequestBody Activity activity)
 	{
 		activity.setId(id);
-		activity.setLastUpdateTime(System.currentTimeMillis());
+		activity.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		activityRepo.save(activity);
 
 		return activity;

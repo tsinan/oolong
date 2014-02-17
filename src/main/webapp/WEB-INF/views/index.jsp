@@ -13,9 +13,7 @@
       	<div class="container">
       		<div class="row">
       			<div class="col-md-2">
-      				<%@ include file="include/include_nav_left.jsp" %>
-      			</div>
-      			<div class="col-md-10">
+      				
       				
       			</div>
       		</div>

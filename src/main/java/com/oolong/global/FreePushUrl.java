@@ -2,13 +2,12 @@ package com.oolong.global;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.oolong.platform.domain.Domain;
 
 /**
  * 免推送地址
@@ -18,12 +17,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "T_FREEPUSH_URL")
-public class FreePushUrl
+public class FreePushUrl extends Domain
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-
 	/** 关联网站名称，必需 */
 	@NotNull
 	@Size(min = 1, max = 100)
@@ -34,19 +29,8 @@ public class FreePushUrl
 	@Override
 	public String toString()
 	{
-		return "WebsiteUrl [id=" + id + ", url=" + url + "]";
+		return "WebsiteUrl [url=" + url + ", "+ super.toString() + "]";
 	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
-
 
 	public String getUrl()
 	{

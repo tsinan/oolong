@@ -2,15 +2,13 @@ package com.oolong.area;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.oolong.platform.domain.Domain;
 
 /**
  * 区域
@@ -19,49 +17,33 @@ import javax.validation.constraints.Size;
  * @since 2013-12-22
  */
 @Entity
-@Table(name="T_AREA") 
-public class Area
+@Table(name = "T_AREA")
+public class Area extends Domain
 {
-	@Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-	private Long id;
-	
+
 	/** 区域名称，必需 */
 	@NotNull
-	@Size(min=1, max=100)
-	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
-	@Column(name="areaName",length=100)  
+	@Size(min = 1, max = 100)
+	@Pattern(regexp = "[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
+	@Column(name = "areaName", length = 100)
 	private String areaName;
-	
+
 	@Transient
 	private long ipCount;
-	
-	@Size(max=200)
-	@Column(name="description")  
+
+	@Size(max = 200)
+	@Column(name = "description")
 	private String description;
 
-	@Column(name="createTime")  
+	@Column(name = "createTime")
 	private long createTime;
-	
-	@Column(name="lastUpdateTime")
-	private long lastUpdateTime;
 
 	@Override
 	public String toString()
 	{
-		return "Area [id=" + id + ", areaName=" + areaName + ", ipCount="
-				+ ipCount + ", description=" + description + ", createTime="
-				+ createTime + ", lastUpdateTime=" + lastUpdateTime + "]";
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
+		return "Area [areaName=" + areaName + ", ipCount=" + ipCount
+				+ ", description=" + description + ", createTime=" + createTime
+				+ ", " + super.toString() + "]";
 	}
 
 	public String getAreaName()
@@ -93,17 +75,7 @@ public class Area
 	{
 		this.createTime = createTime;
 	}
-
-	public long getLastUpdateTime()
-	{
-		return lastUpdateTime;
-	}
-
-	public void setLastUpdateTime(long lastUpdateTime)
-	{
-		this.lastUpdateTime = lastUpdateTime;
-	}
-
+	
 	public long getIpCount()
 	{
 		return ipCount;

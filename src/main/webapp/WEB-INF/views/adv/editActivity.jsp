@@ -26,27 +26,14 @@
 						
 						<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>修改成功！</strong> 
+						 	<strong></strong> 
 						</div>
 						
 						<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>修改失败！</strong> 
+						 	<strong></strong> 
 						</div>
 						
-        				<div class="form-group ">	<!-- 公司名称 -->
-          					<label class="control-label col-sm-3">公司名称：</label>
-							<div class="col-sm-6 controls">
-					            <select id="company" name="company" class="form-control input-sm" 
-					            	style="line-height:18px;padding:2px 0">
-					      			<option>杯京公司</option>
-					      			<option>极难公司</option>
-					      			<option>航舟公司</option>
-					      			<option>程度公司</option>
-					      		</select>
-					      		<p class="help-block">必需：请在列表中选择公司</p>
-          					</div>
-						</div>
 						<div class="form-group">	<!-- 活动名称 -->
 							<label class="control-label col-sm-3"  >广告活动名称：</label>
 							<div class="col-sm-6 controls">
@@ -55,6 +42,13 @@
         							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符">
             					<p class="help-block">必需：2-30个字符，可输入中文字符、英文字符、数字或下划线（_）</p>
             					
+          					</div>
+						</div>
+						<div class="form-group ">		<!-- 公司名称 -->
+          					<label class="control-label col-sm-3">公司名称：</label>
+							<div class="col-sm-6 controls">
+					        	<input id="company" name="company" type="text" placeholder="" class="form-control input-sm">
+    							<p class="help-block"></p>
           					</div>
 						</div>
 						<div class="form-group ">	<!-- 联系人 -->
@@ -160,12 +154,14 @@ function sendRequest(editId, data, paging, query){
         success: function(activity){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
+        	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(activity.lastUpdateTime));
         	$(".alert-warning").css("display","none");
         },  
         error: function(error){
         	// 操作结果显示
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
+        	$(".alert-warning strong").html("修改失败！ 错误信息：" + getErrorMessage(error));
         
         	var response = error.responseJSON;
         	// 如果是450错误，说明是用户输入有误，需要重新显示表单并触发校验

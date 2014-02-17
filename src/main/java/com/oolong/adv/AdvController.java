@@ -1,10 +1,13 @@
 package com.oolong.adv;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -24,11 +27,14 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
 
-import com.oolong.exception.DuplicationNameException;
-import com.oolong.exception.InputValidateException;
-import com.oolong.util.TextUtil;
-import com.oolong.web.AjaxValidateFieldResult;
+import com.oolong.platform.exception.DuplicationNameException;
+import com.oolong.platform.exception.InputValidateException;
+import com.oolong.platform.util.TextUtil;
+import com.oolong.platform.util.TimeUtil;
+import com.oolong.platform.web.AjaxValidateFieldResult;
 
 /**
  * 广告处理控制器，页面跳转、增、删、改、查、校验
@@ -40,12 +46,20 @@ import com.oolong.web.AjaxValidateFieldResult;
 @RequestMapping(value = "/advs")
 public class AdvController
 {
-	@SuppressWarnings("unused")
 	private static final Logger logger = LoggerFactory
 			.getLogger(AdvController.class);
 
+	private static final String FILE_UPLOAD_DIRECTRY = "D:\\tmp";
+
+	private static final int FILE_UPLOAD_SIZE_MAX = 10240000;
+
+	private static final String FILE_UPLOAD_TYPE_ONLY = ".zip";
+
 	@Autowired
 	private AdvRepository advRepo;
+	
+	@Autowired
+	private ActivityRepository actiRepo;
 
 	@Autowired
 	private AdvWebsiteRelationRepository awrRepo;
@@ -79,7 +93,7 @@ public class AdvController
 	 ******************************************************/
 
 	/**
-	 * 查询广告列表
+	 * 查询广告订单列表
 	 * 
 	 * @param query 查询条件
 	 * @param page 当前页数
@@ -113,6 +127,20 @@ public class AdvController
 		{
 			list = advRepo.findAll(pageable).getContent();
 			count = advRepo.count();
+		}
+		
+		// 补充显示名称
+		for(Adv adv:list)
+		{
+			Activity acti = actiRepo.findOne(adv.getActivityId());
+			if(acti != null)
+			{
+				adv.setActivityName(acti.getActivityName());
+			}
+			else
+			{
+				adv.setActivityName("-");
+			}
 		}
 
 		// 查询并返回结果
@@ -173,9 +201,8 @@ public class AdvController
 		}
 
 		// 存入数据库
-		long now = System.currentTimeMillis();
-		adv.setCreateTime(now);
-		adv.setLastUpdateTime(now);
+		adv.setCreateTime(TimeUtil.getServerTimeSecond());
+		adv.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		advRepo.save(adv);
 
 		// 关联网站关系保存
@@ -208,7 +235,7 @@ public class AdvController
 	}
 
 	/**
-	 * 修改活动
+	 * 修改广告订单
 	 * 
 	 * @param id
 	 * @param activity
@@ -220,7 +247,7 @@ public class AdvController
 	Adv put(@PathVariable("id") long id, @Valid @RequestBody Adv adv)
 	{
 		adv.setId(id);
-		adv.setLastUpdateTime(System.currentTimeMillis());
+		adv.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		advRepo.save(adv);
 
 		return adv;
@@ -241,11 +268,12 @@ public class AdvController
 		String[] ids = idString.split(",");
 		for (String id : ids)
 		{
-			System.out.println(" " + Long.valueOf(id));
 			idArry.add(Long.valueOf(id));
 		}
 
 		advRepo.batchDelete(idArry);
+		awrRepo.batchDelete(idArry);
+		aarRepo.batchDelete(idArry);
 	}
 
 	/**
@@ -280,6 +308,61 @@ public class AdvController
 			result.setMessage("已经存在同名广告订单，请输入其他广告订单名称");
 		}
 
+		return result;
+	}
+
+	/**
+	 * 广告文件上传
+	 * 
+	 * @param request
+	 * @param response
+	 * @return
+	 */
+	@RequestMapping(value = "/advFiles", method = RequestMethod.POST)
+	public @ResponseBody
+	Map<String, Object> upload(MultipartHttpServletRequest request,
+			HttpServletResponse response)
+	{
+		Map<String, Object> result = new HashMap<String, Object>();
+		MultipartFile multipartFile = request.getFile("trueAdvFile");
+
+		// 校验文件大小,最大10兆
+		if (multipartFile.getSize() > FILE_UPLOAD_SIZE_MAX)
+		{
+			throw new InputValidateException("广告文件超过最大容量限制：10M。");
+		}
+
+		// 提取并校验文件名扩展
+		String fileExtension = multipartFile.getOriginalFilename().substring(
+				multipartFile.getOriginalFilename().lastIndexOf("."));
+		if (fileExtension == null
+				|| !fileExtension.equalsIgnoreCase(FILE_UPLOAD_TYPE_ONLY))
+		{
+			// 文件名扩展有误
+			throw new InputValidateException("广告文件不是.zip格式");
+		}
+
+		// 生成UUID新文件名字
+		String newFilenameBase = UUID.randomUUID().toString();
+		String newFilename = newFilenameBase + fileExtension;
+
+		// 写入指定目录
+		String filePath = FILE_UPLOAD_DIRECTRY + "/" + newFilename;
+		File newFile = new File(filePath);
+		try
+		{
+			multipartFile.transferTo(newFile);
+		}
+		catch (IOException e)
+		{
+			logger.error(
+					"Could not upload file "
+							+ multipartFile.getOriginalFilename(), e);
+
+			throw new RuntimeException("文件上传失败，请联系管理员解决。");
+		}
+
+		result.put("path", filePath);
 		return result;
 	}
 

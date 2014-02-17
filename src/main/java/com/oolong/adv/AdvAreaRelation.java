@@ -2,10 +2,9 @@ package com.oolong.adv;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
+
+import com.oolong.platform.domain.Domain;
 
 /**
  * 广告订单-区域映射关系
@@ -14,17 +13,14 @@ import javax.persistence.Table;
  * @since 2014-1-9
  */
 @Entity
-@Table(name="T_ADV_AREAS") 
-public class AdvAreaRelation
+@Table(name = "T_ADV_AREAS")
+public class AdvAreaRelation extends Domain
 {
-	@Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-	private Long id;
-	
-	@Column(name="advId")
+
+	@Column(name = "advId")
 	private Long advId;
-	
-	@Column(name="areaId")
+
+	@Column(name = "areaId")
 	private Long areaId;
 
 	public AdvAreaRelation(Long advId, Long areaId)
@@ -37,18 +33,8 @@ public class AdvAreaRelation
 	@Override
 	public String toString()
 	{
-		return "AdvAreaRelation [id=" + id + ", advId=" + advId + ", areaId="
-				+ areaId + "]";
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
+		return "AdvAreaRelation [advId=" + advId + ", areaId=" + areaId + ", "
+				+ super.toString() + "]";
 	}
 
 	public Long getAdvId()
@@ -70,6 +56,5 @@ public class AdvAreaRelation
 	{
 		this.areaId = areaId;
 	}
-	
-	
+
 }

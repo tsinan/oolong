@@ -3,6 +3,8 @@ package com.oolong.adv;
 import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
 /**
  *
@@ -12,4 +14,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AdvAreaRelationRepository extends JpaRepository<AdvAreaRelation,Long>
 {
 	List<AdvAreaRelation> findByAdvId(Long advId);
+
+	@Modifying
+	@Query("delete from AdvAreaRelation aar where aar.advId in ( ?1 )")
+	void batchDelete(List<Long> ids);
+
 }

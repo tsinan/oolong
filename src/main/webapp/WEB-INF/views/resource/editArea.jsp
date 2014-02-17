@@ -27,12 +27,12 @@
     				
     				<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>修改成功！</strong> 
+					 	<strong></strong> 
 					</div>
 					
 					<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>修改失败！</strong> 
+					 	<strong></strong> 
 					</div>
     				
 					<div class="form-group">		<!-- 区域名称 -->
@@ -138,6 +138,7 @@ function sendRequest(editId, data, paging, query){
         success: function(area){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
+        	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(area.lastUpdateTime));
         	$(".alert-warning").css("display","none");
         },  
         error: function(error){
@@ -145,6 +146,7 @@ function sendRequest(editId, data, paging, query){
         	// 操作结果显示
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
+        	$(".alert-warning strong").html("修改失败！ 错误信息：" + getErrorMessage(error));
         
         	var response = error.responseJSON;
         	// 如果是450错误，说明是用户输入有误，需要重新显示表单并触发校验

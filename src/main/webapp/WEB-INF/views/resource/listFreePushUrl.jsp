@@ -25,11 +25,11 @@
 					
 					<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>添加成功！</strong> 
+					 	<strong></strong> 
 					</div>
 					<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 					 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-					 	<strong>添加失败！</strong> 请联系管理员处理。
+					 	<strong></strong>
 					</div>
 					
 					<div class="col-sm-6">
@@ -261,7 +261,9 @@ function sendRequest(data)
         success: function(freePushUrl){
         	// 关闭对话框并刷新列表
         	$(".alert-success").css("display","block");
+        	$(".alert-success strong").html("添加成功！ 更新时间：" + formatTimeSecond(freePushUrl.lastUpdateTime));
         	$(".alert-warning").css("display","none");
+        	
 			$("#freePushUrlGrid").simplePagingGrid("refresh");
 			
 			// 清空input
@@ -271,6 +273,8 @@ function sendRequest(data)
         	// 提示删除错误
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
+        	$(".alert-warning strong").html("添加失败！ 错误信息：" + getErrorMessage(error));
+        	
 			$("#freePushUrlGrid").simplePagingGrid("refresh");
 
 			// 清空input

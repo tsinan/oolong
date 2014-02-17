@@ -34,16 +34,16 @@
 					<div id="queryBar" class="row" style="margin:5px auto;border: 1px solid #f1f1f1;display:none;">
 						<form class="form-inline"  novalidate>
 						<div class="form-group">
-							<input id="queryByActiName" class="form-control input-sm" style="width:150px;"  placeholder="活动名称">
+							<input id="queryByAdvName" class="form-control input-sm" style="width:150px;"  placeholder="广告名称">
 					  	</div>
 					  	
-					  	<button id="doQueryActivities" class="btn btn-default btn-xs">查询</button>
-					  	<button id="clearQueryActivities" class="btn btn-default btn-xs">放弃查询</button>
+					  	<button id="doQueryAdvs" class="btn btn-default btn-xs">查询</button>
+					  	<button id="clearQueryAdvs" class="btn btn-default btn-xs">放弃查询</button>
 				    	
 						</form>
 					</div>
 					
-					<div id="activityGrid"></div>
+					<div id="advGrid"></div>
       				<!-- end of main area -->
       			</div>
       		
@@ -118,15 +118,15 @@ $(function(){
 			$("#queryButton").addClass("active");
 			
 			// 清空查询字符串
-			$("#queryByActiName").val(query);
+			$("#queryByAdvName").val(query);
 		}
 	}
 
 	// 注册表格插件
-    $("#activityGrid").simplePagingGrid({
+    $("#advGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","活动名称", "公司", "联系人/联系电话","操作"],
-        columnKeys: ["id","activityName", "company", "linkman","operation"],
+        columnNames: ["","广告名称", "所属活动", "生效日期/失效日期","操作"],
+        columnKeys: ["id","advName", "activityId", "startDate","operation"],
         columnWidths: ["5%","20%", "20%", "25%", "30%"],
         sortable: [false, true, true, true, false],
         showLoadingOverlay: false,
@@ -140,20 +140,19 @@ $(function(){
 			"<th><input type='checkbox' id='c_all'></th>"
 		],
         cellTemplates: [
-        	"<input type='checkbox' name='{{activityName}}' id='{{id}}'>",
+        	"<input type='checkbox' name='{{advName}}' id='{{id}}'>",
+	        "{{advName}}",
 	        "{{activityName}}",
-	        "{{company}}",
-	        "{{linkman}}/{{linkmanPhone}}",
-	        "<a href='activities/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
+	        "{{startDate}} / {{endDate}}",
+	        "<a href='advs/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
 	        			"style='margin-right:15px'>修改</a> "+
 	        "<a href='#' style='margin-right:15px' "+
 	        			"onclick='return openDelDialog({{id}},"+
-	        			"\"{{activityName}}\",\"{{company}}\","+
-	        			"\"{{linkman}}\",\"{{linkmanPhone}}\");' "+
-	        			">删除</a>"+
-	        "<a href='#' style='margin-right:15px'>创建广告订单</a>"
+	        			"\"{{advName}}\",\"{{activityName}}\","+
+	        			"\"{{startDate}}\",\"{{endDate}}\");' "+
+	        			">删除</a>"
 	    ],
-        dataUrl: "activities?query="+query
+        dataUrl: "advs?query="+query
     });
     
     // 绑定全选按钮事件
@@ -165,7 +164,7 @@ $(function(){
 	
 	// 刷新列表
 	$("#refreshButton").click(function(){
-		$("#activityGrid").simplePagingGrid("refresh");
+		$("#advGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -173,7 +172,7 @@ $(function(){
 	// 注册删除关闭对话框并刷新列表
 	$("#giveupDelete").click(function(){
 		$("#deleteDialog").modal('hide');
-		$("#activityGrid").simplePagingGrid("refresh");
+		$("#advGrid").simplePagingGrid("refresh");
 		return false;
 	});
 	
@@ -194,21 +193,21 @@ $(function(){
 	});
 	
 	// 查询
-	$("#doQueryActivities").click(function(){
+	$("#doQueryAdvs").click(function(){
 		// 替换原有查询字符串
 		// TODO 需要考虑对查询字符串编码
-		query = $("#queryByActiName").val();	
-		$("#activityGrid").simplePagingGrid("refresh","activities?query="+query);
+		query = $("#queryByAdvName").val();	
+		$("#advGrid").simplePagingGrid("refresh","advs?query="+query);
 		
 		return false;
 	});
 	
 	// 清空查询
-	$("#clearQueryActivities").click(function(){
+	$("#clearQueryAdvs").click(function(){
 		// 清空查询字符串
-		$("#queryByActiName").val("");
+		$("#queryByAdvName").val("");
 		query = "";
-		$("#activityGrid").simplePagingGrid("refresh","activities?query="+query);
+		$("#advGrid").simplePagingGrid("refresh","advs?query="+query);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");
@@ -219,13 +218,13 @@ $(function(){
 });
 
 // 打开删除对话框
-function openDelDialog(id, activityName, company, linkman, linkmanPhone)
+function openDelDialog(id, advName, activityName, startDate, endDate)
 {
 	// 显示活动名称和详细信息
-	$('#deleteDialog .modal-title').text("请确认是否删除活动 "+activityName+"？");
-	$('#deleteDialog .modal-body ul').html("<li>公司："+company+"</li>"+
-		"<li>联系人："+linkman+"</li>"+
-		"<li>联系电话："+linkmanPhone+"</li>");
+	$('#deleteDialog .modal-title').text("请确认是否删除广告订单 "+advName+"？");
+	$('#deleteDialog .modal-body ul').html("<li>所属广告活动："+activityName+"</li>"+
+		"<li>生效日期："+startDate+"</li>"+
+		"<li>失效日期："+endDate+"</li>");
 
 	// 绑定confirmDelete按钮的click事件
 	$("#confirmDelete").click(function(){
@@ -266,7 +265,7 @@ function openBatchDelDialog()
 	else
 	{
 		// 显示活动名称和详细信息
-		$('#deleteDialog .modal-title').text("请确认是否删除下列活动？");
+		$('#deleteDialog .modal-title').text("请确认是否删除下列广告订单？");
 
 		var nameDisplay = "";
 		for(idx in batchNames){
@@ -298,16 +297,16 @@ function sendConfirmDelete(ids)
         async:false,  // 同步执行，根据返回结果确定是否关闭对话框
         contentType: "application/json;charset=UTF-8",  
         dataType: "json", 
-        url: "activities/"+ids+"?_method=delete",  
+        url: "advs/"+ids+"?_method=delete",  
         data: null, 
-        success: function(activity){
+        success: function(adv){
         	// 关闭对话框并刷新列表
 			$('#deleteDialog').modal('hide');
-			$("#activityGrid").simplePagingGrid("refresh");
+			$("#advGrid").simplePagingGrid("refresh");
         },  
         error: function(error){
         	// 提示删除错误
-        	$('#deleteDialog .modal-title').text("在删除活动时发生了异常，请点击“确认”重复尝试或者点击“放弃”返回活动列表。");
+        	$('#deleteDialog .modal-title').text("在删除广告订单时发生了异常，请点击“确认”重复尝试或者点击“放弃”返回广告订单列表。");
         	$('#deleteDialog .modal-title').css("font-color","red");
         }
 	});       

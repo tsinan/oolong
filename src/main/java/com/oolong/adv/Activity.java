@@ -2,13 +2,12 @@ package com.oolong.adv;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
+
+import com.oolong.platform.domain.Domain;
 
 
 /**
@@ -20,24 +19,20 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name="T_ACTIVITY") 
-public class Activity
+public class Activity extends Domain
 {
-	@Id  
-    @GeneratedValue(strategy = GenerationType.AUTO)  
-	private Long id;
-	
-	/** 公司名，必需 */
-	@NotNull
-	@Size(min=1, max=100)
-	@Column(name="company",length=100)  
-	private String company;
-	
 	/** 广告活动名称，必需 */
 	@NotNull
 	@Size(min=1, max=100)
 	@Pattern(regexp="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}")
 	@Column(name="activityName",length=100)  
 	private String activityName;
+	
+	/** 公司名 */
+	@NotNull
+	@Size(max=100)
+	@Column(name="company",length=100)  
+	private String company;
 	
 	@NotNull
 	@Size(max=100)
@@ -55,29 +50,16 @@ public class Activity
 	@Column(name="createTime")  
 	private long createTime;
 	
-	@Column(name="lastUpdateTime")
-	private long lastUpdateTime;
-	
-
 	@Override
 	public String toString()
 	{
-		return "Activity [id=" + id + ", company=" + company
+		return "Activity [company=" + company
 				+ ", activityName=" + activityName + ", linkman=" + linkman
 				+ ", linkmanPhone=" + linkmanPhone + ", description="
 				+ description + ", createTime=" + createTime
-				+ ", lastUpdateTime=" + lastUpdateTime + "]";
+				+ ", "+ super.toString() + "]";
 	}
 
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
-	}
 	public String getCompany()
 	{
 		return company;
@@ -138,15 +120,5 @@ public class Activity
 		this.createTime = createTime;
 	}
 
-	public long getLastUpdateTime()
-	{
-		return lastUpdateTime;
-	}
-
-	public void setLastUpdateTime(long lastUpdateTime)
-	{
-		this.lastUpdateTime = lastUpdateTime;
-	}
-	
 	
 }

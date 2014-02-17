@@ -14,6 +14,7 @@ import org.springframework.data.jpa.repository.Query;
  */
 public interface ActivityRepository extends JpaRepository<Activity,Long>
 {
+	
 	List<Activity> findByActivityName(String activityName);
 	
 	List<Activity> findByActivityNameLike(String activityNameLike, Pageable pageable);

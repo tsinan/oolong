@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.oolong.platform.util.TimeUtil;
+
 /**
  * 全局配置处理控制器，页面跳转、修改
  * 
@@ -100,6 +102,7 @@ public class GlobalConfigController
 			@Valid @RequestBody GlobalConfig globalConfig)
 	{
 		globalConfig.setId(id);
+		globalConfig.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		globalConfigRepo.save(globalConfig);
 
 		return globalConfig;

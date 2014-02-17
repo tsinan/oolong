@@ -23,9 +23,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import com.oolong.exception.DuplicationNameException;
-import com.oolong.util.TextUtil;
-import com.oolong.web.AjaxValidateFieldResult;
+import com.oolong.platform.exception.DuplicationNameException;
+import com.oolong.platform.util.TextUtil;
+import com.oolong.platform.util.TimeUtil;
+import com.oolong.platform.web.AjaxValidateFieldResult;
 
 /**
  * 免推送地址处理控制器，页面跳转、增、删、改、查、校验
@@ -131,6 +132,7 @@ public class FreePushUrlController
 		}
 
 		// 存入数据库
+		freePushUrl.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		freePushUrlRepo.save(freePushUrl);
 
 		// 返回201码时，需要设置新资源的URL（非强制）

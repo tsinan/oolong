@@ -26,12 +26,12 @@
 		    		<fieldset>
 						<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>修改成功！</strong> 
+						 	<strong></strong>
 						</div>
 						
 						<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>修改失败！</strong>
+						 	<strong></strong>
 						</div>
 						
 						<div class="form-group">		<!-- 推送间隔 -->
@@ -155,6 +155,7 @@ function sendRequest(globalConfigId,data){
         success: function(globalConfig){
         	// 关闭对话框并刷新列表
         	$(".alert-success").css("display","block");
+        	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(globalConfig.lastUpdateTime));
         	$(".alert-warning").css("display","none");
         	
         	// 应答结果写入表单
@@ -173,6 +174,7 @@ function sendRequest(globalConfigId,data){
         	// 提示删除错误
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
+        	$(".alert-warning strong").html("修改失败！ 错误信息：" + getErrorMessage(error));
         	
         },  
     });         

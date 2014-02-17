@@ -46,17 +46,15 @@
 		<beans:property name="suffix" value=".jsp" />
 	</beans:bean>
 	
-	<!-- 
 	<beans:bean id="multipartResolver"  
 	    class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
 	    <beans:property name="maxUploadSize">  
 	        <beans:value>1048576</beans:value>  
 	    </beans:property>  
-	</beans:bean>  
- 	-->
+	</beans:bean>
  	
  	<!-- Handler Exception, convert to json -->
- 	<beans:bean id="restExceptionResolver" class="com.oolong.web.error.RestExceptionHandler">
+ 	<beans:bean id="restExceptionResolver" class="com.oolong.platform.web.error.RestExceptionHandler">
         <beans:property name="order" value="1"/>
         <!--<beans:property name="messageConverters">
              <list>
@@ -64,16 +62,16 @@
             </list> 
         </beans:property>-->
         <beans:property name="errorResolver">
-            <beans:bean class="com.oolong.web.error.DefaultRestErrorResolver">
+            <beans:bean class="com.oolong.platform.web.error.DefaultRestErrorResolver">
                 <!-- <property name="localeResolver" ref="localeResolver"/>  -->
                 <beans:property name="defaultMoreInfoUrl" value="mailto:support@mycompany.com"/>
                 <beans:property name="exceptionMappingDefinitions">
                     <beans:map>
                         <!-- 450 -->
-                        <beans:entry key="com.oolong.exception.DuplicationNameException" value="400, 关键信息名称重复，请修改重新提交"/>
+                        <beans:entry key="com.oolong.platform.exception.DuplicationNameException" value="400, 关键信息名称重复，请修改重新提交"/>
                         
                         <!-- 404 -->
-                        <beans:entry key="com.oolong.exception.UnknownResourceException" value="404, _exmsg"/>
+                        <beans:entry key="com.oolong.platform.exception.UnknownResourceException" value="404, _exmsg"/>
 
                         <beans:entry key="org.springframework.web.bind.MethodArgumentNotValidException" value="500, 参数检查未通过"/>
                         

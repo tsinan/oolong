@@ -2,14 +2,13 @@ package com.oolong.area;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.oolong.platform.domain.Domain;
 
 /**
  * 区域IP地址段
@@ -19,12 +18,8 @@ import javax.validation.constraints.Size;
  */
 @Entity
 @Table(name = "T_AREA_IP")
-public class IpSegment
+public class IpSegment extends Domain
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	private Long id;
-
 	@Column(name = "areaId")
 	private Long areaId;
 
@@ -57,20 +52,11 @@ public class IpSegment
 	@Override
 	public String toString()
 	{
-		return "IpSegment [id=" + id + ", areaId=" + areaId + ", ipType="
+		return "IpSegment [areaId=" + areaId + ", ipType="
 				+ ipType + ", ipStartText="
 				+ ipStartText + ", maskLength=" + maskLength + ", ipStart="
-				+ ipStart + ", ipEnd=" + ipEnd + "]";
-	}
-
-	public Long getId()
-	{
-		return id;
-	}
-
-	public void setId(Long id)
-	{
-		this.id = id;
+				+ ipStart + ", ipEnd=" + ipEnd + ", "
+						+ super.toString() + "]";
 	}
 
 	public Long getAreaId()

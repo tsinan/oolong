@@ -45,6 +45,24 @@ function controlAdvNav(path)
 		$(".panel-group .panel-collapse li").removeClass("active");
 		$("#leftNav_newActi").addClass("active");
 	}
+	if((path.indexOf('/advs/listPage')>=0) || (path.indexOf('/advs/editPage')>=0))
+	{
+		// 顶部导航设置
+		$(".navbar-fixed-top .navbar-nav li").removeClass("active");
+		$("#topNav_adv").addClass("active");
+		
+		// 左侧导航panel设置
+		$(".panel-group .panel").addClass("collapse");
+		$("#panelActivity").removeClass("collapse");
+		$("#panelAdv").removeClass("collapse");
+		
+		$(".panel-group .panel-collapse").removeClass("in");
+		$("#panelAdv .panel-collapse").addClass("in");
+		
+		$(".panel-group .panel-collapse li").removeClass("active");
+		$("#leftNav_viewAdv").addClass("active");
+		
+	}
 	else if(path.indexOf('/advs/createPage')>=0)
 	{
 		// 顶部导航设置
@@ -205,4 +223,27 @@ function closeAlertBar()
 {
 	$(".alert-success").css("display","none");
 	$(".alert-warning").css("display","none");
+}
+
+// 提取错误信息
+function getErrorMessage(error)
+{
+	var response = error.responseJSON;
+	var errorText = response.code + " - " + response.message;
+	return errorText;
+}
+
+// 格式化秒级时间
+function formatTimeSecond(updateTime)
+{
+	var updateTime = new Date(updateTime*1000);
+	
+	var updateTimeText = updateTime.getFullYear() + "年";
+	updateTimeText += (updateTime.getMonth()+1) +"月";
+	updateTimeText += updateTime.getDate()+"日";
+	updateTimeText += updateTime.getHours()+"时";
+	updateTimeText += updateTime.getMinutes()+"分";
+	updateTimeText += updateTime.getSeconds()+"秒";
+	
+	return updateTimeText;
 }
