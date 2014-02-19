@@ -23,6 +23,11 @@ public class AdvAreaRelation extends Domain
 	@Column(name = "areaId")
 	private Long areaId;
 
+	public AdvAreaRelation()
+	{
+		super();
+	}
+	
 	public AdvAreaRelation(Long advId, Long areaId)
 	{
 		super();

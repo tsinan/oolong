@@ -215,8 +215,8 @@ public class AreaController
 			idArry.add(Long.valueOf(id));
 		}
 
-		// websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
 		areaRepo.batchDelete(idArry);
+		ipSegmentRepo.deleteIpSegmentsByAreaId(idArry);
 	}
 
 	/**

@@ -163,7 +163,13 @@
 								<div class="input-group" style="padding-right: 0;padding-left: 0px;">
 				                    <input id="advFileDisplay" name="advFileDisplay" size="24" type="text" 
 				                    	class="form-control input-sm" placeholder="" readonly />
-									<span id="advFileButton" class="input-group-addon" ><span class="glyphicon glyphicon-th"></span></span>
+				                    <span id="advFileDownLoadButton" class="input-group-addon" >
+										<span class="glyphicon glyphicon-download" title="下载"></span>
+									</span>
+									<span id="advFileButton" class="input-group-addon" >
+										<span class="glyphicon glyphicon-th" title="选择上传文件"></span>
+									</span>
+									
 				                </div>
           					</div>
         				</div>
@@ -321,10 +327,10 @@ $(function (){
 	loadActivities();
 	
 	// 加载关联网站,默认设置为普通推送
-	loadWebsite();
+	loadWebsites();
 	
 	// 加载区域
-	loadArea();
+	loadAreas();
 
 	// 时间选择器注册
     $('.form_date').datetimepicker({
@@ -338,17 +344,12 @@ $(function (){
 		forceParse: 0
     });
     
-    // 文件上传控件
-    $('input[id=trueAdvFile]').change(function() {
-		$('#advFileDisplay').val($(this).val());
-	});
-	
 	$('input[id=trueAdvFile]').fileupload({
 	 	dataType:	"json",
 	 	url:		"advs/advFiles",
 		done:		function(e,data){
-						alert(data.result.path);
 						$('#advFile').val(data.result.path);
+						$('#advFileDisplay').val(data.result.path);
 					}  
 	});
 	
@@ -357,6 +358,11 @@ $(function (){
 		{
 			$('input[id=trueAdvFile]').click();
 		}
+	});
+	
+	$('#advFileDownLoadButton').click(function(){
+		var filePath = $('#advFile').val();
+		alert("下载广告素材"+filePath);
 	});
 	
 	// 提取URL查询参数
@@ -379,30 +385,60 @@ $(function (){
 			function(adv){
 				// 加载数据到表单
 				$("#advName").val(adv.advName);
-				$("#activityName").val(adv.activityName);
-				
+				$("#activityId").val(adv.activityId);
+				$("#startDate").val(adv.startDate);
+				$("#endDate").val(adv.endDate);
 				$("#cpm").val(adv.cpm);
 				$("#priority").val(adv.priority);
 				
-				$("#advType").val(adv.advType);
 				if(adv.advType=="url")
-				{
+				{					
+					$("#advTypeUrl").attr("checked","checked");
+					$("#advTypeFile").removeAttr("checked");
+					
+					switchAdvType("url");
+				
 					$("#advUrl").val(adv.advUrl);
 				}
 				else if(adv.advType="file")
 				{
+					$("#advTypeUrl").removeAttr("checked");
+					$("#advTypeFile").attr("checked","checked");
 					
+					switchAdvType("file");
+					
+					$("#advFile").val(adv.advFile);
+					$("#advFileDisplay").val(adv.advFile);
 				}
 				
-				$("#spreadType").val(adv.spreadType);
 				if(adv.spreadType=="accurate")
 				{
+					$("#spreadTypeAccurate").attr("checked","checked");
+					$("#spreadTypeNomarl").removeAttr("checked");
+					
+					switchSpreadType("accurate");
+					
+					var websites = adv.websites;
+					for(idx in websites)
+					{
+						var selector = "#website_"+websites[idx];
+						$(selector).attr("checked","checked");
+					}
 				}
 				
-				$("#scope").val(adv.scope);
 				if(adv.scope=="area")
 				{
+					$("#scopeArea").attr("checked","checked");
+					$("#scopeGlobal").removeAttr("checked");
 					
+					switchScope("area");
+					
+					var areas = adv.areas;
+					for(idx in areas)
+					{
+						var selector = "#area_"+areas[idx];
+						$(selector).attr("checked","checked");
+					}
 				}
 				
 				$("#description").val(adv.description);
@@ -470,7 +506,7 @@ $(function (){
 			// 校验通过，提交表单
 			if(willSubmit)
 			{
-				request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));
+				sendRequest(editId, JSON.stringify(serializeObject(form.serializeArray())));
 			}
 		},
 		filter: function () {
@@ -496,26 +532,20 @@ $(function (){
 })
 	
 // 向服务端提交请求
-function request(url, method, param){      
+function sendRequest(editId, data){      
 
     $.ajax({  
-		type: method,  
+		type: "POST",  
         async:false,  
         contentType: "application/json;charset=UTF-8",  
         dataType: "json",  
-        url: url,  
-        data: param,   
+        url: "advs/"+editId+"?_method=PUT",  
+        data: data,   
         success: function(adv){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
-        	$(".alert-success strong").html("添加成功！ 更新时间：" + formatTimeSecond(adv.lastUpdateTime));
+        	$(".alert-success strong").html("修改成功！ 更新时间：" + formatTimeSecond(adv.lastUpdateTime));
         	$(".alert-warning").css("display","none");
-			
-			// 清空表单
-			$("form")[0].reset();
-			switchAdvType("url");
-			switchSpreadType("normal");
-			switchScope("global");
 			
 			// 切换到锚点
 			location.hash="anchor_top";
@@ -524,7 +554,7 @@ function request(url, method, param){
         	// 操作结果显示
         	$(".alert-success").css("display","none");
         	$(".alert-warning").css("display","block");
-        	$(".alert-warning strong").html("添加失败！ 错误信息：" + getErrorMessage(error));
+        	$(".alert-warning strong").html("修改失败！ 错误信息：" + getErrorMessage(error));
         	
         	var response = error.responseJSON;
         	// 如果是450错误，说明是用户输入有误，需要重新显示表单并触发校验
@@ -538,11 +568,7 @@ function request(url, method, param){
         	// 其他错误属于系统异常，弹出对话框，指导用户选择下一步操作
         	else
         	{
-        		// 清空表单
-				$("form")[0].reset();
-				switchAdvType("url");
-				switchSpreadType("normal");
-				switchScope("global");
+        		
         	}
         	
         	// 切换到锚点
@@ -583,7 +609,7 @@ function loadActivities()
 }
 
 // 加载关联网站
-function loadWebsite()
+function loadWebsites()
 {
 	$.get("websites?sortColumn=websiteName&sortOrder=ASC", 
 			null, 
@@ -594,7 +620,7 @@ function loadWebsite()
 				{
 					// 提示当前没有可用的关联网站
 					var checkbox = "<label class=\"checkbox col-sm-12\"> "+
-											"<input name=\"website\" type=\"checkbox\" "+
+											"<input name=\"websites\" type=\"checkbox\" "+
 												"value='0' disabled /> "+
 									    	"尚未添加关联网站"+
 									 	"</label>";
@@ -606,7 +632,7 @@ function loadWebsite()
 					for(idx in array)
 					{
 						var checkbox = "<label class=\"checkbox col-sm-4\"> "+
-											"<input name=\"website\" type=\"checkbox\" "+
+											"<input name=\"websites\" id=\"website_"+array[idx].id+"\" type=\"checkbox\" "+
 												"value='"+array[idx].id+"' disabled "+
 												"onclick=\"return chooseWebsite(this);\" "+
           										"/> "+
@@ -624,7 +650,7 @@ function loadWebsite()
 }
 
 // 加载区域
-function loadArea()
+function loadAreas()
 {
 	$.get("areas?sortColumn=areaName&sortOrder=ASC", 
 			null, 
@@ -635,7 +661,7 @@ function loadArea()
 				{
 					// 提示当前没有可用的区域
 					var checkbox = "<label class=\"checkbox col-sm-12\"> "+
-											"<input name=\"area\" type=\"checkbox\" "+
+											"<input name=\"areas\" type=\"checkbox\" "+
 												"value='0' disabled /> "+
 									    	"尚未添加虚拟域"+
 									 	"</label>";
@@ -647,7 +673,7 @@ function loadArea()
 					for(idx in array)
 					{
 						var checkbox = "<label class=\"checkbox col-sm-4\"> "+
-											"<input name=\"area\" type=\"checkbox\" "+
+											"<input name=\"areas\" id=\"area_"+array[idx].id+"\" type=\"checkbox\" "+
 												"value='"+array[idx].id+"' disabled "+
 												"onclick=\"return chooseArea(this);\" "+
           										"/> "+

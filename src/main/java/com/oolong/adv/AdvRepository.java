@@ -20,8 +20,12 @@ public interface AdvRepository extends JpaRepository<Adv,Long>
 
 	long countByAdvNameLike(String advNameLike);
 	
+	long countByActivityId(long activityId);
+	
 	@Modifying
 	@Query("delete from Adv a where a.id in ( ?1 )")
 	void batchDelete(List<Long> ids);
 	
+//	@Query("select count(a.id) from Adv a where a.activityId in ( ?1 )")
+//	long countByActivityIds(List<Long> ids);
 }

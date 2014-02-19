@@ -77,7 +77,7 @@ public class Adv extends Domain
 	
 	/** 外部URL地址 */
 	@NotNull
-	@Size(min=1, max=100)
+	@Size(min=0, max=100)
 	@Column(name="advUrl",length=100)
 	private String advUrl;
 	
@@ -99,7 +99,7 @@ public class Adv extends Domain
 	
 	/** 关联网站 1:N */
 	@Transient
-	private List<String> website;
+	private List<String> websites;
 	
 	/** 推送范围 global:全局; area:分区域 */
 	@NotNull
@@ -109,7 +109,7 @@ public class Adv extends Domain
 	
 	/** 推送区域 1:N */
 	@Transient
-	private List<String> area;
+	private List<String> areas;
 	
 	@Size(max=200)
 	@Column(name="description")  
@@ -126,8 +126,8 @@ public class Adv extends Domain
 				+ startDate + ", endDate=" + endDate + ", cpm=" + cpm
 				+ ", priority=" + priority + ", advType=" + advType
 				+ ", advUrl=" + advUrl + ", advFile=" + advFile
-				+ ", spreadType=" + spreadType + ", website=" + website
-				+ ", scope=" + scope + ", area=" + area + ", description="
+				+ ", spreadType=" + spreadType + ", websites=" + websites
+				+ ", scope=" + scope + ", areas=" + areas + ", description="
 				+ description + ", createTime=" + createTime
 				+ ", "+ super.toString() + "]";
 	}
@@ -263,14 +263,14 @@ public class Adv extends Domain
 		this.spreadType = spreadType;
 	}
 
-	public List<String> getWebsite()
+	public List<String> getWebsites()
 	{
-		return website;
+		return websites;
 	}
 
-	public void setWebsite(List<String> website)
+	public void setWebsites(List<String> websites)
 	{
-		this.website = website;
+		this.websites = websites;
 	}
 
 	public String getScope()
@@ -283,14 +283,14 @@ public class Adv extends Domain
 		this.scope = scope;
 	}
 
-	public List<String> getArea()
+	public List<String> getAreas()
 	{
-		return area;
+		return areas;
 	}
 
-	public void setArea(List<String> area)
+	public void setAreas(List<String> areas)
 	{
-		this.area = area;
+		this.areas = areas;
 	}
 
 	public String getDescription()

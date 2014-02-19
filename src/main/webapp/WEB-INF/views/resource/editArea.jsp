@@ -118,8 +118,7 @@ $(function (){
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
 		submitSuccess: function (form, event) {
 			event.preventDefault();		// 停止URL参数形式的提交操作，使用ajax方式提交来替代
-			sendRequest(editId,	JSON.stringify(serializeObject(form.serializeArray())),
-						paging,	query);  
+			sendRequest(editId,	JSON.stringify(serializeObject(form.serializeArray())));  
 		}
 	});
 	
@@ -127,7 +126,7 @@ $(function (){
 })
 	
 // 向服务端提交请求
-function sendRequest(editId, data, paging, query){      
+function sendRequest(editId, data){      
 
     $.ajax({  
 		type: "POST",  

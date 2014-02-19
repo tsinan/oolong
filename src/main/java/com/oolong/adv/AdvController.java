@@ -169,11 +169,15 @@ public class AdvController
 		// 查询并返回结果
 		Adv adv = advRepo.findOne(id);
 		if(adv == null)
-		{		
+		{	
 			return null;
 		}
 		
-		adv.setActivityName(actiRepo.findOne(adv.getActivityId()).getActivityName());
+		Activity acti = actiRepo.findOne(adv.getActivityId());
+		if(acti == null)
+		{
+			return null;
+		}
 		
 		// 查询关联网站
 		if("accurate".equals(adv.getSpreadType()))
@@ -185,7 +189,7 @@ public class AdvController
 			{
 				websites.add(String.valueOf(awr.getWebsiteId()));
 			}
-			adv.setWebsite(websites);
+			adv.setWebsites(websites);
 		}
 		
 		// 查询推送区域
@@ -198,7 +202,7 @@ public class AdvController
 			{
 				areas.add(String.valueOf(aar.getAreaId()));
 			}
-			adv.setArea(areas);
+			adv.setAreas(areas);
 		}
 		
 		return adv;
@@ -240,9 +244,9 @@ public class AdvController
 		advRepo.save(adv);
 
 		// 关联网站关系保存
-		if (adv.getWebsite() != null)
+		if (adv.getWebsites() != null)
 		{
-			for (String websiteId : adv.getWebsite())
+			for (String websiteId : adv.getWebsites())
 			{
 				AdvWebsiteRelation awr = new AdvWebsiteRelation(adv.getId(),
 						Long.valueOf(websiteId));
@@ -251,9 +255,9 @@ public class AdvController
 		}
 
 		// 推送区域关系保存
-		if (adv.getArea() != null)
+		if (adv.getAreas() != null)
 		{
-			for (String areaId : adv.getArea())
+			for (String areaId : adv.getAreas())
 			{
 				AdvAreaRelation aar = new AdvAreaRelation(adv.getId(),
 						Long.valueOf(areaId));

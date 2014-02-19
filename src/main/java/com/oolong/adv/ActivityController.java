@@ -1,6 +1,5 @@
 package com.oolong.adv;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,6 +45,9 @@ public class ActivityController
 
 	@Autowired
 	private ActivityRepository activityRepo;
+	
+	@Autowired
+	private AdvRepository advRepo;
 
 	/******************************************************
 	 * 页面跳转
@@ -205,15 +207,18 @@ public class ActivityController
 	@Transactional
 	public void delete(@PathVariable("ids") String idString)
 	{
-		List<Long> idArry = new ArrayList<Long>();
-
 		String[] ids = idString.split(",");
 		for (String id : ids)
 		{
-			idArry.add(Long.valueOf(id));
-		}
+			long toDelete = Long.valueOf(id);
 
-		activityRepo.batchDelete(idArry);
+			//检查是否有广告，有广告的活动，不能删除
+			long advCount = advRepo.countByActivityId(toDelete);
+			if(advCount == 0)
+			{
+				activityRepo.delete(toDelete);
+			}
+		}
 	}
 
 	/**
@@ -257,4 +262,11 @@ public class ActivityController
 	{
 		this.activityRepo = activityRepo;
 	}
+
+	public void setAdvRepo(AdvRepository advRepo)
+	{
+		this.advRepo = advRepo;
+	}
+	
+	
 }

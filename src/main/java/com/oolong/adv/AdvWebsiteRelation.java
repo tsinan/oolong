@@ -22,7 +22,12 @@ public class AdvWebsiteRelation extends Domain
 	
 	@Column(name="websiteId")
 	private Long websiteId;
-
+	
+	public AdvWebsiteRelation()
+	{
+		super();
+	}
+	
 	public AdvWebsiteRelation(Long advId, Long websiteId)
 	{
 		super();

@@ -163,7 +163,9 @@
 								<div class="input-group" style="padding-right: 0;padding-left: 0px;">
 				                    <input id="advFileDisplay" name="advFileDisplay" size="24" type="text" 
 				                    	class="form-control input-sm" placeholder="" readonly />
-									<span id="advFileButton" class="input-group-addon" ><span class="glyphicon glyphicon-th"></span></span>
+									<span id="advFileButton" class="input-group-addon" >
+										<span class="glyphicon glyphicon-th" title="选择上传文件"></span>
+									</span>
 				                </div>
           					</div>
         				</div>
@@ -320,10 +322,10 @@ $(function (){
 	loadActivities();
 	
 	// 加载关联网站,默认设置为普通推送
-	loadWebsite();
+	loadWebsites();
 	
 	// 加载区域
-	loadArea();
+	loadAreas();
 
 	// 时间选择器注册
     $('.form_date').datetimepicker({
@@ -419,7 +421,7 @@ $(function (){
 			// 校验通过，提交表单
 			if(willSubmit)
 			{
-				request("advs", "POST", JSON.stringify(serializeObject(form.serializeArray())));
+				sendRequest(JSON.stringify(serializeObject(form.serializeArray())));
 			}
 		},
 		filter: function () {
@@ -445,15 +447,15 @@ $(function (){
 })
 	
 // 向服务端提交请求
-function request(url, method, param){      
+function sendRequest(data){      
 
     $.ajax({  
-		type: method,  
+		type: "POST",  
         async:false,  
         contentType: "application/json;charset=UTF-8",  
         dataType: "json",  
-        url: url,  
-        data: param,   
+        url: "advs",  
+        data: data,   
         success: function(adv){
         	// 操作结果显示
         	$(".alert-success").css("display","block");
@@ -532,7 +534,7 @@ function loadActivities()
 }
 
 // 加载关联网站
-function loadWebsite()
+function loadWebsites()
 {
 	$.get("websites?sortColumn=websiteName&sortOrder=ASC", 
 			null, 
@@ -543,7 +545,7 @@ function loadWebsite()
 				{
 					// 提示当前没有可用的关联网站
 					var checkbox = "<label class=\"checkbox col-sm-12\"> "+
-											"<input name=\"website\" type=\"checkbox\" "+
+											"<input name=\"websites\" type=\"checkbox\" "+
 												"value='0' disabled /> "+
 									    	"尚未添加关联网站"+
 									 	"</label>";
@@ -555,7 +557,7 @@ function loadWebsite()
 					for(idx in array)
 					{
 						var checkbox = "<label class=\"checkbox col-sm-4\"> "+
-											"<input name=\"website\" type=\"checkbox\" "+
+											"<input name=\"websites\" type=\"checkbox\" "+
 												"value='"+array[idx].id+"' disabled "+
 												"onclick=\"return chooseWebsite(this);\" "+
           										"/> "+
@@ -573,7 +575,7 @@ function loadWebsite()
 }
 
 // 加载区域
-function loadArea()
+function loadAreas()
 {
 	$.get("areas?sortColumn=areaName&sortOrder=ASC", 
 			null, 
@@ -584,7 +586,7 @@ function loadArea()
 				{
 					// 提示当前没有可用的区域
 					var checkbox = "<label class=\"checkbox col-sm-12\"> "+
-											"<input name=\"area\" type=\"checkbox\" "+
+											"<input name=\"areas\" type=\"checkbox\" "+
 												"value='0' disabled /> "+
 									    	"尚未添加虚拟域"+
 									 	"</label>";
@@ -596,7 +598,7 @@ function loadArea()
 					for(idx in array)
 					{
 						var checkbox = "<label class=\"checkbox col-sm-4\"> "+
-											"<input name=\"area\" type=\"checkbox\" "+
+											"<input name=\"areas\" type=\"checkbox\" "+
 												"value='"+array[idx].id+"' disabled "+
 												"onclick=\"return chooseArea(this);\" "+
           										"/> "+
