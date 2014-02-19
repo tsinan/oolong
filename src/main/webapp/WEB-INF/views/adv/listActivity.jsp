@@ -125,10 +125,10 @@ $(function(){
 	// 注册表格插件
     $("#activityGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","活动名称", "公司", "联系人/联系电话","操作"],
-        columnKeys: ["id","activityName", "company", "linkman","operation"],
-        columnWidths: ["5%","20%", "20%", "25%", "30%"],
-        sortable: [false, true, true, true, false],
+        columnNames: ["","活动名称", "广告数量", "公司", "联系人/联系电话","操作"],
+        columnKeys: ["id","activityName","advCount", "company", "linkman","operation"],
+        columnWidths: ["5%","20%", "15%", "15%", "20%", "25%"],
+        sortable: [false, true, true, true, true, false],
         showLoadingOverlay: false,
         initialSortColumn: sortColumn,
         sortOrder: sortOrder,
@@ -142,6 +142,7 @@ $(function(){
         cellTemplates: [
         	"<input type='checkbox' name='{{activityName}}' id='{{id}}'>",
 	        "{{activityName}}",
+	        "{{advCount}}",
 	        "{{company}}",
 	        "{{linkman}}/{{linkmanPhone}}",
 	        "<a href='activities/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +

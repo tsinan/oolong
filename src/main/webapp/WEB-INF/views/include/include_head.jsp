@@ -1,6 +1,6 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%
-	String rootPath = "http://localhost:8080";
+	String rootPath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort();
 	String contextPath = request.getContextPath();
 %>
 <title>oolong</title>

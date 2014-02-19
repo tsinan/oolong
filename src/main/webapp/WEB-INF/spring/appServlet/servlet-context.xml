@@ -67,8 +67,12 @@
                 <beans:property name="defaultMoreInfoUrl" value="mailto:support@mycompany.com"/>
                 <beans:property name="exceptionMappingDefinitions">
                     <beans:map>
-                        <!-- 450 -->
+                        <!-- 400 -->
                         <beans:entry key="com.oolong.platform.exception.DuplicationNameException" value="400, 关键信息名称重复，请修改重新提交"/>
+                        
+                        <!-- 400 -->
+                        <beans:entry key="com.oolong.platform.exception.FileValidateException" value="400, 上传文件错误，请重新上传"/>
+                        
                         
                         <!-- 404 -->
                         <beans:entry key="com.oolong.platform.exception.UnknownResourceException" value="404, _exmsg"/>

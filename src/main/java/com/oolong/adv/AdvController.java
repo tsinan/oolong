@@ -31,6 +31,7 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
 
 import com.oolong.platform.exception.DuplicationNameException;
+import com.oolong.platform.exception.FileValidateException;
 import com.oolong.platform.exception.InputValidateException;
 import com.oolong.platform.util.TextUtil;
 import com.oolong.platform.util.TimeUtil;
@@ -244,7 +245,7 @@ public class AdvController
 		advRepo.save(adv);
 
 		// 关联网站关系保存
-		if (adv.getWebsites() != null)
+		if (adv.getSpreadType().equals("accurate") && adv.getWebsites() != null)
 		{
 			for (String websiteId : adv.getWebsites())
 			{
@@ -255,7 +256,7 @@ public class AdvController
 		}
 
 		// 推送区域关系保存
-		if (adv.getAreas() != null)
+		if (adv.getScope().equals("area") && adv.getAreas() != null)
 		{
 			for (String areaId : adv.getAreas())
 			{
@@ -285,12 +286,37 @@ public class AdvController
 	Adv put(@PathVariable("id") long id, @Valid @RequestBody Adv adv)
 	{
 		adv.setId(id);
+		
+		// 校验广告订单名称不可重复
+		List<Adv> advExsitList = advRepo.findByAdvName(adv.getAdvName());
+		if(advExsitList.size() > 0 && advExsitList.get(0).getId() != id)
+		{
+			throw new DuplicationNameException("AdvName duplication.");
+		}
+
+		// 时间格式校验
+		Date startDate = TextUtil.parseDateFromInput(adv.getStartDate());
+		Date endDate = TextUtil.parseDateFromInput(adv.getEndDate());
+		if (startDate == null || endDate == null)
+		{
+			throw new InputValidateException("StartDate or EndDate is null.");
+		}
+		else if (startDate.after(endDate))
+		{
+			throw new InputValidateException("StartDate is later than EndDate.");
+		}
+		
 		adv.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		advRepo.save(adv);
 
+		addOrDeleteAdvWebsiteRelation(id, adv);
+		addOrDeleteAdvAreaRelation(id, adv);
+		
+		// 查询修改前推送区域
 		return adv;
 	}
 
+	
 	/**
 	 * 删除活动
 	 * 
@@ -367,7 +393,7 @@ public class AdvController
 		// 校验文件大小,最大10兆
 		if (multipartFile.getSize() > FILE_UPLOAD_SIZE_MAX)
 		{
-			throw new InputValidateException("广告文件超过最大容量限制：10M。");
+			throw new FileValidateException("广告文件超过最大容量限制：10M");
 		}
 
 		// 提取并校验文件名扩展
@@ -377,7 +403,7 @@ public class AdvController
 				|| !fileExtension.equalsIgnoreCase(FILE_UPLOAD_TYPE_ONLY))
 		{
 			// 文件名扩展有误
-			throw new InputValidateException("广告文件不是.zip格式");
+			throw new FileValidateException("广告文件不是.zip格式");
 		}
 
 		// 生成UUID新文件名字
@@ -402,6 +428,89 @@ public class AdvController
 
 		result.put("path", filePath);
 		return result;
+	}
+	
+
+	/**
+	 * 根据数据库记录和页面参数，计算需要新增和删除的关联网站，并进行数据库操作
+	 * 
+	 * @param id
+	 * @param adv
+	 */
+	private void addOrDeleteAdvWebsiteRelation(long id, Adv adv)
+	{
+		// 查询修改前关联网站
+		List<AdvWebsiteRelation> oldAwrList = new ArrayList<AdvWebsiteRelation>(awrRepo.findByAdvId(id));
+		// 新关联网站
+		List<AdvWebsiteRelation> newAwrList = new ArrayList<AdvWebsiteRelation>();
+		if (adv.getSpreadType().equals("accurate") && adv.getWebsites() != null)
+		{
+			for (String websiteId : adv.getWebsites())
+			{
+				AdvWebsiteRelation awr = new AdvWebsiteRelation(adv.getId(),
+						Long.valueOf(websiteId));
+				newAwrList.add(awr);
+			}
+		}
+
+		// 待新增关联网站=原有管理网站+修改后关联网站-原有关联网站
+		List<AdvWebsiteRelation> toAddAwrList = new ArrayList<AdvWebsiteRelation>(oldAwrList);
+		toAddAwrList.addAll(newAwrList);
+		toAddAwrList.removeAll(oldAwrList);
+		for(AdvWebsiteRelation advWebsite:toAddAwrList)
+		{
+			awrRepo.save(advWebsite);
+		}
+		
+		// 待删除关联网站=原有管理网站+修改后关联网站-修改后关联网站
+		List<AdvWebsiteRelation> toDeleteAwrList = new ArrayList<AdvWebsiteRelation>(oldAwrList);
+		toDeleteAwrList.addAll(newAwrList);
+		toDeleteAwrList.removeAll(newAwrList);
+		for(AdvWebsiteRelation advWebsite:toDeleteAwrList)
+		{
+			awrRepo.delete(advWebsite);
+		}
+	}
+
+	/**
+	 * 根据数据库记录和页面参数，计算需要新增和删除的关联区域，并进行数据库操作
+	 * 
+	 * @param id
+	 * @param adv
+	 */
+	private void addOrDeleteAdvAreaRelation(long id, Adv adv)
+	{
+		// 查询修改前关联区域
+		List<AdvAreaRelation> oldAarList = new ArrayList<AdvAreaRelation>(aarRepo.findByAdvId(id));
+		// 新关联区域
+		List<AdvAreaRelation> newAarList = new ArrayList<AdvAreaRelation>();
+		if (adv.getScope().equals("area") && adv.getAreas() != null)
+		{
+			for (String areaId : adv.getAreas())
+			{
+				AdvAreaRelation aar = new AdvAreaRelation(adv.getId(),
+						Long.valueOf(areaId));
+				newAarList.add(aar);
+			}
+		}
+
+		// 待新增关联区域=原有关联区域+修改后关联区域-原有关联区域
+		List<AdvAreaRelation> toAddAarList = new ArrayList<AdvAreaRelation>(oldAarList);
+		toAddAarList.addAll(newAarList);
+		toAddAarList.removeAll(oldAarList);
+		for(AdvAreaRelation advArea:toAddAarList)
+		{
+			aarRepo.save(advArea);
+		}
+		
+		// 待删除关联区域=原有关联区域+修改后关联区域-修改后关联区域
+		List<AdvAreaRelation> toDeleteAarList = new ArrayList<AdvAreaRelation>(oldAarList);
+		toDeleteAarList.addAll(newAarList);
+		toDeleteAarList.removeAll(newAarList);
+		for(AdvAreaRelation advArea:toDeleteAarList)
+		{
+			aarRepo.delete(advArea);
+		}
 	}
 
 	public void setAdvRepository(AdvRepository advRepo)

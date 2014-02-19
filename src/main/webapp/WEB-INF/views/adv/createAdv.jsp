@@ -339,18 +339,17 @@ $(function (){
 		forceParse: 0
     });
     
-    // 文件上传控件
-    $('input[id=trueAdvFile]').change(function() {
-		$('#advFileDisplay').val($(this).val());
-	});
-	
 	$('input[id=trueAdvFile]').fileupload({
 	 	dataType:	"json",
 	 	url:		"advs/advFiles",
 		done:		function(e,data){
-						alert(data.result.path);
 						$('#advFile').val(data.result.path);
-					}  
+						$('#advFile').trigger("change");
+						$('#advFileDisplay').val(data.result.path);
+					},
+		fail: 		function (e, data) {
+						alert(data.jqXHR.responseJSON.message+"。详细原因："+data.jqXHR.responseJSON.developerMessage);
+					}
 	});
 	
 	$('#advFileButton').click(function(){

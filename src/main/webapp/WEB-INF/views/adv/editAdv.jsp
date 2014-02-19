@@ -55,8 +55,7 @@
 									required
 									data-validation-required-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符"
             						data-validation-regex-regex="[\u4e00-\u9fa5a-zA-Z0-9_-]{2,30}" 
-        							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" 
-        							data-validation-ajax-ajax="advs/checkNameIfDup">
+        							data-validation-regex-message="支持中文字符、英文字符、数字、英文括号、中划线（-）或下划线（_），可以输入2至30个字符" >
             					<p class="help-block"></p>
           					</div>
 						</div>
@@ -349,8 +348,12 @@ $(function (){
 	 	url:		"advs/advFiles",
 		done:		function(e,data){
 						$('#advFile').val(data.result.path);
+						$('#advFile').trigger("change");
 						$('#advFileDisplay').val(data.result.path);
-					}  
+					},
+		fail: 		function (e, data) {
+						alert(data.jqXHR.responseJSON.message+"。详细原因："+data.jqXHR.responseJSON.developerMessage);
+					}
 	});
 	
 	$('#advFileButton').click(function(){

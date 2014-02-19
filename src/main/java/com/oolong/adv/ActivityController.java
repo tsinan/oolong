@@ -113,6 +113,12 @@ public class ActivityController
 			list = activityRepo.findAll(pageable).getContent();
 			count = activityRepo.count();
 		}
+		
+		// 查询各个广告活动的广告订单数量
+		for(Activity acti:list)
+		{
+			acti.setAdvCount(advRepo.countByActivityId(acti.getId()));
+		}
 
 		// 查询并返回结果
 		Map<String, Object> result = new HashMap<String, Object>();
@@ -191,6 +197,16 @@ public class ActivityController
 			@Valid @RequestBody Activity activity)
 	{
 		activity.setId(id);
+		
+		// 校验活动名称不可重复
+		List<Activity> activities = activityRepo
+				.findByActivityName(activity.getActivityName());
+		if (activities.size() >= 0
+				&& activities.get(0).getId() != id)
+		{
+			throw new DuplicationNameException("ActivityName duplication.");
+		}
+				
 		activity.setLastUpdateTime(TimeUtil.getServerTimeSecond());
 		activityRepo.save(activity);
 

@@ -3,6 +3,7 @@ function controlNav()
 {
 	// 分析URL，控制nav_top和nav_left
 	var path = location.pathname;
+	
 	controlAdvNav(path);
 	controlResourceNav(path);
 	
