@@ -161,15 +161,11 @@ public class ActivityController
 	Activity create(@Valid @RequestBody Activity activity,
 			HttpServletResponse reponse)
 	{
-		// TODO 根据时间和随机数生成活动编码，需要编码吗？
-
 		// 校验活动名称不可重复
 		if (activityRepo.findByActivityName(activity.getActivityName()).size() > 0)
 		{
 			throw new DuplicationNameException("ActivityName duplication.");
 		}
-
-		// TODO 活动总数不超过限制，按公司还是按管理员？
 
 		// 存入数据库
 		activity.setCreateTime(TimeUtil.getServerTimeSecond());

@@ -91,8 +91,7 @@ $(function (){
 	
 	// 查询当前配置
 	var globalConfigId = 1;
-	$.get('globalConfig/'+globalConfigId, 
-			null, 
+	syncGet('globalConfig/'+globalConfigId, 
 			function(globalConfig){
 				// 加载数据到表单
 				globalConfigId = globalConfig.id;
@@ -107,8 +106,7 @@ $(function (){
 					$("#pushTimesPerDay").val(1440);
 				}
 				
-			}, 
-			"json");
+			});
 
 	// 注册校验器
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({

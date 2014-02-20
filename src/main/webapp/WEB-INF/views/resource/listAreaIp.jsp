@@ -128,27 +128,8 @@
   	
   	<%@ include file="../include/include_bottom.jsp" %>
 	
-	<!-- Response Dialog -->
-	<div class="modal fade" id="deleteDialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-		        	<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  -->
-		        	<h4 class="modal-title"></h4>
-		      	</div>
-      			<div class="modal-body">
-        			<p>将要被删除的信息：</p>
-        			<ul>
-        			</ul>
-                	
-      			</div>
-				<div class="modal-footer">
-		        	<a id="confirmDelete" href="#" class="btn btn-default btn-sm" role="button">确认</a>
-                	<a id="giveupDelete" href="#" class="btn btn-default btn-sm" role="button">放弃</a>
-		      	</div>
-    		</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-	</div><!-- end of Response Dialog -->
+	<%@ include file="../include/include_deleteDialog.jsp" %>
+	
 	
 <%@ include file="../include/include_js.jsp" %>
 <script type="text/javascript" src="resources/plugin/jqBootstrapValidation.js"></script>
@@ -173,12 +154,11 @@ $(function (){
 	});
 	
 	// 加载待修改的活动信息
-	$.get('areas/'+editId, null, 
+	syncGet('areas/'+editId, 
 			function(area){
 				// 加载数据到表单
 				$("#areaName").text(area.areaName);
-			}, 
-			"json");
+			});
 	
 	// 注册校验器
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
@@ -348,6 +328,8 @@ function openDelDialog(id, areaIp, areaId)
 		
 	// 显示活动名称和详细信息
 	$('#deleteDialog .modal-title').text("请确认是否删除？");
+	$('#deleteDialog .modal-title').addClass("text-warning");
+	$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
 	$('#deleteDialog .modal-body ul').html("<li>区域IP地址段："+areaIp+"</li>");
 
 	// 绑定confirmDelete按钮的click事件
@@ -391,7 +373,8 @@ function openBatchDelDialog(areaId)
 	{
 		// 显示活动名称和详细信息
 		$('#deleteDialog .modal-title').text("请确认是否删除下列区域IP地址段？");
-
+		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
+		
 		var nameDisplay = "";
 		for(idx in batchNames){
 			 nameDisplay = nameDisplay + "<li>"+batchNames[idx]+"</li>";

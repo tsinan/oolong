@@ -383,8 +383,7 @@ $(function (){
 	});
 	
 	// 加载待修改的活动信息
-	$.get('advs/'+editId, 
-			null, 
+	syncGet('advs/'+editId, 
 			function(adv){
 				// 加载数据到表单
 				$("#advName").val(adv.advName);
@@ -445,8 +444,7 @@ $(function (){
 				}
 				
 				$("#description").val(adv.description);
-			}, 
-			"json");
+			});
     
 	// 注册校验器
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
@@ -583,8 +581,7 @@ function sendRequest(editId, data){
 // 加载广告活动
 function loadActivities()
 {
-	$.get("activities?sortColumn=activityName&sortOrder=ASC", 
-			null, 
+	syncGet("activities?sortColumn=activityName&sortOrder=ASC", 
 			function(activites){
 				// 加载数据到表单
 				var array = activites.currentPage;
@@ -607,15 +604,13 @@ function loadActivities()
 					return;
 				}
 				
-			}, 
-			"json");
+			});
 }
 
 // 加载关联网站
 function loadWebsites()
 {
-	$.get("websites?sortColumn=websiteName&sortOrder=ASC", 
-			null, 
+	syncGet("websites?sortColumn=websiteName&sortOrder=ASC", 
 			function(websites){
 				// 加载数据到表单
 				var array = websites.currentPage;
@@ -648,15 +643,13 @@ function loadWebsites()
 					return;
 				}
 				
-			}, 
-			"json");
+			});
 }
 
 // 加载区域
 function loadAreas()
 {
-	$.get("areas?sortColumn=areaName&sortOrder=ASC", 
-			null, 
+	syncGet("areas?sortColumn=areaName&sortOrder=ASC", 
 			function(areas){
 				// 加载数据到表单
 				var array = areas.currentPage;
@@ -688,8 +681,7 @@ function loadAreas()
 					return;
 				}
 				
-			}, 
-			"json");
+			});
 }
 
 // 广告物料类型切换

@@ -248,3 +248,14 @@ function formatTimeSecond(updateTime)
 	
 	return updateTimeText;
 }
+
+// 同步Get
+function syncGet(url,callback)
+{
+	$.ajax({
+		async	:	false,
+	  	url		:	url,
+	  	dataType: 	"json",	  	
+	  	success	: 	callback
+	});
+}

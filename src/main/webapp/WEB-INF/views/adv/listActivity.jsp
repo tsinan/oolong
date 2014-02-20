@@ -54,27 +54,8 @@
   	
 	<%@ include file="../include/include_bottom.jsp" %>
 
-	<!-- Response Dialog -->
-	<div class="modal fade" id="deleteDialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-		        	<!-- <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>  -->
-		        	<h4 class="modal-title"></h4>
-		      	</div>
-      			<div class="modal-body">
-        			<p>将要被删除的信息：</p>
-        			<ul>
-        			</ul>
-                	
-      			</div>
-				<div class="modal-footer">
-		        	<a id="confirmDelete" href="#" class="btn btn-default btn-sm" role="button">确认</a>
-                	<a id="giveupDelete" href="#" class="btn btn-default btn-sm" role="button">放弃</a>
-		      	</div>
-    		</div><!-- /.modal-content -->
-  		</div><!-- /.modal-dialog -->
-	</div><!-- end of Response Dialog -->
+	<%@ include file="../include/include_deleteDialog.jsp" %>
+
 
 <%@ include file="../include/include_js.jsp" %>
 <script type="text/javascript" src="resources/plugin/handlebars-1.0.rc.1.js"></script>
@@ -140,7 +121,7 @@ $(function(){
 			"<th><input type='checkbox' id='c_all'></th>"
 		],
         cellTemplates: [
-        	"<input type='checkbox' name='{{activityName}}' id='{{id}}'>",
+        	"<input type='checkbox' name='{{activityName}}' id='{{id}}_{{advCount}}'>",
 	        "{{activityName}}",
 	        "{{advCount}}",
 	        "{{company}}",
@@ -149,10 +130,10 @@ $(function(){
 	        			"style='margin-right:15px'>修改</a> "+
 	        "<a href='#' style='margin-right:15px' "+
 	        			"onclick='return openDelDialog({{id}},"+
-	        			"\"{{activityName}}\",\"{{company}}\","+
+	        			"\"{{activityName}}\",{{advCount}},\"{{company}}\","+
 	        			"\"{{linkman}}\",\"{{linkmanPhone}}\");' "+
 	        			">删除</a>"+
-	        "<a href='#' style='margin-right:15px'>创建广告订单</a>"
+	        "<a href='advs/createPage?activityId={{id}}' style='margin-right:15px'>创建广告订单</a>"
 	    ],
         dataUrl: "activities?query="+query
     });
@@ -220,21 +201,43 @@ $(function(){
 });
 
 // 打开删除对话框
-function openDelDialog(id, activityName, company, linkman, linkmanPhone)
+function openDelDialog(id, activityName, advCount, company, linkman, linkmanPhone)
 {
-	// 显示活动名称和详细信息
-	$('#deleteDialog .modal-title').text("请确认是否删除活动 "+activityName+"？");
-	$('#deleteDialog .modal-body ul').html("<li>公司："+company+"</li>"+
-		"<li>联系人："+linkman+"</li>"+
-		"<li>联系电话："+linkmanPhone+"</li>");
-
-	// 绑定confirmDelete按钮的click事件
-	$("#confirmDelete").click(function(){
-		sendConfirmDelete(id);
-		$("#confirmDelete").unbind('click'); //解除绑定
-		return false;
-	}); 		
-
+	if(advCount > 0)
+	{
+		// 显示活动名称和详细信息
+		$('#deleteDialog .modal-title').text("活动 "+activityName+" 无法删除，请先删除相关广告。");
+		$('#deleteDialog .modal-title').removeClass("text-warning").addClass("text-danger");
+		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
+		$('#deleteDialog .modal-body ul').html("<li>广告数量："+advCount+"</li>"+
+			"<li>公司："+company+"</li>"+
+			"<li>联系人："+linkman+"</li>"+
+			"<li>联系电话："+linkmanPhone+"</li>");
+			
+		//隐藏确认按钮
+		$("#confirmDelete").addClass("disabled");
+	}
+	else
+	{
+		// 显示活动名称和详细信息
+		$('#deleteDialog .modal-title').text("请确认是否删除活动 "+activityName+"？");
+		$('#deleteDialog .modal-title').removeClass("text-danger").addClass("text-warning");
+		$('#deleteDialog .modal-body ul').html("<li>广告数量："+advCount+"</li>"+
+			"<li>公司："+company+"</li>"+
+			"<li>联系人："+linkman+"</li>"+
+			"<li>联系电话："+linkmanPhone+"</li>");
+	
+		// 删除可能存在的disabled样式
+		$("#confirmDelete").removeClass("disabled");
+	
+		// 绑定confirmDelete按钮的click事件
+		$("#confirmDelete").click(function(){
+			sendConfirmDelete(id);
+			$("#confirmDelete").unbind('click'); //解除绑定
+			return false;
+		});
+	}
+	
 	// 显示对话框
 	$('#deleteDialog').modal({
             		backdrop: 'static',
@@ -249,10 +252,12 @@ function openBatchDelDialog()
 	// 获取选中的ID数组
 	var batchIds = new Array();
 	var batchNames = new Array();
+	var batchAdvCounts = new Array();
 	var index = 0;
 	$('td input').each(function(){
 		if(this.checked == true){
-			batchIds[index] = this.id;
+			batchIds[index] = this.id.split('_')[0];
+			batchAdvCounts[index] = this.id.split('_')[1];
 			batchNames[index] = this.name;
 			index++;
 		}
@@ -268,11 +273,21 @@ function openBatchDelDialog()
 	{
 		// 显示活动名称和详细信息
 		$('#deleteDialog .modal-title').text("请确认是否删除下列活动？");
-
+		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
+		
 		var nameDisplay = "";
-		for(idx in batchNames){
-			 nameDisplay = nameDisplay + "<li>"+batchNames[idx]+"</li>";
+		for(idx in batchNames)
+		{
+			if(batchAdvCounts[idx] == 0)
+			{
+				nameDisplay = nameDisplay + "<li>"+batchNames[idx]+"</li>";
+			}
+			else
+			{
+				nameDisplay = nameDisplay + "<li>无法删除："+batchNames[idx]+"（广告订单数量："+batchAdvCounts[idx]+"）</li>";
+			}
 		}
+		
 		$('#deleteDialog .modal-body ul').html(nameDisplay);
 		
 		// 绑定confirmDelete按钮的click事件

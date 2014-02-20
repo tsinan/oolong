@@ -120,8 +120,7 @@ $(function (){
 	});
 
 	// 加载待修改的活动信息
-	$.get('activities/'+editId, 
-			null, 
+	syncGet('activities/'+editId, 
 			function(activity){
 				// 加载数据到表单
 				$("#company").val(activity.company);
@@ -129,8 +128,7 @@ $(function (){
 				$("#linkman").val(activity.linkman);
 				$("#linkmanPhone").val(activity.linkmanPhone);
 				$("#description").val(activity.description);
-			}, 
-			"json");
+			});
 
 	// 注册校验器
 	$("input,select,textarea").not("[type=submit]").jqBootstrapValidation({
