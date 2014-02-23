@@ -101,7 +101,7 @@ $(function (){
 
 	// 注册页面返回按钮事件
 	$("#returnToListBtn").click(function(){
-		window.location = "websites/listPage?paging="+paging+"&query="+query;
+		window.location = "<%=contextPath%>/websites/listPage?paging="+paging+"&query="+query;
 	});
 
 	// 加载待修改的活动信息
