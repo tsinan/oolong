@@ -94,7 +94,7 @@ $(function (){
 	var param = location.search.split("&");
 	var editId = param[0].split("=")[1];
 	var paging = param[1].split("=")[1];
-	var query = param[2].split("=")[1]
+	var query = param[2].split("=")[1];
 
 	// 设置ajax校验URL
 	$("#areaName").attr("data-validation-ajax-ajax","areas/checkNameIfDup?exceptId="+editId);

@@ -188,7 +188,7 @@ $(function (){
 	        			"onclick='return openDelDialog({{id}},\"{{url}}\",{{websiteId}});' "+
 	        			">删除</a>"
 	    ],
-    	dataUrl: "websites/"+editId+"/websiteUrls?query="+urlQuery
+    	dataUrl: "websites/"+editId+"/websiteUrls?urlQuery="+urlQuery
     	
     });
     
@@ -237,9 +237,8 @@ $(function (){
 		closeAlertBar();
 				
 		// 替换原有查询字符串
-		// TODO 需要考虑对查询字符串编码
-		urlQuery = $("#queryByWebsiteUrl").val();	
-		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?query="+urlQuery);
+		urlQuery = encodeURIComponent(encodeURIComponent($("#queryByWebsiteUrl").val()));	
+		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?urlQuery="+urlQuery);
 		return false;
 	});
 	
@@ -251,7 +250,7 @@ $(function (){
 		// 清空查询字符串
 		$("#queryByWebsiteUrl").val("");
 		urlQuery = "";
-		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?query="+urlQuery);
+		$("#websiteUrlGrid").simplePagingGrid("refresh","websites/"+editId+"/websiteUrls?urlQuery="+urlQuery);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");

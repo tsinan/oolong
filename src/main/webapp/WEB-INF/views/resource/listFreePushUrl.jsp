@@ -156,7 +156,7 @@ $(function (){
 	        			"onclick='return openDelDialog({{id}},\"{{url}}\");' "+
 	        			">删除</a>"
 	    ],
-    	dataUrl: "freePushUrls?query="+urlQuery
+    	dataUrl: "freePushUrls?urlQuery="+urlQuery
     	
     });
     
@@ -205,9 +205,8 @@ $(function (){
 		closeAlertBar();
 				
 		// 替换原有查询字符串
-		// TODO 需要考虑对查询字符串编码
-		urlQuery = $("#queryByFreePushUrl").val();	
-		$("#freePushUrlGrid").simplePagingGrid("refresh","freePushUrls?query="+urlQuery);
+		urlQuery = encodeURIComponent(encodeURIComponent($("#queryByFreePushUrl").val()));	
+		$("#freePushUrlGrid").simplePagingGrid("refresh","freePushUrls?urlQuery="+urlQuery);
 		return false;
 	});
 	
@@ -219,7 +218,7 @@ $(function (){
 		// 清空查询字符串
 		$("#queryByFreePushUrl").val("");
 		urlQuery = "";
-		$("#freePushUrlGrid").simplePagingGrid("refresh","freePushUrls?query="+urlQuery);
+		$("#freePushUrlGrid").simplePagingGrid("refresh","freePushUrls?urlQuery="+urlQuery);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");

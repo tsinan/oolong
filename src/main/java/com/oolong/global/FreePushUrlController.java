@@ -62,7 +62,7 @@ public class FreePushUrlController
 	/**
 	 * 查询免推送地址列表
 	 * 
-	 * @param query 查询条件
+	 * @param urlQuery 查询条件
 	 * @param page 当前页数
 	 * @param pageSize 每页记录数
 	 * @param sortColumn 排序字段
@@ -73,7 +73,7 @@ public class FreePushUrlController
 	@ResponseStatus(value = HttpStatus.OK)
 	@Transactional
 	public @ResponseBody
-	Map<String, Object> list(@RequestParam(required = false) String query,
+	Map<String, Object> list(@RequestParam(required = false) String urlQuery,
 			@RequestParam(required = false) Integer page,
 			@RequestParam(required = false) Integer pageSize,
 			@RequestParam(required = false) String sortColumn,
@@ -83,7 +83,7 @@ public class FreePushUrlController
 		Pageable pageable = TextUtil.parsePageableObj(page, pageSize,
 				sortOrder, sortColumn, "url");
 
-		String urlLike = TextUtil.buildLikeText(query);
+		String urlLike = TextUtil.buildLikeText(urlQuery);
 		
 		// 查询
 		List<FreePushUrl> list = null;
@@ -103,11 +103,6 @@ public class FreePushUrlController
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("currentPage", list);
 		result.put("totalRows", Long.valueOf(count));
-
-		// 将分页和查询条件放入结果集
-		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
-				+ sortOrder);
-		result.put("query", query);
 
 		return result;
 	}

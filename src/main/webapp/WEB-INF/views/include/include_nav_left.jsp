@@ -91,5 +91,25 @@
 	</div>
 	<!-- TODO 查询网站地址 -->
 	
+	<div id="panelAdmin" class="panel panel-default">	<!-- 系统管理 -->
+    	<div class="panel-heading">
+      	<h4 class="panel-title">
+        	<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseSix">
+          	系统管理
+        	</a>
+      	</h4>
+    	</div>
+	    <div id="collapseSix" class="panel-collapse collapse">
+	      	<div class="panel-body" style="padding:5px">
+	      	<ul class="nav nav-pills nav-stacked">
+				<li id="leftNav_modifyPwd"><a href=".">修改密码</a></li>
+				<li id="leftNav_newUser"><a href=".">添加用户</a></li>
+				<li id="leftNav_viewUser"><a href=".">查看用户</a></li>
+				<li id="leftNav_newUserGroup"><a href=".">添加用户组</a></li>
+				<li id="leftNav_viewUserGroup"><a href=".">查看用户组</a></li>
+			</ul>
+	      	</div>
+	    </div>
+	</div>
 	
 </div>	<!-- end of left nav -->

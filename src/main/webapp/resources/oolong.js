@@ -6,7 +6,7 @@ function controlNav()
 	
 	controlAdvNav(path);
 	controlResourceNav(path);
-	
+	controlAdminNav(path);
 }	
 
 function controlAdvNav(path)
@@ -200,6 +200,27 @@ function controlResourceNav(path)
 		
 		$(".panel-group .panel-collapse li").removeClass("active");	
 		$("#leftNav_viewWebsite").addClass("active");
+	}
+}
+
+function controlAdminNav(path)
+{
+	// 推送间隔配置
+	if(path.indexOf('/admin') >= 0)
+	{
+		// 顶部导航设置
+		$(".navbar-fixed-top .navbar-nav li").removeClass("active");
+		$("#topNav_admin").addClass("active");
+		
+		// 左侧导航panel设置
+		$(".panel-group .panel").addClass("collapse");
+		$("#panelAdmin").removeClass("collapse");
+		
+		$(".panel-group .panel-collapse").removeClass("in");
+		$("#panelAdmin .panel-collapse").addClass("in");
+		
+		$(".panel-group .panel-collapse li").removeClass("active");	
+		$("#leftNav_viewUser").addClass("active");
 	}
 }
 

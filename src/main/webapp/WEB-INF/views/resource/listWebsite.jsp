@@ -97,8 +97,8 @@ $(function(){
 			$("#queryBar").css("display","block");
 			$("#queryButton").addClass("active");
 			
-			// 清空查询字符串
-			$("#queryByWebsiteName").val(query);
+			// 设置查询字符串
+			$("#queryByWebsiteName").val(decodeURIComponent(decodeURIComponent(query)));
 		}
 		
 	}
@@ -176,8 +176,7 @@ $(function(){
 	// 查询
 	$("#doQueryWebsite").click(function(){
 		// 替换原有查询字符串
-		// TODO 需要考虑对查询字符串编码
-		query = $("#queryByWebsiteName").val();	
+		query = encodeURIComponent(encodeURIComponent($("#queryByWebsiteName").val()));	
 		$("#websiteGrid").simplePagingGrid("refresh","websites?query="+query);
 		
 

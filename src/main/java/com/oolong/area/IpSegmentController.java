@@ -63,7 +63,7 @@ public class IpSegmentController
 	/**
 	 * 查询IP地址段列表
 	 * 
-	 * @param query 查询条件
+	 * @param ipQuery 查询条件
 	 * @param page 当前页数
 	 * @param pageSize 每页记录数
 	 * @param sortColumn 排序字段
@@ -75,7 +75,7 @@ public class IpSegmentController
 	@Transactional
 	public @ResponseBody
 	Map<String, Object> list(@PathVariable("id") long areaId,
-			@RequestParam(required = false) String query,
+			@RequestParam(required = false) String ipQuery,
 			@RequestParam(required = false) Integer page,
 			@RequestParam(required = false) Integer pageSize,
 			@RequestParam(required = false) String sortColumn,
@@ -86,9 +86,9 @@ public class IpSegmentController
 				sortOrder, sortColumn, "ipStart");
 
 		long queryIp = 0;
-		if (query != null && query.length() > 0)
+		if (ipQuery != null && ipQuery.length() > 0)
 		{
-			queryIp = IpUtil.convertIpAddressFromText(query);
+			queryIp = IpUtil.convertIpAddressFromText(ipQuery);
 		}
 
 		// 查询
@@ -110,11 +110,6 @@ public class IpSegmentController
 		Map<String, Object> result = new HashMap<String, Object>();
 		result.put("currentPage", list);
 		result.put("totalRows", Long.valueOf(count));
-
-		// 将分页和查询条件放入结果集
-		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
-				+ sortOrder);
-		result.put("query", query);
 
 		return result;
 	}

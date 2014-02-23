@@ -204,7 +204,7 @@ $(function (){
 	        			"onclick='return openDelDialog({{id}},\"{{ipStartText}}/{{maskLength}}\",{{areaId}});' "+
 	        			">删除</a>"
 	    ],
-    	dataUrl: "areas/"+editId+"/areaIps?query="+ipQuery
+    	dataUrl: "areas/"+editId+"/areaIps?ipQuery="+ipQuery
     	
     });
     
@@ -253,9 +253,8 @@ $(function (){
 		closeAlertBar();
 				
 		// 替换原有查询字符串
-		// TODO 需要考虑对查询字符串编码
 		ipQuery = $("#queryByAreaIp").val();	
-		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?query="+ipQuery);
+		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?ipQuery="+ipQuery);
 		return false;
 	});
 	
@@ -267,7 +266,7 @@ $(function (){
 		// 清空查询字符串
 		$("#queryByAreaIp").val("");
 		ipQuery = "";
-		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?query="+ipQuery);
+		$("#areaIpGrid").simplePagingGrid("refresh","areas/"+editId+"/areaIps?ipQuery="+ipQuery);
 		
 		// 关闭查询区域
 		$("#queryBar").css("display","none");

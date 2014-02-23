@@ -641,7 +641,7 @@
 		            validator.lastFinished = false;
 		            $.ajax({
 		              url: validator.url, 
-		              data: "value=" + value + "&field=" + $this.attr("name"),
+		              data: "value=" + encodeURIComponent(encodeURIComponent(value)) + "&field=" + $this.attr("name"),   // add encode by liumeng
 		              dataType: "json",
 		              success: function (data) {
 		                if (""+validator.lastValue === ""+data.value) {

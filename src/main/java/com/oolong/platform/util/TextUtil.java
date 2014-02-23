@@ -1,6 +1,8 @@
 package com.oolong.platform.util;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -28,22 +30,61 @@ public class TextUtil
 		{
 			return "";
 		}
+		
+		return decodeURIComposite(inputText).trim();
 
-		String result = "";
+//		String result = "";
+//		try
+//		{
+//			result = new String(inputText.getBytes("iso-8859-1"), "utf-8");
+//		}
+//		catch (UnsupportedEncodingException e)
+//		{
+//			// do nothing...
+//		}
+//		return result.trim();
+	}
+	
+	public static String encodeURIComposite(String toEncode)
+	{
+		String encoded = "";
+		if(toEncode == null || toEncode.length() == 0)
+		{
+			return encoded;
+		}
+		
 		try
 		{
-			result = new String(inputText.getBytes("iso-8859-1"), "utf-8");
+			encoded = URLEncoder.encode(toEncode, "UTF-8");
 		}
 		catch (UnsupportedEncodingException e)
 		{
-			// do nothing...
 		}
-		return result.trim();
+		return encoded.trim();
+	}
+	
+	public static String decodeURIComposite(String toDecode)
+	{
+		String decoded = "";
+		if(toDecode == null || toDecode.length() ==0)
+		{
+			return decoded;
+		}
+		
+		try
+		{
+			decoded = URLDecoder.decode(toDecode, "UTF-8");
+		}
+		catch (UnsupportedEncodingException e)
+		{
+		}
+		return decoded.trim();
 	}
 
 	public static String buildLikeText(String inputText)
 	{
-		String parsedText = parseTextFromInput(inputText);
+		// 在页面encode两次，容器默认进行一次decode，所以此处只decode一次即可
+		String parsedText = decodeURIComposite(inputText);
 		if (parsedText.length() > 0)
 		{
 			return "%" + parsedText + "%";

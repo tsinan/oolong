@@ -128,7 +128,8 @@ public class ActivityController
 		// 将分页和查询条件放入结果集
 		result.put("paging", page + "|" + pageSize + "|" + sortColumn + "|"
 				+ sortOrder);
-		result.put("query", query);
+		// 页面传递参数encode两次，因容器进行了一次decode，此处需要encode一次发到页面
+		result.put("query", TextUtil.encodeURIComposite(query));	
 		return result;
 	}
 
