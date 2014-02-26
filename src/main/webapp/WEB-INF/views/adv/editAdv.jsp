@@ -375,7 +375,9 @@ $(function (){
 	
 	$('#advFileDownLoadButton').click(function(){
 		var filePath = $('#advFile').val();
-		alert("下载广告素材"+filePath);
+		var downloadUrl = "<%=contextPath%>/advs/advFiles?filePath="+encodeURIComponent(encodeURIComponent(filePath));
+		alert(" "+downloadUrl);
+		window.open(downloadUrl);
 	});
 	
 	// 提取URL查询参数

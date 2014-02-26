@@ -1,7 +1,9 @@
 package com.oolong.adv;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -9,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -55,6 +58,9 @@ public class AdvController
 	private static final int FILE_UPLOAD_SIZE_MAX = 10240000;
 
 	private static final String FILE_UPLOAD_TYPE_ONLY = ".zip";
+
+	private static final int FILE_DOWNLOAD_BUFFER_SIZE = 4096;
+			
 
 	@Autowired
 	private AdvRepository advRepo;
@@ -426,7 +432,9 @@ public class AdvController
 		String newFilename = newFilenameBase + fileExtension;
 
 		// 写入指定目录
-		String filePath = FILE_UPLOAD_DIRECTRY + "/" + newFilename;
+		String filePath = FILE_UPLOAD_DIRECTRY 
+						+ System.getProperty("file.separator")
+						+ newFilename;
 		File newFile = new File(filePath);
 		try
 		{
@@ -443,6 +451,53 @@ public class AdvController
 
 		result.put("path", filePath);
 		return result;
+	}
+	
+	@RequestMapping(value = "/advFiles", method = RequestMethod.GET)
+	public void download(@RequestParam("filePath") String filePath, 
+			HttpServletRequest request,
+			HttpServletResponse response) throws IOException 
+	{
+		// get absolute path of the application
+		ServletContext context = request.getSession().getServletContext();
+
+		// construct the complete absolute path of the file
+		String fullPath = TextUtil.decodeURIComposite(filePath);		
+		File downloadFile = new File(fullPath);
+		FileInputStream inputStream = new FileInputStream(downloadFile);
+		
+		// get MIME type of the file
+		String mimeType = context.getMimeType(fullPath);
+		if (mimeType == null) 
+		{
+			// set to binary type if MIME mapping not found
+			mimeType = "application/octet-stream";
+		}
+
+		// set content attributes for the response
+		response.setContentType(mimeType);
+		response.setContentLength((int) downloadFile.length());
+
+		// set headers for the response
+		String headerKey = "Content-Disposition";
+		String headerValue = String.format("attachment; filename=\"%s\"",
+				downloadFile.getName());
+		response.setHeader(headerKey, headerValue);
+
+		// get output stream of the response
+		OutputStream outStream = response.getOutputStream();
+
+		byte[] buffer = new byte[FILE_DOWNLOAD_BUFFER_SIZE];
+		int bytesRead = -1;
+
+		// write bytes read from the input stream into the output stream
+		while ((bytesRead = inputStream.read(buffer)) != -1) 
+		{
+			outStream.write(buffer, 0, bytesRead);
+		}
+
+		inputStream.close();
+		outStream.close();
 	}
 	
 
