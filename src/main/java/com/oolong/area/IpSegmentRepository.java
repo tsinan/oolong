@@ -33,6 +33,6 @@ public interface IpSegmentRepository extends JpaRepository<IpSegment, Long>
 	void batchDelete(List<Long> ids);
 
 	@Modifying
-	@Query("delete from IpSegment i where i.areaId in ( ?1 )")
-	void deleteIpSegmentsByAreaId(List<Long> areaIds);
+	@Query("delete from IpSegment i where i.areaId=?1")
+	void deleteByAreaId(Long areaId);
 }

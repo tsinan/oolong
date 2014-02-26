@@ -1,6 +1,5 @@
 package com.oolong.area;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.oolong.adv.AdvAreaRelationRepository;
 import com.oolong.platform.exception.DuplicationNameException;
 import com.oolong.platform.util.TextUtil;
 import com.oolong.platform.util.TimeUtil;
@@ -48,6 +48,10 @@ public class AreaController
 	
 	@Autowired
 	private IpSegmentRepository ipSegmentRepo;
+	
+	@Autowired
+	private AdvAreaRelationRepository aarRepo;
+
 
 
 	/******************************************************
@@ -114,11 +118,15 @@ public class AreaController
 			count = areaRepo.count();
 		}
 
-		// 查找IP段数量
 		 for(Area area:list)
 		 {
+			 // 查找IP段数量
 			 long ipCount = ipSegmentRepo.countByAreaId(area.getId());
 			 area.setIpCount(ipCount);
+			 
+			 // 查询关联广告数量
+			 long advRelationCount = aarRepo.countByAreaId(area.getId());
+			 area.setAdvRelationCount(advRelationCount);
 		 }
 
 		// 查询并返回结果
@@ -208,16 +216,20 @@ public class AreaController
 	@Transactional
 	public void delete(@PathVariable("ids") String idString)
 	{
-		List<Long> idArry = new ArrayList<Long>();
-
 		String[] ids = idString.split(",");
 		for (String id : ids)
 		{
-			idArry.add(Long.valueOf(id));
+			long toDelete = Long.valueOf(id);
+			
+			// 检查是否有广告，有广告的活动，不能删除
+			long advCount = aarRepo.countByAreaId(toDelete);
+			if(advCount == 0)
+			{
+				ipSegmentRepo.deleteByAreaId(toDelete);
+				areaRepo.delete(toDelete);
+			}
 		}
 
-		areaRepo.batchDelete(idArry);
-		ipSegmentRepo.deleteIpSegmentsByAreaId(idArry);
 	}
 
 	/**
@@ -265,4 +277,11 @@ public class AreaController
 	{
 		this.ipSegmentRepo = ipSegmentRepo;
 	}
+
+	public void setAarRepo(AdvAreaRelationRepository aarRepo)
+	{
+		this.aarRepo = aarRepo;
+	}
+	
+	
 }

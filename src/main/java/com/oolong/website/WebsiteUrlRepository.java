@@ -31,6 +31,6 @@ public interface WebsiteUrlRepository extends JpaRepository<WebsiteUrl,Long>
 	void batchDelete(List<Long> ids);
 	
 	@Modifying
-	@Query("delete from WebsiteUrl u where u.websiteId in ( ?1 )")
-	void deleteUrlsByWebsiteId(List<Long> websiteIds);
+	@Query("delete from WebsiteUrl u where u.websiteId=?1")
+	void deleteByWebsiteId(Long websiteId);
 }

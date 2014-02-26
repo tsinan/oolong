@@ -1,6 +1,5 @@
 package com.oolong.website;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.oolong.adv.AdvWebsiteRelationRepository;
 import com.oolong.platform.exception.DuplicationNameException;
 import com.oolong.platform.util.TextUtil;
 import com.oolong.platform.util.TimeUtil;
@@ -48,6 +48,9 @@ public class WebsiteController
 
 	@Autowired
 	private WebsiteUrlRepository websiteUrlRepo;
+	
+	@Autowired
+	private AdvWebsiteRelationRepository awrRepo;
 
 	/******************************************************
 	 * 页面跳转
@@ -114,11 +117,15 @@ public class WebsiteController
 			count = websiteRepo.count();
 		}
 
-		// 查找URL数量
 		for (Website website : list)
 		{
+			// 查找URL数量
 			long urlCount = websiteUrlRepo.countByWebsiteId(website.getId());
 			website.setUrlCount(urlCount);
+			
+			// 查找关联的广告数量
+			long advRelationCount = awrRepo.countByWebsiteId(website.getId());
+			website.setAdvRelationCount(advRelationCount);
 		}
 
 		// 查询并返回结果
@@ -209,16 +216,19 @@ public class WebsiteController
 	@Transactional
 	public void delete(@PathVariable("ids") String idString)
 	{
-		List<Long> idArry = new ArrayList<Long>();
-
 		String[] ids = idString.split(",");
 		for (String id : ids)
 		{
-			idArry.add(Long.valueOf(id));
-		}
+			long toDelete = Long.valueOf(id);
 
-		websiteUrlRepo.deleteUrlsByWebsiteId(idArry);
-		websiteRepo.batchDelete(idArry);
+			// 检查是否有广告，有广告的活动，不能删除
+			long advCount = awrRepo.countByWebsiteId(toDelete);
+			if(advCount == 0)
+			{
+				websiteUrlRepo.deleteByWebsiteId(toDelete);
+				websiteRepo.delete(toDelete);
+			}
+		}
 	}
 
 	/**
@@ -267,4 +277,10 @@ public class WebsiteController
 		this.websiteUrlRepo = websiteUrlRepo;
 	}
 
+	public void setAwrRepo(AdvWebsiteRelationRepository awrRepo)
+	{
+		this.awrRepo = awrRepo;
+	}
+
+	
 }

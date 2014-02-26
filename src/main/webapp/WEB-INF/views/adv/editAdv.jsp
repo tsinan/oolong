@@ -30,14 +30,24 @@
 					
 						<div class="alert alert-success alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>添加成功！</strong> 
+						 	<strong>修改成功！</strong> 
 						</div>
 						
 						<div class="alert alert-warning alert-dismissable" style="padding-top:5px;padding-bottom:5px;display:none">
 						 	<button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-						 	<strong>添加失败！</strong> 
+						 	<strong>修改失败！</strong> 
 						</div>
 					
+						<div class="form-group ">	<!-- 当前状态 -->
+          					<label class="control-label col-sm-3">审核状态：</label>
+							<div class="col-sm-6 controls">
+				                <select id="status" name="status" class="form-control">
+				                	<option value='draft'>未审核</option>
+				                	<option value='go'>通过审核</option>
+				                	<option value='redirect'>未通过审核</option>
+								</select>
+          					</div>
+						</div>
         				<div class="form-group ">	<!-- 活动名称 -->
           					<label class="control-label col-sm-3">广告活动：</label>
 							<div class="col-sm-6 controls">
@@ -386,12 +396,14 @@ $(function (){
 	syncGet('advs/'+editId, 
 			function(adv){
 				// 加载数据到表单
+				$("#status").val(adv.status);
 				$("#advName").val(adv.advName);
 				$("#activityId").val(adv.activityId);
 				$("#startDate").val(adv.startDate);
 				$("#endDate").val(adv.endDate);
 				$("#cpm").val(adv.cpm);
 				$("#priority").val(adv.priority);
+				
 				
 				if(adv.advType=="url")
 				{					

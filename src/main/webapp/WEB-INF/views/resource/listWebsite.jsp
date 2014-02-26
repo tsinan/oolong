@@ -106,10 +106,10 @@ $(function(){
 	// 注册表格插件
     $("#websiteGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","关联网站名称", "站点地址数量", "描述","操作"],
-        columnKeys: ["id","websiteName", "urlCount", "description","operation"],
-        columnWidths: ["5%","20%", "20%", "25%", "30%"],
-        sortable: [false, true, true, true, false],
+        columnNames: ["","关联网站名称", "站点地址数量", "关联广告数量", "描述","操作"],
+        columnKeys: ["id","websiteName", "urlCount","advRelationCount", "description","operation"],
+        columnWidths: ["5%","15%", "15%", "15%", "25%", "25%"],
+        sortable: [false, true, false, false, true, false],
         showLoadingOverlay: false,
         initialSortColumn: sortColumn,
         sortOrder: sortOrder,
@@ -121,15 +121,16 @@ $(function(){
 			"<th><input type='checkbox' id='c_all'></th>"
 		],
         cellTemplates: [
-        	"<input type='checkbox' name='{{websiteName}}' id='{{id}}'>",
+        	"<input type='checkbox' name='{{websiteName}}' id='{{id}}_{{advRelationCount}}'>",
 	        "{{websiteName}}",
 	        "{{urlCount}}",
+	        "{{advRelationCount}}",
 	        "{{description}}",
 	        "<a href='websites/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
 	        			"style='margin-right:15px'>修改</a> "+
 	        "<a href='#' style='margin-right:15px' "+
 	        			"onclick='return openDelDialog({{id}},"+
-	        			"\"{{websiteName}}\",{{urlCount}},"+
+	        			"\"{{websiteName}}\",{{urlCount}},{{advRelationCount}},"+
 	        			"\"{{description}}\");' "+
 	        			">删除</a>"+
 	        "<a href='websites/{{id}}/websiteUrls/listPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
@@ -199,22 +200,42 @@ $(function(){
 });
 
 // 打开删除对话框
-function openDelDialog(id, websiteName, urlCount, description)
+function openDelDialog(id, websiteName, urlCount, advRelationCount, description)
 {
-	// 显示活动名称和详细信息
-	$('#deleteDialog .modal-title').text("请确认是否删除关联网站 "+websiteName+"？");
-	$('#deleteDialog .modal-title').addClass("text-warning");
-	$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
-	$('#deleteDialog .modal-body ul').html("<li>站点地址数量："+urlCount+"</li>"+
-		"<li>描述信息："+description+"</li>");
-
-	// 绑定confirmDelete按钮的click事件
-	$("#confirmDelete").click(function(){
-		sendConfirmDelete(id);
-		$("#confirmDelete").unbind('click'); //解除绑定
-		return false;
-	}); 		
-
+	if(advRelationCount > 0)
+	{
+		// 显示活动名称和详细信息
+		$('#deleteDialog .modal-title').text("关联网站 "+websiteName+" 无法删除，请先删除相关广告。");
+		$('#deleteDialog .modal-title').removeClass("text-warning").addClass("text-danger");
+		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
+		$('#deleteDialog .modal-body ul').html("<li>广告数量："+advRelationCount+"</li>"+
+			"<li>站点地址数量："+urlCount+"</li>"+
+			"<li>描述信息："+description+"</li>");
+			
+		//隐藏确认按钮
+		$("#confirmDelete").addClass("disabled");
+	}
+	else
+	{
+		// 显示活动名称和详细信息
+		$('#deleteDialog .modal-title').text("请确认是否删除关联网站 "+websiteName+"？");
+		$('#deleteDialog .modal-title').addClass("text-warning");
+		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
+		$('#deleteDialog .modal-body ul').html("<li>站点地址数量："+urlCount+"</li>"+
+			"<li>描述信息："+description+"</li>");
+	
+		// 删除可能存在的disabled样式
+		$("#confirmDelete").removeClass("disabled");
+		
+		// 绑定confirmDelete按钮的click事件
+		$("#confirmDelete").click(function(){
+			sendConfirmDelete(id);
+			$("#confirmDelete").unbind('click'); //解除绑定
+			return false;
+		}); 		
+		
+	}
+	
 	// 显示对话框
 	$('#deleteDialog').modal({
             		backdrop: 'static',
@@ -229,10 +250,12 @@ function openBatchDelDialog()
 	// 获取选中的ID数组
 	var batchIds = new Array();
 	var batchNames = new Array();
+	var batchAdvCounts = new Array();
 	var index = 0;
 	$('td input').each(function(){
 		if(this.checked == true){
-			batchIds[index] = this.id;
+			batchIds[index] = this.id.split('_')[0];
+			batchAdvCounts[index] = this.id.split('_')[1];
 			batchNames[index] = this.name;
 			index++;
 		}
@@ -251,8 +274,16 @@ function openBatchDelDialog()
 		$('#deleteDialog .modal-body p').html("<p>将要被删除的信息：</p>");
 		
 		var nameDisplay = "";
-		for(idx in batchNames){
-			 nameDisplay = nameDisplay + "<li>"+batchNames[idx]+"</li>";
+		for(idx in batchNames)
+		{
+			if(batchAdvCounts[idx] == 0)
+			{
+				nameDisplay = nameDisplay + "<li>"+batchNames[idx]+"</li>";
+			}
+			else
+			{
+				nameDisplay = nameDisplay + "<li>无法删除："+batchNames[idx]+"（广告订单数量："+batchAdvCounts[idx]+"）</li>";
+			}
 		}
 		$('#deleteDialog .modal-body ul').html(nameDisplay);
 		

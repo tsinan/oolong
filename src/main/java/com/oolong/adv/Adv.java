@@ -28,6 +28,9 @@ public class Adv extends Domain
 	@Column(name="status",length=10)
 	private String status;
 	
+	@Transient
+	private String statusDisplay;
+	
 	/** 广告活动ID */
 	@NotNull
 	@Column(name="activityId")  
@@ -312,5 +315,17 @@ public class Adv extends Domain
 	{
 		this.createTime = createTime;
 	}
+	
+
+	public String getStatusDisplay()
+	{
+		return statusDisplay;
+	}
+
+	public void setStatusDisplay(String statusDisplay)
+	{
+		this.statusDisplay = statusDisplay;
+	}
+
 
 }

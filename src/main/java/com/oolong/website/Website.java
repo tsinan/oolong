@@ -31,6 +31,9 @@ public class Website extends Domain
 
 	@Transient
 	private long urlCount;
+	
+	@Transient
+	private long advRelationCount;
 
 	@Size(max = 200)
 	@Column(name = "description")
@@ -85,6 +88,16 @@ public class Website extends Domain
 	public void setUrlCount(long urlCount)
 	{
 		this.urlCount = urlCount;
+	}
+
+	public long getAdvRelationCount()
+	{
+		return advRelationCount;
+	}
+
+	public void setAdvRelationCount(long advRelationCount)
+	{
+		this.advRelationCount = advRelationCount;
 	}
 
 }

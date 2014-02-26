@@ -14,6 +14,8 @@ import org.springframework.data.jpa.repository.Query;
 public interface AdvAreaRelationRepository extends JpaRepository<AdvAreaRelation,Long>
 {
 	List<AdvAreaRelation> findByAdvId(Long advId);
+	
+	long countByAreaId(Long areaId);
 
 	@Modifying
 	@Query("delete from AdvAreaRelation aar where aar.advId in ( ?1 )")

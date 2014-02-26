@@ -15,6 +15,8 @@ public interface AdvWebsiteRelationRepository extends JpaRepository<AdvWebsiteRe
 {
 	List<AdvWebsiteRelation> findByAdvId(Long advId);
 	
+	long countByWebsiteId(Long websiteId);
+	
 	@Modifying
 	@Query("delete from AdvWebsiteRelation awr where awr.advId in ( ?1 )")
 	void batchDelete(List<Long> ids);

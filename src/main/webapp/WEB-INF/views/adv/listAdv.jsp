@@ -104,10 +104,10 @@ $(function(){
 	// 注册表格插件
     $("#advGrid").simplePagingGrid({
     	tableClass: "table table-striped table-bordered table-condensed",
-        columnNames: ["","广告名称", "所属活动", "生效日期/失效日期","操作"],
-        columnKeys: ["id","advName", "activityId", "startDate","operation"],
-        columnWidths: ["5%","20%", "20%", "25%", "30%"],
-        sortable: [false, true, true, true, false],
+        columnNames: ["", "广告名称", "状态", "所属活动", "生效日期/失效日期","操作"],
+        columnKeys: ["id", "advName", "status", "activityId", "startDate","operation"],
+        columnWidths: ["5%", "20%", "10%", "20%", "25%", "20%"],
+        sortable: [false, true, true, true, true, false],
         showLoadingOverlay: false,
         initialSortColumn: sortColumn,
         sortOrder: sortOrder,
@@ -121,6 +121,7 @@ $(function(){
         cellTemplates: [
         	"<input type='checkbox' name='{{advName}}' id='{{id}}'>",
 	        "{{advName}}",
+	        "{{statusDisplay}}",
 	        "{{activityName}}",
 	        "{{startDate}} / {{endDate}}",
 	        "<a href='advs/editPage?id={{id}}&paging={{../paging}}&query={{../query}}' " +
@@ -129,7 +130,7 @@ $(function(){
 	        			"onclick='return openDelDialog({{id}},"+
 	        			"\"{{advName}}\",\"{{activityName}}\","+
 	        			"\"{{startDate}}\",\"{{endDate}}\");' "+
-	        			">删除</a>"
+	        			">删除</a> "
 	    ],
         dataUrl: "advs?query="+query
     });

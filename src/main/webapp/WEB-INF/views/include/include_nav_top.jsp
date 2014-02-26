@@ -14,7 +14,7 @@
       	<div class="collapse navbar-collapse">
        		<ul class="nav navbar-nav">
 				<li id="topNav_home" class="active"><a href=".">首页</a></li>
-				<li id="topNav_adv"><a href="activities/listPage">广告管理</a></li>
+				<li id="topNav_adv"><a href="advs/listPage">广告管理</a></li>
 				<li id="topNav_resource"><a href="websites/listPage">资源管理</a></li>
               	<!-- <li id="topNav_report"><a href="#report">报表管理</a></li>  -->
               	<li id="topNav_admin"><a href="#system">系统管理</a></li>

@@ -72,22 +72,23 @@ public class AdvController
 	 * 页面跳转
 	 ******************************************************/
 	@RequestMapping(value = "/createPage", method = RequestMethod.GET)
-	public String toCreateActivityPage()
+	public String toCreateAdvPage()
 	{
 		return "adv/createAdv";
 	}
 
 	@RequestMapping(value = "/listPage", method = RequestMethod.GET)
-	public String toListActivityPage()
+	public String toListAdvPage()
 	{
 		return "adv/listAdv";
 	}
 
 	@RequestMapping(value = "/editPage", method = RequestMethod.GET)
-	public String toEditActivityPage(HttpServletRequest request)
+	public String toEditAdvPage(HttpServletRequest request)
 	{
 		return "adv/editAdv";
 	}
+	
 
 	/******************************************************
 	 * 功能接口
@@ -141,6 +142,19 @@ public class AdvController
 			else
 			{
 				adv.setActivityName("-");
+			}
+			
+			if(adv.getStatus().equalsIgnoreCase("go"))
+			{
+				adv.setStatusDisplay("审核通过");
+			}
+			else if(adv.getStatus().equalsIgnoreCase("redirect"))
+			{
+				adv.setStatusDisplay("审核未通过");
+			}
+			else 
+			{
+				adv.setStatusDisplay("未审核");				
 			}
 		}
 

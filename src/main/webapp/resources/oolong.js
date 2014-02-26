@@ -46,7 +46,8 @@ function controlAdvNav(path)
 		$(".panel-group .panel-collapse li").removeClass("active");
 		$("#leftNav_newActi").addClass("active");
 	}
-	if((path.indexOf('/advs/listPage')>=0) || (path.indexOf('/advs/editPage')>=0))
+	if((path.indexOf('/advs/listPage')>=0) || (path.indexOf('/advs/editPage')>=0)
+										|| (path.indexOf('/advs/approvalPage')>=0))
 	{
 		// 顶部导航设置
 		$(".navbar-fixed-top .navbar-nav li").removeClass("active");

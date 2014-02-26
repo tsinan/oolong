@@ -30,6 +30,9 @@ public class Area extends Domain
 
 	@Transient
 	private long ipCount;
+	
+	@Transient
+	private long advRelationCount;
 
 	@Size(max = 200)
 	@Column(name = "description")
@@ -84,6 +87,16 @@ public class Area extends Domain
 	public void setIpCount(long ipCount)
 	{
 		this.ipCount = ipCount;
+	}
+
+	public long getAdvRelationCount()
+	{
+		return advRelationCount;
+	}
+
+	public void setAdvRelationCount(long advRelationCount)
+	{
+		this.advRelationCount = advRelationCount;
 	}
 
 }
